@@ -190,9 +190,48 @@ Exemplo: alterar ForEach por while, melhorar a query ao banco, etc.
 Exemplo: Circle, Travis, BrowserStack, etc.
 * __Revert__: indica a reverão de um commit anterior.
 
+## Padrão de Branches 🌿
 
-###Exemplo:
+Além dos commits, as branches devem seguir os seguintes padrões para garantir consistência.
 
-```
-Feat: add table and pagination clients
-```
+### 1. **Branches Principais** 🌟
+   - **`main`**: A branch principal contendo a versão de produção do código.
+   - **`develop`**: A branch de integração onde as novas funcionalidades são mescladas antes de serem lançadas.
+
+### 2. **Branches de Funcionalidade (Feature) 🚀**
+   - **Formato**: `feature/nome-da-feature`
+   - **Uso**: Para o desenvolvimento de novas funcionalidades.
+   - **Exemplo**:
+     - `feature/criar-pagina-de-login`
+
+### 3. **Branches de Correção de Bug 🐞**
+   - **Formato**: `bugfix/nome-do-bug`
+   - **Uso**: Para correção de bugs.
+   - **Exemplo**:
+     - `bugfix/corrigir-erro-no-login`
+
+### 4. **Branches de Hotfix 🚑**
+   - **Formato**: `hotfix/nome-do-hotfix`
+   - **Uso**: Para correções urgentes diretamente em produção.
+   - **Exemplo**:
+     - `hotfix/corrigir-erro-de-pagamento-em-producao`
+
+### 5. **Branches de Configuração do Projeto ⚙️**
+   - **Formato**: `config/nome-da-configuracao`
+   - **Uso**: Para mudanças nas configurações do projeto.
+   - **Exemplo**:
+     - `config/ajustes-no-dockerfile`
+
+### 6. **Branches de Documentação 📚**
+   - **Formato**: `docs/nome-da-documentacao`
+   - **Uso**: Para mudanças ou melhorias na documentação do projeto.
+   - **Exemplo**:
+     - `docs/atualizar-readme`
+     - `docs/adicionar-guia-de-configuracao`
+
+### 7. **Branches de Release 🎉**
+   - **Formato**: `release/versao`
+   - **Uso**: Para preparar e testar novas versões antes de liberá-las.
+   - **Exemplo**:
+     - `release/1.0.0`
+
