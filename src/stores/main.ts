@@ -1,23 +1,24 @@
-import { defineStore } from 'pinia';
-import { format, formatDate } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import useDateandLocale from "../utils/DateUtils"
+import { computed, ref } from "vue";
+import { ptBR } from "date-fns/locale";
+import { defineStore } from "pinia";
 
+import useDateandLocale from "../utils/DateUtils";
 
-export const useDateStore = defineStore('dateStore', {
-    state: () => ({
-        today: new Date(),
-        locale: ptBR
-    }),
+export const useDateStore = defineStore("dateStore", () => {
+    const today = ref(new Date());
+    const locale = ref(ptBR);
 
-    getters: {
-        formattedDate: () => useDateandLocale().formattedDate.value,
-        formattedDateMM: () => useDateandLocale().formattedDateMM.value
-    },
+    const { formattedDate, formattedDateMM } = useDateandLocale();
 
-    actions: {
-        updateDate() {
-            this.today = new Date(); // Atualiza a data
-          }
-    }
-})
+    const updateDate = () => {
+        today.value = new Date();
+    };
+
+    return {
+        today,
+        locale,
+        formattedDate: computed(() => formattedDate.value),
+        formattedDateMM: computed(() => formattedDateMM.value),
+        updateDate,
+    };
+});
