@@ -12,8 +12,15 @@ defineProps<{
       <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next?
     </h3>
+
+        <div>
+            <v-chip>
+                Chip
+            </v-chip>
+        </div>
   </div>
 </template>
+
 
 <style scoped>
 h1 {
