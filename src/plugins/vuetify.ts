@@ -21,9 +21,9 @@ theme: {
     themes: {
       light: {
         colors: {
-          primary: "#6FF24B",
-          secondary: "#482E8F",
-          accent: "#FFFFFF",
+          primary: "#461CDC",
+          secondary:"#FFFFFF" ,
+          accent: "#6FF24B",
           error: "#4839DB",
           info: "#2196F3",
           success: "#6FF24B",
@@ -34,15 +34,16 @@ theme: {
       dark: {
         colors: {
           primary: "#010326",
-          secondary: "#FFFFFF",
+          secondary:"#2B3A8C" ,
           accent: "#000000",
-          error: "#2B3A8C",
+          error: "#FFFFFF",
           info: "#6FF24B",
           success: "#010326",
           warning: "#FFFFFF"
         }
       }
     }
+
   }
 })
 

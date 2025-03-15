@@ -1,17 +1,19 @@
+
 <template>
     <v-card>
       <v-layout>
-        <v-app-bar color="#371ED9">
+        <v-app-bar color = primary >
           <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
           <v-toolbar-title>Instituto Matera</v-toolbar-title>
 
           <v-spacer></v-spacer>
 
-          <v-btn icon="mdi mdi-theme-light-dark" variant="text"></v-btn>
+          <v-btn icon="mdi mdi-theme-light-dark" variant="text" @click="toggleTheme"></v-btn>
+
         </v-app-bar>
 
-        <v-navigation-drawer
+        <v-navigation-drawer color = secondary
           v-model="drawer"
           :location="$vuetify.display.mobile ? 'bottom' : undefined"
           temporary
@@ -29,28 +31,30 @@
       </v-layout>
     </v-card>
   </template>
+
 <script>
+import { ref } from 'vue';
+import { useTheme } from 'vuetify';
+
 export default {
-  data: () => ({
-    drawer: false,
-    group: null,
-    items: [
-      {
-        title: 'Home',
-        value: 'home',
-      },
-      {
-        title: 'Aluno',
-        value: 'aluno',
-      },
+  setup() {
+    const drawer = ref(false);
+    const group = ref(null);
+    const theme = useTheme();
 
-    ],
-  }),
+    const toggleTheme = () => {
+      theme.global.name.value = theme.global.name.value === 'light' ? 'dark' : 'light';
+    };
 
-  watch: {
-    group () {
-      this.drawer = false
-    },
-  },
-}
+    return {
+      drawer,
+      group,
+      items: [
+        { title: 'Home', value: 'home' },
+        { title: 'Aluno', value: 'aluno' }
+      ],
+      toggleTheme,
+    };
+  }
+};
 </script>
