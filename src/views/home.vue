@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useDateStore } from "../stores/main";
+import { useIndexStore } from "../stores/index.store.ts";
 
-const dateStore = useDateStore();
+const indexStore = useIndexStore();
 </script>
 
 <template>
     <div>
         <h1>Home</h1>
-        <p>Data atual: {{ dateStore.formattedDate }}</p>
-        <button @click="dateStore.updateDate">Atualizar Data</button>
-        <p>Data formatada MM: {{ dateStore.formattedDateMM }}</p>
+        <p>Data atual: {{ indexStore.formattedDate }}</p>
+        <button @click="indexStore.updateDate">Atualizar Data</button>
+        <p>Data formatada MM: {{ indexStore.formattedDateMM }}</p>
     </div>
 </template>
 
