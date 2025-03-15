@@ -1,21 +1,21 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
-import Alunos from "@/views/alunos.vue";
 import { authRoutes } from "@/modules/auth/auth.routes";
 import FullPageContent from "@/layout/full-page-content.vue";
 import Home from "@/views/home.vue";
 import SideBarContent from "@/layout/side-bar-content.vue";
+import Student from "@/views/student.vue";
 
 const routes: RouteRecordRaw[] = [
     {
         path: "",
         component: SideBarContent,
-        redirect: "/alunos",
+        redirect: "/student",
         children: [
             {
-                path: "alunos",
-                name: "Alunos",
-                component: Alunos,
+                path: "student",
+                name: "Student",
+                component: Student,
             },
             {
                 path: "home",
