@@ -12,7 +12,7 @@
     </div>
 </template>
 <script lang="ts">
-console.log("teste");
+
 </script>
 <style scoped>
 .item {

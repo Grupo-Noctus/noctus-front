@@ -13,10 +13,11 @@
 
         </v-app-bar>
 
-        <v-navigation-drawer color = secondary
+        <v-navigation-drawer
           v-model="drawer"
           :location="$vuetify.display.mobile ? 'bottom' : undefined"
           temporary
+          color = secondary
         >
           <v-list
             :items="items"
@@ -32,29 +33,19 @@
     </v-card>
   </template>
 
-<script>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { useTheme } from 'vuetify';
 
-export default {
-  setup() {
-    const drawer = ref(false);
-    const group = ref(null);
-    const theme = useTheme();
+const drawer = ref(false);
+const theme = useTheme();
 
-    const toggleTheme = () => {
-      theme.global.name.value = theme.global.name.value === 'light' ? 'dark' : 'light';
-    };
-
-    return {
-      drawer,
-      group,
-      items: [
-        { title: 'Home', value: 'home' },
-        { title: 'Aluno', value: 'aluno' }
-      ],
-      toggleTheme,
-    };
-  }
+const toggleTheme = () => {
+  theme.global.name.value = theme.global.name.value === 'light' ? 'dark' : 'light';
 };
+
+const items = [
+  { title: 'Home', value: 'home' },
+  { title: 'Aluno', value: 'aluno' }
+];
 </script>
