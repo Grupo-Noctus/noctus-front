@@ -6,6 +6,8 @@ import Home from "@/views/home.vue";
 import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
 
+
+
 const routes: RouteRecordRaw[] = [
     {
         path: "",

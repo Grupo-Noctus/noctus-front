@@ -2,9 +2,9 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
-
 import { aliases, mdi } from "vuetify/iconsets/mdi";
-
+import 'vuetify/styles';
+import '@/assets/styles.css';
 export const vuetify = createVuetify({
     components,
     directives,
@@ -26,15 +26,15 @@ export const vuetify = createVuetify({
                     error: "#4839DB",
                     info: "#2196F3",
                     success: "#6FF24B",
-                    warning: "#F2F2F2",
+                    warning: "#461CDC",
                     anchor: "#482E8F",
                 },
             },
             dark: {
                 colors: {
-                    primary: "#010326",
-                    secondary: "#2B3A8C",
-                    accent: "#000000",
+                    primary: "#461CDC",
+                    secondary: "#010326",
+                    accent: "#6FF24B",
                     error: "#FFFFFF",
                     info: "#6FF24B",
                     success: "#010326",
