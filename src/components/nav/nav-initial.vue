@@ -5,7 +5,7 @@
                 <router-link :to="{ name: 'Home' }">Login</router-link>
             </li>
             <li>
-                <router-link :to="{ name: 'Alunos' }">Alunos</router-link>
+                <router-link :to="{ name: 'Alunos' }">Aluno</router-link>
             </li>
         </ul>
     </div>
