@@ -39,7 +39,7 @@
           </v-list>
         </v-navigation-drawer>
 
-        <v-main class="px-4" style="height: 100vh">
+        <v-main class="px-4 scroll-container " style="height: 100vh" >
           <router-view></router-view>
         </v-main>
       </v-layout>
@@ -74,4 +74,17 @@
     display: flex;
     align-items: center;
   }
+  .scroll-container {
+    height: 100vh; /* Define a altura como 100% da viewport */
+    overflow-y: auto; /* Habilita scroll vertical */
+    padding-bottom: 20px; /* Espaço extra no final */
+}
+
+.cards-wrapper {
+    min-height: 0; /* Evita problemas de overflow em alguns navegadores */
+}
+
+
+
+
   </style>

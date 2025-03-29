@@ -1,5 +1,6 @@
 <template>
     <v-app>
+
       <router-view></router-view>
     </v-app>
   </template>
@@ -8,7 +9,6 @@
   import { onMounted } from "vue";
   import { useTheme } from "vuetify";
   import { useIndexStore } from "./stores/index.store";
-
   const theme = useTheme();
   const indexStore = useIndexStore();
 
@@ -25,4 +25,6 @@
   </script>
 
   <style scoped>
+
+
   </style>

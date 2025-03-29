@@ -5,6 +5,8 @@ import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import 'vuetify/styles';
 import '@/assets/styles.css';
+
+
 export const vuetify = createVuetify({
     components,
     directives,
