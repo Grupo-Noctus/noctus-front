@@ -5,6 +5,7 @@ import FullPageContent from "@/layout/full-page-content.vue";
 import Home from "@/views/home.vue";
 import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
+import { CourseRoutes } from "@/modules/course/course.routes";
 
 const routes: RouteRecordRaw[] = [
     {
@@ -12,6 +13,7 @@ const routes: RouteRecordRaw[] = [
         component: SideBarContent,
         redirect: "/student",
         children: [
+            ...CourseRoutes,
             {
                 path: "student",
                 name: "Student",
