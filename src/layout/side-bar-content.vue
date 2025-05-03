@@ -31,7 +31,7 @@
                 </v-list>
             </v-navigation-drawer>
 
-            <v-main class="px-4" style="height: 100vh">
+            <v-main class="px-4">
                 <router-view></router-view>
             </v-main>
         </v-layout>
