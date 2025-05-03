@@ -5,8 +5,14 @@ export class AuthHttp {
         this.httpClient = httpClient;
     }
 
-    async loginHttp() {
-        const { data } = await this.httpClient.get("");
+    async loginHttp(usernameOrEmail: string, password: string) {
+        const { data } = await this.httpClient.post("/auth/login", { usernameOrEmail, password });
+
+        return data;
+    }
+
+    async registerHttp(formData: any) {
+        const { data } = await this.httpClient.post("/auth/register", { formData });
         return data;
     }
 }
