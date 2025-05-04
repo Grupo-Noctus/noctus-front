@@ -1,41 +1,33 @@
 <template>
-    <v-card>
-        <v-layout>
-            <v-app-bar color="primary">
-                <v-app-bar-nav-icon
-                    variant="text"
-                    @click.stop="drawer = !drawer"
-                ></v-app-bar-nav-icon>
+    <v-app>
+        <v-navigation-drawer
+            v-model="drawer"
+            :location="$vuetify.display.mobile ? 'bottom' : undefined"
+            temporary
+            color="secondary"
+        >
+            <v-list>
+                <v-list-item
+                    v-for="item in items"
+                    :key="item.value"
+                    @click="navigateToMainContent(item.title)"
+                >
+                    {{ item.value }}
+                </v-list-item>
+            </v-list>
+        </v-navigation-drawer>
 
-                <v-toolbar-title>Instituto Matera</v-toolbar-title>
+        <v-app-bar class="elevation-0" color="primary">
+            <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" />
+            <v-toolbar-title>Instituto Matera</v-toolbar-title>
+            <v-spacer />
+            <v-btn icon="mdi mdi-theme-light-dark" variant="text" @click="toggleTheme" />
+        </v-app-bar>
 
-                <v-spacer></v-spacer>
-
-                <v-btn icon="mdi mdi-theme-light-dark" variant="text" @click="toggleTheme"></v-btn>
-            </v-app-bar>
-
-            <v-navigation-drawer
-                v-model="drawer"
-                :location="$vuetify.display.mobile ? 'bottom' : undefined"
-                temporary
-                color="secondary"
-            >
-                <v-list>
-                    <v-list-item
-                        v-for="item in items"
-                        :key="item.value"
-                        @click="navigateToMainContent(item.title)"
-                    >
-                        {{ item.value }}
-                    </v-list-item>
-                </v-list>
-            </v-navigation-drawer>
-
-            <v-main class="px-4">
-                <router-view></router-view>
-            </v-main>
-        </v-layout>
-    </v-card>
+        <v-main>
+            <router-view />
+        </v-main>
+    </v-app>
 </template>
 
 <script setup lang="ts">
@@ -60,4 +52,22 @@ const navigateToMainContent = (title: string) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.app-main {
+    flex: 1;
+    min-height: calc(100vh - 40px);
+}
+</style>
+
+<style>
+html,
+body,
+#app {
+    height: 100%;
+    margin: 0;
+}
+
+.v-application {
+    height: 100%;
+}
+</style>

@@ -4,10 +4,10 @@
             v-if="loadingContentCourse"
             min-height="40"
             class="font-weight-medium d-flex justify-space-between align-center"
-            style="height: 50px; width: 500px"
+            style="height: 50px; width: 100%"
         >
-            <v-skeleton-loader type="heading" width="250"></v-skeleton-loader>
-            <v-skeleton-loader type="heading" width="60"></v-skeleton-loader>
+            <v-skeleton-loader type="heading" style="width: 60%"></v-skeleton-loader>
+            <v-skeleton-loader type="heading" style="width: 15%"></v-skeleton-loader>
         </div>
 
         <div v-else-if="!eachCourseTabContent.length" class="text-weight-bold pa-1 py-3">
@@ -17,7 +17,7 @@
             v-for="courseTabContent in eachCourseTabContent"
             v-else
             :key="courseTabContent.order"
-            class="pa-0"
+            class="pa-0 rounded-0"
             static
         >
             <v-expansion-panel-title min-height="40" class="font-weight-medium">
@@ -26,7 +26,7 @@
             <v-expansion-panel-text class="pa-0">
                 <div v-for="tabContent in courseTabContent.content" :key="tabContent.id">
                     <v-divider v-if="tabContent.id > 1"></v-divider>
-                    <v-card class="content-course" @click="enterCourse(tabContent.id)">
+                    <v-card class="content-course" @click="enterCourse()">
                         <div>
                             <v-btn
                                 icon="mdi-play-circle-outline"
@@ -75,8 +75,10 @@ onMounted(async () => {
     loadingContentCourse.value = false;
 });
 
-const enterCourse = (idCourse: number) => {
-    return router.push({ name: "CourseVideo", params: { video: idCourse } });
+const enterCourse = () => {
+    return courseStore.getCourseVideoUrl(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    );
 };
 </script>
 

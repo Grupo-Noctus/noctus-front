@@ -1,29 +1,28 @@
 <template>
-    <!--<v-skeleton-loader v-if="loading" type="image" width="500"></v-skeleton-loader>-->
-
-    <v-card class="ma-4 border-sm rounded-lg" elevation="0" style="max-width: 500px">
-        <v-tabs v-model="selectedTab" bg-color="primary" grow :slider-color="sliderColor">
+    <div style="height: 100%; overflow-y: auto" class="overflow-y">
+        <v-tabs v-model="selectedTab" grow :slider-color="sliderColor" class="tabs-header">
             <v-tab
                 v-for="courseTab in listCourseTab.title"
                 :key="courseTab.name"
-                v-model="courseTab.model"
+                :value="courseTab.model"
                 :class="courseTab.style"
-                :text="courseTab.name"
-            ></v-tab>
+            >
+                {{ courseTab.name }}
+            </v-tab>
         </v-tabs>
 
-        <v-card-text class="pa-0">
+        <v-card-text class="tab-content pa-0 rounded-0">
             <v-tabs-window v-model="selectedTab">
-                <v-tabs-window-item value="modules">
-                    <modules-and-content-tab></modules-and-content-tab>
+                <v-tabs-window-item value="module">
+                    <modules-and-content-tab />
                 </v-tabs-window-item>
 
-                <v-tabs-window-item value="exams">
-                    <exams-tab></exams-tab>
+                <v-tabs-window-item value="exam">
+                    <exams-tab />
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
-    </v-card>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -66,7 +65,30 @@ const sliderColor = computed(() => (indexStore.isDark ? "#6BFF50" : "#6BFF50"));
 }
 
 :deep(.v-theme--dark .v-expansion-panel-title.v-expansion-panel-title--active) {
-    background-color: rgba(255, 255, 255, 0.055);
-    color: white;
+    background-color: rgba(70, 28, 220, 0.2);
+    color: rgb(243, 239, 239);
 }
+/*
+.scrollable-content {
+    max-height: 87vh;
+    overflow-y: auto;
+}
+
+.tabs-header {
+    min-height: 48px;
+    max-height: 48px;
+    overflow: hidden;
+}
+
+.tab-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    height: 100%;
+} */
 </style>

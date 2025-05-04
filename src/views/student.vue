@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { pushMessageNotification } from "@/utils/notivue-base";
 pushMessageNotification;
 

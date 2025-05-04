@@ -3,11 +3,11 @@
         v-if="loadingExamCourse"
         min-height="40"
         class="font-weight-medium d-flex justify-space-between align-center"
-        style="height: 50px; width: 500px"
+        style="height: 50px; width: 100%"
     >
-        <v-skeleton-loader type="heading" width="80"></v-skeleton-loader>
-        <v-skeleton-loader type="heading" width="340"></v-skeleton-loader>
-        <v-skeleton-loader type="heading" width="60"></v-skeleton-loader>
+        <v-skeleton-loader type="heading" style="width: 15%"></v-skeleton-loader>
+        <v-skeleton-loader type="heading" style="width: 60%"></v-skeleton-loader>
+        <v-skeleton-loader type="heading" style="width: 30%"></v-skeleton-loader>
     </div>
     <div v-else-if="!eachExamTabCourse.length" class="text-center text-weight-bold pa-1 py-3">
         Erro ao buscar tarefas do curso
