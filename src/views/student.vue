@@ -6,62 +6,68 @@
         </v-col>
       </v-row>
 
-      <v-row justify="center">
-        <v-col cols="12" sm="10" md="8" lg="6">
+      <v-row justify="center" align="center">
+        <v-col
+          v-for="course in courses"
+          :key="course.id"
+          cols="auto"
+          sm="6"
+          md="4"
+          lg="4"
+          class="pa-4"
+        >
+
+
           <v-card
-            v-for="course in courses"
-            :key="course.id"
-            class="course-card mb-4 mx-auto"
-            elevation="2"
+            class="course-card pa-4 mx-auto "
+            elevation="4"
             :class="{ 'dark-theme': isDark }"
-            max-width="500"
           >
-            <v-row no-gutters align="center">
+            <v-img
+              :src="course.image"
+              height="200"
+              cover
+              class="course-image"
+            >
+              <v-chip
+                v-if="isExpired(course.expirationDate)"
+                color="error"
+                class="ma-3"
+                size="large"
+                label
+                outlined
+                style="font-weight: bold;"
+              >
+                EXPIRADO
+              </v-chip>
+            </v-img>
 
-              <v-col cols="12" sm="4">
-                <v-img
-                  :src="course.image"
-                  height="150"
-                  cover
-                  class="course-image"
-                >
-                  <v-chip
-                    v-if="isExpired(course.expirationDate)"
-                    color="error"
-                    class="ma-3"
-                    size="large"
-                    label
-                    outlined
-                    style="font-weight: bold;"
-                  >
-                    EXPIRADO
-                  </v-chip>
-                </v-img>
-              </v-col>
+            <v-card-title class="text-h5 mt-3">
+              {{ course.name }}
+            </v-card-title>
 
+            <v-card-subtitle class="mb-3 text-body-2">
+              Expira em: {{ formatDate(course.expirationDate) }}
+            </v-card-subtitle>
 
-              <v-col cols="12" sm="8" class="pa-4">
-                <v-card-title class="text-h5">
-                  {{ course.name }}
-                </v-card-title>
+            <v-card-text class="text-body-1">
+              {{ course.description }}
+            </v-card-text>
 
-                <v-card-subtitle class="mt-2">
-                  Expira em: {{ formatDate(course.expirationDate) }}
-                </v-card-subtitle>
-
-                <v-card-actions>
-                  <v-btn
-                    color="warning"
-                    variant="text"
-                    size="large"
-                    @click="viewCourse(course.id)"
-                  >
-                    Acessar Curso
-                  </v-btn>
-                </v-card-actions>
-              </v-col>
-            </v-row>
+            <v-card-actions>
+              <v-btn
+                color="warning"
+                variant="tonal"
+                size="large"
+                block
+                @click="viewCourse(course.id)"
+              >
+                Acessar Curso
+              </v-btn>
+            </v-card-actions>
           </v-card>
+
+
         </v-col>
       </v-row>
     </v-container>
@@ -77,6 +83,7 @@
     name: string;
     expirationDate: string;
     image: string;
+    description: string;
   }
 
   const router = useRouter();
@@ -88,18 +95,42 @@
       name: 'UX/UI Designer',
       expirationDate: '2025-06-30',
       image: 'src/layout/curso-de-ux-design-2.jpg',
+      description: 'Aprenda a criar interfaces intuitivas e designs incríveis.',
     },
     {
       id: 2,
       name: 'Java Avançado',
       expirationDate: '2025-03-15',
       image: 'src/layout/java-thumb-1024x576.png',
+      description: 'Domine conceitos avançados de programação em Java.',
     },
     {
       id: 3,
       name: 'Introdução ao Docker',
       expirationDate: '2025-09-20',
       image: 'src/layout/maxresdefault.jpg',
+      description: 'Conheça os fundamentos de contêineres com Docker.',
+    },
+    {
+      id: 4,
+      name: 'C# para iniciantes ',
+      expirationDate: '2025-08-12',
+      image: 'src/layout/cfoto.jpeg',
+      description: 'Crie aplicações web modernas com React.',
+    },
+    {
+      id: 5,
+      name: 'Usando Vuetify',
+      expirationDate: '2025-07-05',
+      image: 'src/layout/vuetify.jpeg',
+      description: 'Desenvolva interfaces elegantes com Vuetify.',
+    },
+    {
+      id: 6,
+      name: 'Python Básico',
+      expirationDate: '2025-10-22',
+      image: 'src/layout/phynton.jpeg',
+      description: 'Mergulhe nas práticas de DevOps e automação.',
     },
   ]);
 
@@ -121,18 +152,24 @@
 
   <style scoped>
   .course-card {
-    width: 100%;
+    max-width: 400px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    border-radius: 12px;
   }
 
   .course-image {
     position: relative;
+    border-radius: 8px;
   }
 
   .v-card-title {
     word-break: break-word;
-    line-height: 1.2;
+    line-height: 1.4;
+  }
+
+  .v-card-text {
+    flex-grow: 1;
   }
 
   .dark-theme {
@@ -141,10 +178,8 @@
   }
 
 
-  @media (max-width: 600px) {
-    .course-card {
-      flex-direction: column; 
-    }
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
   }
   </style>
-
