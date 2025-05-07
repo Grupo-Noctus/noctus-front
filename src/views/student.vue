@@ -1,4 +1,5 @@
 <template>
+
     <v-container fluid>
       <v-row>
         <v-col cols="12">
@@ -70,6 +71,7 @@
 
         </v-col>
       </v-row>
+      <v-btn @click="customNotification">progress</v-btn>
     </v-container>
   </template>
 
@@ -77,6 +79,20 @@
   import { ref, computed } from 'vue';
   import { useIndexStore } from '@/stores/index.store';
   import { useRouter } from 'vue-router';
+  import { pushMessageNotification } from "@/utils/notivue-base";
+  pushMessageNotification;
+
+  const customNotification = () => {
+      pushMessageNotification({
+          type: "success",
+          title: "title",
+          message: "message",
+          props: {
+              progress: true,
+          },
+          duration: 3000,
+      });
+  };
 
   interface Course {
     id: number;

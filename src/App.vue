@@ -1,13 +1,22 @@
 <template>
     <v-app>
+        <Notivue v-slot="item">
+          <Notification :item="item">
+              <div v-if="item.props.progress">
+                  <NotificationProgress :item="item" />
+              </div>
+          </Notification>
+      </Notivue>
       <router-view></router-view>
     </v-app>
   </template>
 
-  <script setup lang="ts">
-  import { onMounted } from "vue";
-  import { useTheme } from "vuetify";
-  import { useIndexStore } from "./stores/index.store";
+
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useTheme } from "vuetify";
+import { useIndexStore } from "./stores/index.store";
+import { Notivue, Notification, NotificationProgress } from "notivue";
 
   const theme = useTheme();
   const indexStore = useIndexStore();
