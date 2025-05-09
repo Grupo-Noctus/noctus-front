@@ -18,3 +18,11 @@ export type TContentExam = {
     name: string;
     questionCount: number;
 };
+
+export type TVideoList = {
+    id: number;
+    title: string;
+    description: string;
+    nextId: number | null;
+    prevId: number | null;
+};

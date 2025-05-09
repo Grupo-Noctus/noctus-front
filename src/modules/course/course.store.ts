@@ -1,8 +1,47 @@
 import { defineStore } from "pinia";
-import type { TContentExam, TContentModule } from "./course.types";
+import type { TContentExam, TContentModule, TVideoList } from "./course.types";
 import { ref } from "vue";
 
 export const useCourseStore = defineStore("courseStore", () => {
+    const videoList: TVideoList[] = [
+        {
+            id: 1,
+            title: "introdução nest",
+            description: "finge que estou fazendo uma descrição correta",
+            nextId: 2,
+            prevId: null,
+        },
+        {
+            id: 2,
+            title: "Configuração inicial",
+            description: "estou fingindo fazer uma descrição",
+            nextId: 4,
+            prevId: 1,
+        },
+        {
+            id: 4,
+            title: "Fundamentos dos cli",
+            description: "descrição está fingindo eu",
+            nextId: null,
+            prevId: 2,
+        },
+    ];
+
+    const videoUrlList: { url: string; id: number }[] = [
+        {
+            id: 1,
+            url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+        },
+        {
+            id: 2,
+            url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        },
+        {
+            id: 4,
+            url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        },
+    ];
+
     const contentModule: TContentModule[] = [
         {
             order: 1,
@@ -177,17 +216,18 @@ export const useCourseStore = defineStore("courseStore", () => {
         },
     ];
 
+    const currentVideoInfo = ref(videoList[0]);
+
     const courseVideoUrl = ref();
 
-    const getCourseVideoUrl = async (
-        url: string = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-    ) => {
+    const getCourseVideoUrl = async (id: number = 0) => {
+        const filteredUrl = videoUrlList.filter((e) => id === e.id);
         const givenUrl = await new Promise((resolve) => {
             setTimeout(() => {
-                resolve(url);
+                resolve(filteredUrl[0].url);
             }, 1000);
         });
-
+        currentVideoInfo.value = videoList.filter((e) => e.id == id)[0];
         courseVideoUrl.value = givenUrl;
     };
 
@@ -207,5 +247,14 @@ export const useCourseStore = defineStore("courseStore", () => {
         });
     };
 
-    return { getContentModule, getContentExam, contentModule, getCourseVideoUrl, courseVideoUrl };
+    return {
+        contentModule,
+        courseVideoUrl,
+        currentVideoInfo,
+        videoList,
+        videoUrlList,
+        getContentModule,
+        getContentExam,
+        getCourseVideoUrl,
+    };
 });

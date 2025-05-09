@@ -1,9 +1,14 @@
 <template>
     <div class="video-container">
-        <div class="video-wrapper">
+        <div
+            class="video-wrapper"
+            @mouseenter="showControls = true"
+            @mouseleave="showControls = false"
+        >
             <div v-if="isLoading" class="video-placeholder">
                 <div class="loader">Carregando vídeo...</div>
             </div>
+
             <video
                 v-show="!isLoading"
                 ref="playerRef"
@@ -11,14 +16,72 @@
                 controls
                 class="video-element"
             ></video>
+
+            <div class="video-navigation" :class="{ 'controls-visible': showControls }">
+                <v-btn
+                    icon
+                    variant="text"
+                    color="white"
+                    class="navigation-btn prev-btn"
+                    :disabled="!hasPreviousVideo || isLoading"
+                    size="large"
+                    @click="playPreviousVideo"
+                >
+                    <v-icon size="large">mdi-skip-previous</v-icon>
+                </v-btn>
+                <v-btn
+                    icon
+                    variant="text"
+                    color="white"
+                    class="navigation-btn next-btn"
+                    :disabled="!hasNextVideo || isLoading"
+                    size="large"
+                    @click="playNextVideo"
+                >
+                    <v-icon size="large">mdi-skip-next</v-icon>
+                </v-btn>
+            </div>
         </div>
     </div>
 
-    <div class="d-flex align-center rounded-0" variant="text">
-        <div class="font-weight-bold text-body-h6 border-b-sm pa-3 w-100 mx-3">
-            Introduction to NestJs
-        </div>
+    <div class="d-flex align-center flex-wrap rounded-0" variant="text">
+        <v-row no-gutters class="w-100 mx-3 border-b-sm d-flex flex-wrap justify-space-between">
+            <v-col cols="12" sm="12" md="12" lg="auto" class="font-weight-bold text-body-h6">
+                <div class="pa-3">{{ currentVideoTitle }}</div>
+            </v-col>
+
+            <v-col
+                cols="12"
+                sm="12"
+                md="12"
+                lg="auto"
+                class="d-flex align-center justify-end flex-wrap"
+            >
+                <v-btn
+                    append-icon="mdi mdi-book-education-outline "
+                    variant="text"
+                    class="text-capitalize text"
+                    size="small"
+                >
+                    detalhado
+                </v-btn>
+                <v-btn
+                    append-icon="mdi-book-arrow-down-outline"
+                    variant="text"
+                    class="text-capitalize"
+                    size="small"
+                >
+                    material
+                </v-btn>
+            </v-col>
+        </v-row>
+        <div></div>
     </div>
+
+    <v-card variant="tonal" class="text-body-2 my-4 border-b-sm pa-3 w-50 mx-3">
+        <span class="font-weight-bold">descrição:</span>
+        {{ currentVideoDescription }}
+    </v-card>
 </template>
 
 <script lang="ts" setup>
@@ -33,13 +96,43 @@ const courseVideoUrl = computed(() => courseStore.courseVideoUrl);
 const playerRef = ref<HTMLVideoElement | null>(null);
 const playerInstance = ref<Plyr | null>(null);
 const isLoading = ref(true);
+const showControls = ref(false);
+
+// Lista de vídeos disponíveis
+const currentVideoInfo = computed(() => courseStore.currentVideoInfo);
+
+const currentVideoTitle = computed(() => {
+    return currentVideoInfo.value.title || "título indisponível";
+});
+const currentVideoDescription = computed(() => {
+    return currentVideoInfo.value.description || "indisponível no momento";
+});
+
+const hasPreviousVideo = computed(() => {
+    return currentVideoInfo.value.prevId;
+});
+const hasNextVideo = computed(() => currentVideoInfo.value.nextId);
+
+const loadVideoByIndex = async (id: number) => {
+    isLoading.value = true;
+    await courseStore.getCourseVideoUrl(id);
+};
+
+const playPreviousVideo = () => {
+    if (!hasPreviousVideo.value) return;
+    loadVideoByIndex(hasPreviousVideo.value);
+};
+
+const playNextVideo = () => {
+    if (!hasNextVideo.value) return;
+    loadVideoByIndex(hasNextVideo.value);
+};
 
 // Carrega vídeo ao montar
 onMounted(async () => {
     await nextTick();
-    await courseStore.getCourseVideoUrl(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-    );
+    // Carrega o primeiro vídeo da lista
+    await loadVideoByIndex(currentVideoInfo.value.id);
 });
 
 // Inicializa player quando URL estiver pronta
@@ -110,6 +203,50 @@ watch(courseVideoUrl, async (newUrl) => {
 
 .loader {
     animation: pulse 1.5s infinite;
+}
+
+/* Estilos para os botões de navegação */
+.video-navigation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 5;
+    pointer-events: none; /* Permite clicar através da div de navegação */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.video-navigation.controls-visible {
+    opacity: 1;
+}
+
+.navigation-btn {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    pointer-events: auto; /* Habilita cliques nos botões */
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+    height: 48px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+}
+
+.navigation-btn:hover {
+    transform: scale(1.1);
+}
+
+.prev-btn {
+    margin-right: auto;
+}
+
+.next-btn {
+    margin-left: auto;
 }
 
 @keyframes pulse {

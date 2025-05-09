@@ -26,7 +26,16 @@
             <v-expansion-panel-text class="pa-0">
                 <div v-for="tabContent in courseTabContent.content" :key="tabContent.id">
                     <v-divider v-if="tabContent.id > 1"></v-divider>
-                    <v-card class="content-course" @click="enterCourse()">
+                    <v-card
+                        class="content-course"
+                        :variant="
+                            selectedVideo.moduleOrder === courseTabContent.order &&
+                            selectedVideo.contentOrder === tabContent.order
+                                ? 'tonal'
+                                : 'text'
+                        "
+                        @click="enterCourse()"
+                    >
                         <div>
                             <v-btn
                                 icon="mdi-play-circle-outline"
@@ -56,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeMount } from "vue";
 import { formatSecondsToHMS } from "@/utils/DateUtils";
 import { useIndexStore } from "@/stores/index.store";
 import router from "@/plugins/router/router";
@@ -68,17 +77,41 @@ const indexStore = useIndexStore();
 const loadingContentCourse = ref(true);
 const eachCourseTabContent = ref();
 
+const selectedVideo = ref<{ moduleOrder: number; contentOrder: number }>({
+    moduleOrder: 0,
+    contentOrder: 0,
+});
+
+const setSelectedContent = (givenModule: number, givenOrder: number) => {
+    const moduleFound = eachCourseTabContent.value.find(
+        (module: number) => module.order === givenModule,
+    );
+
+    if (moduleFound) {
+        const contentFound = moduleFound.content.find(
+            (content: number) => content.order === givenOrder,
+        );
+
+        if (contentFound) {
+            selectedVideo.value = { moduleOrder: givenModule, contentOrder: givenOrder };
+            return contentFound;
+        }
+    }
+
+    return null;
+};
+
 const iconContentColor = computed(() => (indexStore.isDark ? "#FFFFFF" : "#461CDC"));
 
-onMounted(async () => {
+onBeforeMount(async () => {
     eachCourseTabContent.value = await courseStore.getContentModule();
+    console.log(setSelectedContent(2, 1));
+    console.log(selectedVideo.value);
     loadingContentCourse.value = false;
 });
 
 const enterCourse = () => {
-    return courseStore.getCourseVideoUrl(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    );
+    return courseStore.getCourseVideoUrl(1);
 };
 </script>
 
@@ -89,6 +122,7 @@ const enterCourse = () => {
     align-items: center;
     box-shadow: none;
     cursor: pointer;
+    border-radius: 0;
 }
 
 :deep(.v-expansion-panel-title.v-expansion-panel-title--static) {
