@@ -8,8 +8,14 @@
       </v-row>
 
       <v-row justify="center" align="center">
+
+        <v-col v-if="!courses" cols="12" class="text-center">
+          <v-alert type="info">Nenhum curso encontrado.</v-alert>
+        </v-col>
+
         <v-col
           v-for="course in courses"
+          v-else
           :key="course.id"
           cols="auto"
           sm="6"
@@ -24,22 +30,40 @@
             elevation="4"
             :class="{ 'dark-theme': isDark }"
           >
-            <v-img
+            <v-img v-if="!course.image"
+              src="https://placehold.co/300x200"
+              height="200"
+              cover
+              class="course-image"
+            >
+              <v-chip
+                v-if="isExpired(course.endDate)"
+                color="error"
+                class="ma-3"
+                size="large"
+                label
+                
+                style="font-weight: bold;"
+              >
+                EXPIRADO
+              </v-chip>
+            </v-img>
+
+            <v-img v-else
               :src="course.image"
               height="200"
               cover
               class="course-image"
             >
               <v-chip
-                v-if="isExpired(course.expirationDate)"
+                v-if="isExpired(course.endDate)"
                 color="error"
-                class="ma-3"
+                class="ma-3 text-uppercase"
                 size="large"
                 label
-                outlined
                 style="font-weight: bold;"
               >
-                EXPIRADO
+                expirado
               </v-chip>
             </v-img>
 
@@ -48,7 +72,7 @@
             </v-card-title>
 
             <v-card-subtitle class="mb-3 text-body-2">
-              Expira em: {{ formatDate(course.expirationDate) }}
+              Expira em: {{ formatDate(course.endDate) }}
             </v-card-subtitle>
 
             <v-card-text class="text-body-1">
@@ -71,16 +95,17 @@
 
         </v-col>
       </v-row>
-      <v-btn @click="customNotification">progress</v-btn>
     </v-container>
   </template>
 
   <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { useIndexStore } from '@/stores/index.store';
   import { useRouter } from 'vue-router';
   import { pushMessageNotification } from "@/utils/notivue-base";
   pushMessageNotification;
+  import { CourseService } from '@/modules/course/course.service';
+  
 
   const customNotification = () => {
       pushMessageNotification({
@@ -105,50 +130,23 @@
   const router = useRouter();
   const indexStore = useIndexStore();
 
-  const courses = ref<Course[]>([
-    {
-      id: 1,
-      name: 'UX/UI Designer',
-      expirationDate: '2025-06-30',
-      image: 'src/layout/curso-de-ux-design-2.jpg',
-      description: 'Aprenda a criar interfaces intuitivas e designs incríveis.',
-    },
-    {
-      id: 2,
-      name: 'Java Avançado',
-      expirationDate: '2025-03-15',
-      image: 'src/layout/java-thumb-1024x576.png',
-      description: 'Domine conceitos avançados de programação em Java.',
-    },
-    {
-      id: 3,
-      name: 'Introdução ao Docker',
-      expirationDate: '2025-09-20',
-      image: 'src/layout/maxresdefault.jpg',
-      description: 'Conheça os fundamentos de contêineres com Docker.',
-    },
-    {
-      id: 4,
-      name: 'C# para iniciantes ',
-      expirationDate: '2025-08-12',
-      image: 'src/layout/cfoto.jpeg',
-      description: 'Crie aplicações web modernas com React.',
-    },
-    {
-      id: 5,
-      name: 'Usando Vuetify',
-      expirationDate: '2025-07-05',
-      image: 'src/layout/vuetify.jpeg',
-      description: 'Desenvolva interfaces elegantes com Vuetify.',
-    },
-    {
-      id: 6,
-      name: 'Python Básico',
-      expirationDate: '2025-10-22',
-      image: 'src/layout/phynton.jpeg',
-      description: 'Mergulhe nas práticas de DevOps e automação.',
-    },
-  ]);
+  const courses = ref<Course[]>([]);
+  const { getCourseService } = CourseService();
+
+  const fetchCourses = async () => {
+  try {
+    const response = await getCourseService();
+    console.log('Resposta da API:', response);
+    courses.value = response.courses;
+  } catch (error) {
+    console.error('Erro ao carregar cursos:', error);
+  }
+  };
+
+  onMounted(() => {
+    fetchCourses();
+  });
+
 
   const isDark = computed(() => indexStore.isDark);
 
