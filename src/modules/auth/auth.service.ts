@@ -10,6 +10,7 @@ export const AuthService  = () => {
           return data;
         } catch (error) {
           if (error.response.status === 401) {
+            console.error(error)
             pushMessageNotification({
               type: "error",
               title: "Erro na autenticação",
@@ -17,14 +18,15 @@ export const AuthService  = () => {
               duration: 3000,
             });
           } else if (error.request) {
+            console.error(error)
             pushMessageNotification({
               type: "error",
               title: "Erro de conexão",
               message: "Não foi possível se conectar ao servidor.",
               duration: 3000,
             });
-            //resposta de outros erros
           } else {
+            console.error(error)
             pushMessageNotification({
               type: "error",
               title: "Erro inesperado",
@@ -40,16 +42,16 @@ export const AuthService  = () => {
           const data = await authHttp.registerHttp(formData)
           return data;
         } catch (error) {
-          if (error.response) {
+          if (error.response.status == 400) {
+            console.error(error)
             pushMessageNotification({
               type: "error",
               title: "Erro na autenticação",
-              message: error.response.data.message,
+              message: "Dados inválidos. Por favor, verifique as informações enviadas e tente novamente.",
               duration: 3000,
-            });
-    
-            //erro de conexão
+            });    
           } else if (error.request) {
+            console.error(error)
             pushMessageNotification({
               type: "error",
               title: "Erro de conexão",
@@ -57,8 +59,8 @@ export const AuthService  = () => {
               duration: 3000,
             });
     
-            //outros erros
           } else {
+            console.error(error)
             pushMessageNotification({
               type: "error",
               title: "Erro inesperado",

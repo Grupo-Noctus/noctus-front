@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid class="d-flex pa-0 ma-0" style="height: 100vh; overflow: hidden;">
+  <v-container fluid class="full-height-container">
     <!-- Image (Left) -->
-    <div class="d-flex flex-column bg-primary" style="flex: 1;">
+    <div class="bg-primary right-image-section">
       <v-img
       :src="imageSrc"
       cover
@@ -10,18 +10,13 @@
     </div>
 
     <!-- Form Login (Right) -->
-    <div class="d-flex justify-center align-center bg-primary flex-column pa-6" style="flex: 1;">
+    <div class="bg-primary left-register-section">
       <v-card
-        class="mx-auto pa-8 pb-8"
-        elevation="8"
-        width="100%"
-        min-width="340"
+        class="register-card"
         color="secondary"
-        height="100%"
-        max-height="380"
       >
 
-        <div class="font-weight-bold" style="color: #615f5f;">E-mail</div>
+        <div class="label-style">E-mail</div>
         <v-text-field v-model="email" required          
           density="default"
           placeholder="Informe seu e-mail"
@@ -29,7 +24,7 @@
           variant="outlined"          
         ></v-text-field>
 
-        <div class="d-flex align-center justify-space-between font-weight-bold" style="color: #615f5f;">Senha</div>
+        <div class="label-style">Senha</div>
         <v-text-field v-model="password" required           
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
@@ -44,16 +39,14 @@
           Login
         </v-btn>
 
-        <v-card-text class="text-center text-subtitle-1">
-          <v-link
-            class="text-decoration-none text-primary register-button"
-            style="cursor: pointer;"
-            @click.prevent="redirectPage"
+        <v-card-text class="register-button">
+          <div
+            @click="redirectPage"
   
           >
             Não possui uma conta? Cadastre-se
             <v-icon icon="mdi-chevron-right"></v-icon>
-          </v-link>
+          </div>
         </v-card-text>
 
       </v-card>
@@ -62,46 +55,83 @@
 </template>
   
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref } from 'vue';
   import router from "@/plugins/router/router";
   import imagem from '@/assets/img/image-login.png';
     
-  const imageSrc = ref(imagem)
-  
-  const visible = ref(false);
-  
-  const redirectPage = () => {
-      router.push({ name: props.redirectRouteName })
-  }
-  
   const props = defineProps<{
     email: string;
     password: string;
     redirectRouteName: string;
     onSubmit: () => void;
   }>();
+
+  const email = ref(props.email);
+  const password = ref(props.password);
+
+  const imageSrc = ref(imagem)
+  const visible = ref(false);
   
-  const emit = defineEmits(['update:email', 'update:password']);
+  const redirectPage = () => {
+      router.push({ name: props.redirectRouteName })
+  }
   
-  const email = computed({
-    get: () => props.email,
-    set: (value) => emit('update:email', value)
-  });
-  
-  const password = computed({
-    get: () => props.password,
-    set: (value) => emit('update:password', value)
-  });
+  const emit = defineEmits(['updateCredencials'])
   
   const handleSubmit = () => {
-      if (props.onSubmit)props.onSubmit();
+      //if (props.onSubmit)props.onSubmit();
+      emit("updateCredencials", email, password)
   }
 
 </script>
   
 <style scoped>
 
-  .login-button {
-    color:#461CDC
+  .full-height-container {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
   }
+
+  .left-register-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 1.5rem;
+    flex: 1;
+  }
+
+  .register-card {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2rem;
+    padding-bottom: 3.75rem;
+    box-shadow: 8;
+    width: 100%;
+    min-width: 340px;
+    max-height: 800px;
+  }
+
+  .right-image-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  }
+
+  .label-style {
+    color: #615f5f;
+    font-weight: bold;
+  }
+
+  .register-button {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color:#461CDC;
+  cursor: pointer;
+  }
+
 </style>

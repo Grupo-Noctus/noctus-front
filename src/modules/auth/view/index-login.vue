@@ -3,6 +3,7 @@
     v-model:email="email"
     v-model:password="password" 
     redirectRouteName="Register"
+    @updateCredencials="submitForm"
     :onSubmit="submitForm"
   />
 </template>
@@ -31,8 +32,12 @@ const passwordSchema = yup
 .string()
 .required("A senha é obrigatória")
 
-const submitForm = async () => {
+const submitForm = async (givenEmail: string, givenPassword: string) => {
 
+  email.value = givenEmail.value
+  password.value = givenPassword.value
+  console.log("email:", givenEmail)
+  console.log("password:", givenPassword)
   await emailSchema.validate(email.value);
   await passwordSchema.validate(password.value);
   
@@ -48,7 +53,6 @@ const submitForm = async () => {
     router.push({ name: 'Student' });
 
   } catch (error) {
-    //resposta de erro do yup
     if (error instanceof yup.ValidationError) {
       pushMessageNotification({
         type: "error",

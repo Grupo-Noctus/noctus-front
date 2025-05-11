@@ -2,6 +2,7 @@
   <Register
     v-model:formData="formData" 
     redirectRouteName="Login"
+    @updateFormData="submitForm"
     :onSubmit="submitForm"
   />
 </template>
@@ -77,6 +78,10 @@ const fullSchema = yup.object({
 });
 
 const submitForm = async () => {
+
+  console.log(formData.value.email)
+  console.log(formData.value.password)
+
   try {
     if (formData.value.password !== formData.value.confirmationPassword) {
       pushMessageNotification({
@@ -131,7 +136,7 @@ const submitForm = async () => {
         duration: 3000,
       });
     } else {
-      console.log(error);
+      console.error(error);
       pushMessageNotification({
         type: "error",
         title: "Erro inesperado",

@@ -1,19 +1,15 @@
 <template>
-    <v-container fluid class="d-flex pa-0 ma-0" style="height: 100vh; overflow: hidden;">
+    <v-container fluid class="full-height-container">
       <!-- Form Register (Left) -->
-      <div class="d-flex justify-center align-center flex-column bg-primary pa-6" style="flex: 1;">
+      <div class="bg-primary left-register-section">
         <v-card
-        class="mx-auto pa-8 pb-15"
-        elevation="8"
-        width="100%"
-        min-width="340"
+        class="register-card"
         color="secondary"
-        max-height="800"
         >
 
         <!-- STEP 1 -->        
         <div v-if="step === 1">
-        <div class="name-label text-body-2 font-weight-bold" style="color: #615f5f;">Nome</div>
+          <div class="label-style">Nome</div>
           <v-text-field v-model="formData.name" required         
             density="compact"
             placeholder="Informe seu nome"
@@ -22,16 +18,15 @@
             
           ></v-text-field>
 
-        <div class="user-name-label text-body-2 font-weight-bold" style="color: #615f5f;">Nome de usuário</div>
+          <div class="label-style">Nome de usuário</div>
           <v-text-field v-model="formData.username" required         
             density="compact"
             placeholder="Informe seu nome"
             prepend-inner-icon="mdi-account-outline"
-            variant="outlined"
-            @update:formData="formData"          
+            variant="outlined"       
           ></v-text-field>
 
-          <div class="email-label text-body-2 font-weight-bold" style="color: #615f5f;">E-mail</div>
+          <div class="label-style">E-mail</div>
           <v-text-field v-model="formData.email" required 
             type="email"            
             density="compact"
@@ -41,7 +36,7 @@
             
           ></v-text-field>
   
-          <div class="d-flex align-center justify-space-between password-label text-body-2 font-weight-bold" style="color: #615f5f;">Senha</div>
+          <div class="label-style">Senha</div>
             <v-text-field v-model="formData.password" required          
               :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="visible ? 'text' : 'password'"
@@ -53,7 +48,7 @@
   
             ></v-text-field>
     
-          <div class="confirmationPassword text-body-2 font-weight-bold" style="color: #615f5f;">Confirmar senha</div>
+          <div class="label-style">Confirmar senha</div>
             <v-text-field v-model="formData.confirmationPassword" required             
               :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="visible ? 'text' : 'password'"
@@ -136,44 +131,41 @@
           ></v-textarea>  
         </div>  
   
-          <v-card-text class="d-flex justify-space-between align-center text-subtitle-2 font-weight-bold">
+          <v-card-text class="navigation-buttons-container">
             <div>      
-              <v-link v-if="step > 1"
-                class="text-decoration-none register-button"
-                style="cursor: pointer;"
+              <div v-if="step > 1"
+                class="register-button"
                 @click.prevent="previousStep"
               >
               <v-icon icon="mdi-chevron-left"></v-icon>
                 Anterior
-              </v-link>
+              </div>
             </div>
   
             <div>
-              <v-link v-if="step < 3 && !formData.email.endsWith('@matera.com') && !formData.email.endsWith('@matera.com.br')"
-                class="text-decoration-none register-button"
-                style="cursor: pointer;"
+              <div v-if="showNextStepBtn"
+                class="register-button"
                 @click.prevent="nextStep"
               >
                 Próximo
                 <v-icon icon="mdi-chevron-right"></v-icon>
-              </v-link>
+              </div>
             </div>
           </v-card-text>
   
-          <v-btn v-if="step === 3 || formData.email.endsWith('@matera.com') || formData.email.endsWith('@matera.com.br')" class="mt-auto mb-8" color="primary" size="large" block @click=handleSubmit>
+          <v-btn v-if="showMateraRegisterBtn" 
+          class="mt-auto mb-8" color="primary" size="large" block @click=handleSubmit>
             Cadastrar
           </v-btn>
 
-          <v-card-text class="text-center text-subtitle-1 login-button">
-          <v-link
-            class="text-decoration-none register-button"
-            style="cursor: pointer;"
-            @click.prevent="redirectPage"
+          <v-card-text class="login-button">
+          <div
+            @click="redirectPage"
   
           >
             Já possui uma conta? Login
             <v-icon icon="mdi-chevron-right"></v-icon>
-          </v-link>
+          </div>
         </v-card-text>
   
         </v-card>
@@ -181,7 +173,7 @@
       </div>
   
       <!-- Image (Right) -->
-      <div class="d-flex flex-column bg-primary" style="flex: 1;">
+      <div class="bg-primary right-image-section">
         <v-img
         :src="imageSrc"
         cover
@@ -193,7 +185,7 @@
 </template>
       
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
   import imagem from '@/assets/img/image-register.png';
   import router from "@/plugins/router/router";
   import {
@@ -208,6 +200,14 @@
   const step = ref(1);
   const imageSrc = ref(imagem)
   const visible = ref(false);
+
+  const showMateraRegisterBtn = computed(() => 
+    step.value === 3 || props.formData.email.endsWith('@matera.com') || props.formData.email.endsWith('@matera.com.br')
+  )
+
+  const showNextStepBtn = computed(() => 
+  step.value < 3 && !props.formData.email.endsWith('@matera.com') && !props.formData.email.endsWith('@matera.com.br')
+  )
 
   const props = defineProps<{
     formData: {
@@ -230,16 +230,7 @@
     onSubmit: () => void;
   }>();
   
-  const emit = defineEmits<{
-  (e: 'updateFormData', data: typeof props.formData): void;
-  }>()
-  
-  const update = (field: keyof typeof props.formData, value:string) => {
-    emit('updateFormData', {
-      ...props.formData,
-      [field]: value
-    })
-  }
+  const emit = defineEmits(['updateFormData'])
     
   const nextStep = () => { if(step.value < 3) step.value++ }
   const previousStep = () => { if(step.value > 1) step.value-- }
@@ -249,13 +240,78 @@
   }
 
   const handleSubmit = () => {
-      if (props.onSubmit)props.onSubmit();
+      //if (props.onSubmit)props.onSubmit();
+      emit("updateFormData", props.formData)
   }
     
 </script>
       
 <style scoped>
-  .register-button {
-    color: #6FF24B;
+
+  .full-height-container {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
   }
+
+  .left-register-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 1.5rem;
+    flex: 1;
+  }
+
+  .register-card {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2rem;
+    padding-bottom: 2.75rem;
+    box-shadow: 8;
+    width: 100%;
+    min-width: 340px;
+    max-height: 800px;
+  }
+
+  .label-style {
+    color: #615f5f;
+    font-weight: bold;
+    font-size: 0.875rem;
+  }
+
+  .login-button {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #6FF24B; 
+  cursor: pointer;
+  }
+
+.register-button {
+  cursor: pointer;
+  text-decoration: none;
+  color: #6FF24B;
+  display: flex;
+  align-items: center;
+  font-size: 0.90rem;
+  font-weight: bold;
+}
+
+.navigation-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.90rem;
+  font-weight: bold;
+}
+
+.right-image-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 </style>
