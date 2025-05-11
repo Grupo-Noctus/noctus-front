@@ -1,17 +1,13 @@
 <template>
     <v-row no-gutters class="h-100">
-        <v-col cols="12" sm="12" lg="9">
+        <v-col cols="12" sm="12" lg="9" class="border-e">
             <div class="rounded-0 border-t pa-0" style="height: auto">
                 <CoursePlayerVideo />
             </div>
         </v-col>
 
         <v-col class="h-100" :style="infoAreaBackGround">
-            <v-sheet
-                elevation="0"
-                class="rounded-0 border-s-sm border-t border-s"
-                :style="infoAreaStyle"
-            >
+            <v-sheet elevation="0" class="rounded-0 border-t" :style="infoAreaStyle">
                 <CourseTab />
             </v-sheet>
         </v-col>

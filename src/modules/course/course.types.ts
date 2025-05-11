@@ -1,8 +1,17 @@
 export type TContentModule = {
+    id: number;
     order: number;
     name: string;
     description: string;
     content: TContentVideoModule[];
+};
+
+export type TSelectedContent = {
+    id: number;
+    order: number;
+    name: string;
+    description: string;
+    content: TContentVideoModule;
 };
 
 export type TContentVideoModule = {
@@ -11,6 +20,7 @@ export type TContentVideoModule = {
     description: string;
     duration: number;
     order: number;
+    checked: boolean;
 };
 
 export type TContentExam = {
@@ -19,10 +29,11 @@ export type TContentExam = {
     questionCount: number;
 };
 
-export type TVideoList = {
-    id: number;
-    title: string;
-    description: string;
-    nextId: number | null;
-    prevId: number | null;
+export type TVskipContent = {
+    moduleId: number;
+    contentOrder: number;
+    nextModuleOrder: number | null;
+    nextContentOrder: number | null;
+    prevModuleOrder: number | null;
+    prevContentOrder: number | null;
 };

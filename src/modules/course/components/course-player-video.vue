@@ -98,41 +98,44 @@ const playerInstance = ref<Plyr | null>(null);
 const isLoading = ref(true);
 const showControls = ref(false);
 
-// Lista de vídeos disponíveis
-const currentVideoInfo = computed(() => courseStore.currentVideoInfo);
+const selectedVideo = computed(() => courseStore.selectedVideo);
+const skipContent = computed(() => courseStore.skipVideo);
 
 const currentVideoTitle = computed(() => {
-    return currentVideoInfo.value.title || "título indisponível";
+    return selectedVideo.value.content.name || "título indisponível";
 });
+
 const currentVideoDescription = computed(() => {
-    return currentVideoInfo.value.description || "indisponível no momento";
+    return selectedVideo.value.content.description || "indisponível no momento";
 });
 
 const hasPreviousVideo = computed(() => {
-    return currentVideoInfo.value.prevId;
+    return skipContent.value.prevContentOrder;
 });
-const hasNextVideo = computed(() => currentVideoInfo.value.nextId);
+const hasNextVideo = computed(() => skipContent.value.nextContentOrder);
 
-const loadVideoByIndex = async (id: number) => {
+const loadVideoByIndex = async (order: number, mode: string) => {
     isLoading.value = true;
-    await courseStore.getCourseVideoUrl(id);
+    await courseStore.getCourseVideoUrl(order, mode);
 };
 
 const playPreviousVideo = () => {
     if (!hasPreviousVideo.value) return;
-    loadVideoByIndex(hasPreviousVideo.value);
+
+    loadVideoByIndex(hasPreviousVideo.value, "prev");
 };
 
 const playNextVideo = () => {
     if (!hasNextVideo.value) return;
-    loadVideoByIndex(hasNextVideo.value);
+    loadVideoByIndex(hasNextVideo.value, "next");
 };
 
 // Carrega vídeo ao montar
 onMounted(async () => {
     await nextTick();
-    // Carrega o primeiro vídeo da lista
-    await loadVideoByIndex(currentVideoInfo.value.id);
+    // Carrega o primeiro vídeo da list
+    courseStore.setSelectedContent();
+    await courseStore.getCourseVideoUrl(1, "nada");
 });
 
 // Inicializa player quando URL estiver pronta

@@ -29,12 +29,12 @@
                     <v-card
                         class="content-course"
                         :variant="
-                            selectedVideo.moduleOrder === courseTabContent.order &&
-                            selectedVideo.contentOrder === tabContent.order
+                            selectedVideo.order === courseTabContent.order &&
+                            selectedVideo.content.order === tabContent.order
                                 ? 'tonal'
                                 : 'text'
                         "
-                        @click="enterCourse()"
+                        @click="enterCourse(courseTabContent.order, tabContent.order)"
                     >
                         <div>
                             <v-btn
@@ -68,50 +68,26 @@
 import { ref, computed, onMounted, onBeforeMount } from "vue";
 import { formatSecondsToHMS } from "@/utils/DateUtils";
 import { useIndexStore } from "@/stores/index.store";
-import router from "@/plugins/router/router";
 import { useCourseStore } from "../course.store";
+import type { TContentModule } from "../course.types";
 
 const courseStore = useCourseStore();
 const indexStore = useIndexStore();
 
 const loadingContentCourse = ref(true);
-const eachCourseTabContent = ref();
+const eachCourseTabContent = ref<TContentModule[]>([]);
 
-const selectedVideo = ref<{ moduleOrder: number; contentOrder: number }>({
-    moduleOrder: 0,
-    contentOrder: 0,
-});
-
-const setSelectedContent = (givenModule: number, givenOrder: number) => {
-    const moduleFound = eachCourseTabContent.value.find(
-        (module: number) => module.order === givenModule,
-    );
-
-    if (moduleFound) {
-        const contentFound = moduleFound.content.find(
-            (content: number) => content.order === givenOrder,
-        );
-
-        if (contentFound) {
-            selectedVideo.value = { moduleOrder: givenModule, contentOrder: givenOrder };
-            return contentFound;
-        }
-    }
-
-    return null;
-};
-
+const selectedVideo = computed(() => courseStore.selectedVideo);
 const iconContentColor = computed(() => (indexStore.isDark ? "#FFFFFF" : "#461CDC"));
 
 onBeforeMount(async () => {
     eachCourseTabContent.value = await courseStore.getContentModule();
-    console.log(setSelectedContent(2, 1));
-    console.log(selectedVideo.value);
     loadingContentCourse.value = false;
 });
 
-const enterCourse = () => {
-    return courseStore.getCourseVideoUrl(1);
+const enterCourse = async (moduleOrder: number, contentOrder: number) => {
+    courseStore.setSelectedContentManual(moduleOrder, contentOrder);
+    return await courseStore.getCourseVideoUrl(contentOrder, "nada");
 };
 </script>
 

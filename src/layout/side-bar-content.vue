@@ -27,6 +27,13 @@
         <v-main>
             <router-view />
         </v-main>
+        <Notivue v-slot="item">
+            <Notification :item="item">
+                <div v-if="item.props.progress">
+                    <NotificationProgress :item="item" />
+                </div>
+            </Notification>
+        </Notivue>
     </v-app>
 </template>
 
@@ -34,6 +41,7 @@
 import { ref } from "vue";
 import router from "@/plugins/router/router";
 import { useIndexStore } from "@/stores/index.store";
+import { Notivue, Notification, NotificationProgress } from "notivue";
 
 const indexStore = useIndexStore();
 
@@ -51,23 +59,3 @@ const navigateToMainContent = (title: string) => {
     router.push({ name: title });
 };
 </script>
-
-<style scoped>
-.app-main {
-    flex: 1;
-    min-height: calc(100vh - 40px);
-}
-</style>
-
-<style>
-html,
-body,
-#app {
-    height: 100%;
-    margin: 0;
-}
-
-.v-application {
-    height: 100%;
-}
-</style>

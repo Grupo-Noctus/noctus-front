@@ -1,4 +1,5 @@
 <template>
+    <router-view></router-view>
     <Notivue v-slot="item">
         <Notification :item="item">
             <div v-if="item.props.progress">
@@ -6,7 +7,6 @@
             </div>
         </Notification>
     </Notivue>
-    <router-view></router-view>
 </template>
 
 <script setup lang="ts">
