@@ -13,7 +13,7 @@
 
         <!-- STEP 1 -->        
         <div v-if="step === 1">
-          <div class="name-label text-body-2">Nome</div>
+        <div class="name-label text-body-2 font-weight-bold" style="color: #615f5f;">Nome</div>
           <v-text-field v-model="formData.name" required         
             density="compact"
             placeholder="Informe seu nome"
@@ -22,8 +22,8 @@
             
           ></v-text-field>
 
-        <div class="user-name-label text-body-2">Nome de usuário</div>
-          <v-text-field v-model="formData.userName" required         
+        <div class="user-name-label text-body-2 font-weight-bold" style="color: #615f5f;">Nome de usuário</div>
+          <v-text-field v-model="formData.username" required         
             density="compact"
             placeholder="Informe seu nome"
             prepend-inner-icon="mdi-account-outline"
@@ -31,7 +31,7 @@
             @update:formData="formData"          
           ></v-text-field>
 
-          <div class="email-label text-body-2">E-mail</div>
+          <div class="email-label text-body-2 font-weight-bold" style="color: #615f5f;">E-mail</div>
           <v-text-field v-model="formData.email" required 
             type="email"            
             density="compact"
@@ -41,7 +41,7 @@
             
           ></v-text-field>
   
-          <div class="d-flex align-center justify-space-between password-label text-body-2">Senha</div>
+          <div class="d-flex align-center justify-space-between password-label text-body-2 font-weight-bold" style="color: #615f5f;">Senha</div>
             <v-text-field v-model="formData.password" required          
               :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="visible ? 'text' : 'password'"
@@ -53,7 +53,7 @@
   
             ></v-text-field>
     
-          <div class="confirmationPassword text-body-2">Confirmar senha</div>
+          <div class="confirmationPassword text-body-2 font-weight-bold" style="color: #615f5f;">Confirmar senha</div>
             <v-text-field v-model="formData.confirmationPassword" required             
               :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="visible ? 'text' : 'password'"
@@ -79,24 +79,32 @@
           <v-select v-model="formData.state" clearable density="default" variant="outlined"
             label="Estado"            
             :items="itemsState"
+            item-title="text"
+            item-value="value"
             
           ></v-select>
   
           <v-select v-model="formData.ethnicity" clearable density="default" variant="outlined"            
             label="Etinia"            
             :items="itemsEthnicity"
+            item-title="text"
+            item-value="value"
             
           ></v-select>
   
           <v-select v-model="formData.gender" clearable density="default" variant="outlined"            
             label="Genero"            
             :items="itemsGender"
+            item-title="text"
+            item-value="value"
             
           ></v-select>
 
           <v-select v-model="formData.educationLevel" clearable density="default" variant="outlined"
             label="Nível Educacional"            
             :items="itemsEducationLevel"
+            item-title="text"
+            item-value="value"
            
           ></v-select>  
         </div>
@@ -106,6 +114,8 @@
           <v-select v-model="formData.hasDisability" clearable density="compact" variant="outlined"            
             label="Possui deficiência?"            
             :items="itemHasDisability"
+            item-title="text"
+            item-value="value"
             
           ></v-select>
 
@@ -116,6 +126,8 @@
           <v-select v-model="formData.needsSupportResources" clearable density="compact" variant="outlined"            
             label="Precisa de recursos de apoio?"            
             :items="itemNeedsSupportResources"
+            item-title="text"
+            item-value="value"
             
           ></v-select>
 
@@ -200,7 +212,7 @@
   const props = defineProps<{
     formData: {
       name: string;
-      userName: string;
+      username: string;
       email: string;
       password: string;
       confirmationPassword: string;
@@ -209,9 +221,9 @@
       ethnicityModel: string;
       genderModel: string;
       educationLevelModel: string;
-      hasDisabilityModel: string;
+      hasDisabilityModel: boolean | false
       disabilityTypeModel: string;
-      needsSupportResourcesModel: string;
+      needsSupportResourcesModel: boolean | false;
       supportResourcesDescriptionModel: string;
     }
     redirectRouteName: string;
@@ -239,7 +251,6 @@
   const handleSubmit = () => {
       if (props.onSubmit)props.onSubmit();
   }
-    
     
 </script>
       

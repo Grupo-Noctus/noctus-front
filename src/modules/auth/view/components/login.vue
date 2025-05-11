@@ -10,18 +10,18 @@
     </div>
 
     <!-- Form Login (Right) -->
-    <div class="d-flex justify-center align-center flex-column bg-primary pa-6" style="flex: 1;">
+    <div class="d-flex justify-center align-center bg-primary flex-column pa-6" style="flex: 1;">
       <v-card
         class="mx-auto pa-8 pb-8"
         elevation="8"
         width="100%"
-        min-width="80"
+        min-width="340"
         color="secondary"
         height="100%"
         max-height="380"
       >
 
-        <div class="email-label font-weight-bold">E-mail</div>
+        <div class="font-weight-bold" style="color: #615f5f;">E-mail</div>
         <v-text-field v-model="email" required          
           density="default"
           placeholder="Informe seu e-mail"
@@ -29,7 +29,7 @@
           variant="outlined"          
         ></v-text-field>
 
-        <div class="d-flex align-center justify-space-between password-label font-weight-bold">Senha</div>
+        <div class="d-flex align-center justify-space-between font-weight-bold" style="color: #615f5f;">Senha</div>
         <v-text-field v-model="password" required           
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
@@ -44,9 +44,9 @@
           Login
         </v-btn>
 
-        <v-card-text class="text-center text-subtitle-1 login-button">
+        <v-card-text class="text-center text-subtitle-1">
           <v-link
-            class="text-decoration-none register-button"
+            class="text-decoration-none text-primary register-button"
             style="cursor: pointer;"
             @click.prevent="redirectPage"
   
@@ -100,13 +100,6 @@
 </script>
   
 <style scoped>
-  .email-label {
-    color: #615f5f;
-  }
-  
-  .password-label {
-    color: #615f5f;
-  }
 
   .login-button {
     color:#461CDC

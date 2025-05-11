@@ -12,7 +12,7 @@ export class AuthHttp {
     }
 
     async registerHttp(formData: any) {
-        const { data } = await this.httpClient.post("/auth/register", { formData });
+        const { data } = await this.httpClient.post("/auth/register",  formData );
         return data;
     }
 }

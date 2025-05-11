@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-layout>
+        <v-layout color="secondary">
             <v-app-bar color="primary">
                 <v-app-bar-nav-icon
                     variant="text"
@@ -31,7 +31,7 @@
                 </v-list>
             </v-navigation-drawer>
 
-            <v-main class="px-4">
+            <v-main>
                 <router-view></router-view>
             </v-main>
         </v-layout>

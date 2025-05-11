@@ -2,16 +2,13 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
-  const email = ref(localStorage.getItem('authEmail') || '')
-  const password = ref(localStorage.getItem('authPassword') || '')
+  const token = ref(localStorage.getItem('authToken') || '')
 
-  function setAuth(authData: { email: string, password: string }) {
-    email.value = authData.email
-    password.value = authData.password
+  function setAuth(authData: { token: string}) {
+    token.value = authData.token
 
-    localStorage.setItem('authEmail', authData.email)
-    localStorage.setItem('authPassword', authData.password)
+    localStorage.setItem('authToken', authData.token)
   }
 
-  return { email, password, setAuth }
+  return { token, setAuth }
 })
