@@ -2,24 +2,26 @@
     <v-row no-gutters class="h-100">
         <v-col cols="12" sm="12" lg="9" class="border-e">
             <div class="rounded-0 border-t pa-0" style="height: auto">
-                <CoursePlayerVideo />
+                <course-player-video />
             </div>
         </v-col>
 
         <v-col class="h-100" :style="infoAreaBackGround">
             <v-sheet elevation="0" class="rounded-0 border-t" :style="infoAreaStyle">
-                <CourseTab />
+                <course-tab :click-and-enter-mode="false" />
             </v-sheet>
         </v-col>
     </v-row>
 </template>
 
 <script lang="ts" setup>
-import { vuetify } from "@/plugins/vuetify";
 import { computed } from "vue";
+import { vuetify } from "@/plugins/vuetify";
+
+import { useIndexStore } from "@/stores/index.store";
+
 import CoursePlayerVideo from "../components/course-player-video.vue";
 import CourseTab from "../components/course-tab.vue";
-import { useIndexStore } from "@/stores/index.store";
 
 const indexStore = useIndexStore();
 

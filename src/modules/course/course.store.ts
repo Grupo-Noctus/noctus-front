@@ -1,7 +1,9 @@
-import { defineStore } from "pinia";
-import type { TContentExam, TContentModule, TSelectedContent, TVskipContent } from "./course.types";
 import { ref } from "vue";
+import { defineStore } from "pinia";
+
 import { pushMessageNotification } from "@/utils/notivue-base";
+
+import type { TContentExam, TContentModule, TSelectedContent, TVskipContent } from "./course.types";
 
 export const useCourseStore = defineStore("courseStore", () => {
     const videoUrlList: { contentId: number; moduleId: number; url: string }[] = [
@@ -27,11 +29,13 @@ export const useCourseStore = defineStore("courseStore", () => {
             id: 1,
             name: "Prova final",
             questionCount: 7,
+            checked: true,
         },
         {
             id: 2,
             name: "Prova média",
             questionCount: 5,
+            checked: false,
         },
     ];
 
@@ -58,7 +62,7 @@ export const useCourseStore = defineStore("courseStore", () => {
                         "Configurações iniciais do projeto NestJS, incluindo estrutura e arquivos principais.",
                     duration: 900,
                     order: 2,
-                    checked: false,
+                    checked: true,
                 },
             ],
         },

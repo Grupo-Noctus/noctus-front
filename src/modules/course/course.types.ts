@@ -27,6 +27,7 @@ export type TContentExam = {
     id: number;
     name: string;
     questionCount: number;
+    checked: boolean;
 };
 
 export type TVskipContent = {

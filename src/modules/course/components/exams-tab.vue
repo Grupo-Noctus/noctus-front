@@ -23,14 +23,23 @@
         <div class="content-course justify-space-between align-center">
             <div>
                 <v-btn
-                    icon="mdi mdi-format-list-checks"
+                    v-if="examTabCourse.checked"
+                    icon="mdi mdi-checkbox-multiple-marked-circle"
                     density="comfortable"
-                    size="x-medium"
+                    size="small"
                     variant="tonal"
                     :color="iconContentColor"
-                    class="px-2 py-2 rounded-0"
-                >
-                </v-btn>
+                    class="pa-1 rounded-lg"
+                ></v-btn>
+                <v-btn
+                    v-else
+                    icon="mdi mdi-checkbox-multiple-blank-circle-outline"
+                    density="comfortable"
+                    size="small"
+                    variant="tonal"
+                    :color="iconContentColor"
+                    class="pa-1 rounded-lg"
+                ></v-btn>
             </div>
             <div class="ml-4 mt-1">
                 <div class="text-capitalize">Avaliação: {{ examTabCourse.name }}</div>
@@ -61,6 +70,14 @@ import { useIndexStore } from "@/stores/index.store";
 const indexStore = useIndexStore();
 const courseStore = useCourseStore();
 
+const props = defineProps({
+    clickAndEnterMode: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+});
+
 const loadingExamCourse = ref(true);
 const eachExamTabCourse = ref();
 
@@ -73,7 +90,11 @@ onMounted(async () => {
 });
 
 const enterExam = (idCourse: number) => {
-    return console.log("entrar no exame");
+    if (props.clickAndEnterMode) {
+        return; // chosose what to do
+    } else {
+        return; //"enter exam"
+    }
 };
 </script>
 

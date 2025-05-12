@@ -38,12 +38,22 @@
                     >
                         <div>
                             <v-btn
-                                icon="mdi-play-circle-outline"
+                                v-if="tabContent.checked"
+                                icon="mdi mdi-checkbox-multiple-marked-circle"
                                 density="comfortable"
-                                size="x-medium"
+                                size="small"
                                 variant="tonal"
                                 :color="iconContentColor"
-                                class="px-2 py-2 rounded-0"
+                                class="pa-1 rounded-lg"
+                            ></v-btn>
+                            <v-btn
+                                v-else
+                                icon="mdi mdi-checkbox-multiple-blank-circle-outline"
+                                density="comfortable"
+                                size="small"
+                                variant="tonal"
+                                :color="iconContentColor"
+                                class="pa-1 rounded-lg"
                             ></v-btn>
                         </div>
                         <div class="d-flex flex-column ml-4 mt-1">
@@ -74,6 +84,14 @@ import type { TContentModule } from "../course.types";
 const courseStore = useCourseStore();
 const indexStore = useIndexStore();
 
+const props = defineProps({
+    clickAndEnterMode: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+});
+
 const eachCourseTabContent = ref<TContentModule[]>([]);
 
 const isLoadingContentTab = computed(() => courseStore.isLoadingContentTab);
@@ -86,8 +104,12 @@ onBeforeMount(async () => {
 });
 
 const enterCourse = async (moduleOrder: number, contentOrder: number) => {
-    courseStore.setSelectedContentManual(moduleOrder, contentOrder);
-    await courseStore.getCourseVideoUrl();
+    if (props.clickAndEnterMode) {
+        return; // chosose what to do
+    } else {
+        courseStore.setSelectedContentManual(moduleOrder, contentOrder);
+        await courseStore.getCourseVideoUrl();
+    }
 };
 </script>
 

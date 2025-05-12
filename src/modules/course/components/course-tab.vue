@@ -14,11 +14,11 @@
         <v-card-text class="tab-content pa-0 rounded-0">
             <v-tabs-window v-model="selectedTab">
                 <v-tabs-window-item value="module">
-                    <modules-and-content-tab />
+                    <modules-and-content-tab :click-and-enter-mode="props.clickAndEnterMode" />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item value="exam">
-                    <exams-tab />
+                    <exams-tab :click-and-enter-mode="props.clickAndEnterMode" />
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
@@ -32,6 +32,14 @@ import { useIndexStore } from "@/stores/index.store";
 
 import ModulesAndContentTab from "./modules-and-content-tab.vue";
 import ExamsTab from "./exams-tab.vue";
+
+const props = defineProps({
+    clickAndEnterMode: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+});
 
 const indexStore = useIndexStore();
 
