@@ -68,27 +68,4 @@ const sliderColor = computed(() => (indexStore.isDark ? "#6BFF50" : "#6BFF50"));
     background-color: rgba(70, 28, 220, 0.2);
     color: rgb(243, 239, 239);
 }
-/*
-.scrollable-content {
-    max-height: 87vh;
-    overflow-y: auto;
-}
-
-.tabs-header {
-    min-height: 48px;
-    max-height: 48px;
-    overflow: hidden;
-}
-
-.tab-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.tab-content {
-    flex: 1;
-    overflow-y: auto;
-    height: 100%;
-} */
 </style>

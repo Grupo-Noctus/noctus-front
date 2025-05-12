@@ -1,47 +1,47 @@
 <template>
-    <v-app>
-        <v-navigation-drawer
-            v-model="drawer"
-            :location="$vuetify.display.mobile ? 'bottom' : undefined"
-            temporary
-            color="secondary"
-        >
-            <v-list>
-                <v-list-item
-                    v-for="item in items"
-                    :key="item.value"
-                    @click="navigateToMainContent(item.title)"
-                >
-                    {{ item.value }}
-                </v-list-item>
-            </v-list>
-        </v-navigation-drawer>
+    <v-card>
+        <v-layout>
+            <v-app-bar color="primary">
+                <v-app-bar-nav-icon
+                    variant="text"
+                    @click.stop="drawer = !drawer"
+                ></v-app-bar-nav-icon>
 
-        <v-app-bar class="elevation-0" color="primary">
-            <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" />
-            <v-toolbar-title>Instituto Matera</v-toolbar-title>
-            <v-spacer />
-            <v-btn icon="mdi mdi-theme-light-dark" variant="text" @click="toggleTheme" />
-        </v-app-bar>
+                <v-toolbar-title>Instituto Matera</v-toolbar-title>
 
-        <v-main>
-            <router-view />
-        </v-main>
-        <Notivue v-slot="item">
-            <Notification :item="item">
-                <div v-if="item.props.progress">
-                    <NotificationProgress :item="item" />
-                </div>
-            </Notification>
-        </Notivue>
-    </v-app>
+                <v-spacer></v-spacer>
+
+                <v-btn icon="mdi mdi-theme-light-dark" variant="text" @click="toggleTheme"></v-btn>
+            </v-app-bar>
+
+            <v-navigation-drawer
+                v-model="drawer"
+                :location="$vuetify.display.mobile ? 'bottom' : undefined"
+                temporary
+                color="secondary"
+            >
+                <v-list>
+                    <v-list-item
+                        v-for="item in items"
+                        :key="item.value"
+                        @click="navigateToMainContent(item.title)"
+                    >
+                        {{ item.value }}
+                    </v-list-item>
+                </v-list>
+            </v-navigation-drawer>
+
+            <v-main>
+                <router-view></router-view>
+            </v-main>
+        </v-layout>
+    </v-card>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import router from "@/plugins/router/router";
 import { useIndexStore } from "@/stores/index.store";
-import { Notivue, Notification, NotificationProgress } from "notivue";
 
 const indexStore = useIndexStore();
 

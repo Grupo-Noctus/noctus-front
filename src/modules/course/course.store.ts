@@ -1,51 +1,9 @@
 import { defineStore } from "pinia";
 import type { TContentExam, TContentModule, TSelectedContent, TVskipContent } from "./course.types";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { pushMessageNotification } from "@/utils/notivue-base";
 
 export const useCourseStore = defineStore("courseStore", () => {
-    const skipVideoList = ref<TVskipContent[]>([
-        {
-            moduleId: 0,
-            contentOrder: 1,
-
-            prevModuleOrder: null,
-            prevContentOrder: null,
-
-            nextContentOrder: 2,
-            nextModuleOrder: 1,
-        },
-        {
-            moduleId: 0,
-            contentOrder: 2,
-
-            prevModuleOrder: 1,
-            prevContentOrder: 1,
-
-            nextModuleOrder: 2,
-            nextContentOrder: 1,
-        },
-        {
-            moduleId: 1,
-            contentOrder: 1,
-
-            prevModuleOrder: 1,
-            prevContentOrder: 2,
-
-            nextModuleOrder: null,
-            nextContentOrder: null,
-        },
-    ]);
-
-    const skipVideo = ref<TVskipContent>({
-        moduleId: 0,
-        contentOrder: 0,
-        prevModuleOrder: null,
-        nextContentOrder: null,
-        nextModuleOrder: null,
-        prevContentOrder: null,
-    });
-
     const videoUrlList: { contentId: number; moduleId: number; url: string }[] = [
         {
             contentId: 0,
@@ -61,6 +19,19 @@ export const useCourseStore = defineStore("courseStore", () => {
             contentId: 0,
             moduleId: 1,
             url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        },
+    ];
+
+    const contentExam: TContentExam[] = [
+        {
+            id: 1,
+            name: "Prova final",
+            questionCount: 7,
+        },
+        {
+            id: 2,
+            name: "Prova média",
+            questionCount: 5,
         },
     ];
 
@@ -247,20 +218,14 @@ export const useCourseStore = defineStore("courseStore", () => {
         },
     ]);
 
-    const contentExam: TContentExam[] = [
-        {
-            id: 1,
-            name: "Prova final",
-            questionCount: 7,
-        },
-        {
-            id: 2,
-            name: "Prova média",
-            questionCount: 5,
-        },
-    ];
+    const courseVideoUrl = ref();
+    const isLoadingContent = ref();
+    const isLoadingContentTab =
+        ref(
+            true,
+        ); /*alonside with isLoadingContent variable, it was necessary to add other loading because could not handle controlling just one.*/
 
-    const selectedVideo = ref<TSelectedContent>({
+    const selectedContent = ref<TSelectedContent>({
         id: 0,
         order: 0,
         name: "",
@@ -275,44 +240,86 @@ export const useCourseStore = defineStore("courseStore", () => {
         },
     });
 
-    const courseVideoUrl = ref();
+    const skipContentList = ref<TVskipContent[]>([
+        {
+            moduleId: 0,
+            contentOrder: 1,
 
-    const getCourseVideoUrl = async (order: number = 0, mode: string) => {
+            prevModuleOrder: null,
+            prevContentOrder: null,
+
+            nextContentOrder: 2,
+            nextModuleOrder: 1,
+        },
+        {
+            moduleId: 0,
+            contentOrder: 2,
+
+            prevModuleOrder: 1,
+            prevContentOrder: 1,
+
+            nextModuleOrder: 2,
+            nextContentOrder: 1,
+        },
+        {
+            moduleId: 1,
+            contentOrder: 1,
+
+            prevModuleOrder: 1,
+            prevContentOrder: 2,
+
+            nextModuleOrder: null,
+            nextContentOrder: null,
+        },
+    ]);
+
+    const skipContent = ref<TVskipContent>({
+        moduleId: 0,
+        contentOrder: 0,
+        prevModuleOrder: null,
+        nextContentOrder: null,
+        nextModuleOrder: null,
+        prevContentOrder: null,
+    });
+
+    const getCourseVideoUrl = async (mode?: "next" | "prev") => {
+        setIsLoadingContent(true);
+
         if (mode === "next") {
             setSelectedContentManual(
-                skipVideo.value.nextModuleOrder || 0,
-                skipVideo.value.nextContentOrder || 0,
+                skipContent.value.nextModuleOrder || 0,
+                skipContent.value.nextContentOrder || 0,
             );
         } else if (mode === "prev") {
             setSelectedContentManual(
-                skipVideo.value.prevModuleOrder || 0,
-                skipVideo.value.prevContentOrder || 0,
+                skipContent.value.prevModuleOrder || 0,
+                skipContent.value.prevContentOrder || 0,
             );
         }
 
-        skipVideo.value = getSkipInfo();
+        skipContent.value = getSkipInfo();
 
-        // Resto do código...
         const filteredUrl = videoUrlList.filter(
             (e) =>
-                selectedVideo.value.id === e.moduleId &&
-                selectedVideo.value.content.id === e.contentId,
+                selectedContent.value.id === e.moduleId &&
+                selectedContent.value.content.id === e.contentId,
         );
+
         const givenUrl = await new Promise((resolve) => {
             setTimeout(() => {
                 resolve(filteredUrl[0].url);
             }, 1000);
         });
 
-        console.log("selectedVideo atualizado:", selectedVideo.value);
         courseVideoUrl.value = givenUrl;
+        setIsLoadingContent(false);
     };
 
     const getSkipInfo = (): TVskipContent => {
-        const selectedSkipContent = skipVideoList.value.find((e) => {
+        const selectedSkipContent = skipContentList.value.find((e) => {
             if (
-                e.moduleId === selectedVideo.value.id &&
-                e.contentOrder === selectedVideo.value.content.order
+                e.moduleId === selectedContent.value.id &&
+                e.contentOrder === selectedContent.value.content.order
             ) {
                 return e;
             }
@@ -329,7 +336,7 @@ export const useCourseStore = defineStore("courseStore", () => {
                 },
                 duration: 3000,
             });
-            return skipVideo.value;
+            return skipContent.value;
         }
 
         return selectedSkipContent;
@@ -343,17 +350,20 @@ export const useCourseStore = defineStore("courseStore", () => {
         });
     };
 
-    watch(skipVideo, (newValue, oldValue) => {
-        console.log("foi atualizado. Valor antigo", oldValue);
-        console.log("foi atualizado. Valor novo", newValue);
-    });
-
     const getContentExam = async (): Promise<TContentExam[]> => {
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve(contentExam);
             }, 1000);
         });
+    };
+
+    const setIsLoadingContent = (value: boolean) => {
+        isLoadingContent.value = value;
+    };
+
+    const setIsLoadingContentTab = (value: boolean) => {
+        isLoadingContentTab.value = value;
     };
 
     const setSelectedContentManual = (givenModuleOrder: number, givenContentOrder: number) => {
@@ -365,9 +375,8 @@ export const useCourseStore = defineStore("courseStore", () => {
             const contentFound = moduleFound.content.find(
                 (content: number) => content.order === givenContentOrder,
             );
-
             if (contentFound) {
-                selectedVideo.value = {
+                selectedContent.value = {
                     id: moduleFound.id,
                     order: moduleFound.order,
                     name: moduleFound.name,
@@ -409,7 +418,7 @@ export const useCourseStore = defineStore("courseStore", () => {
         contentModule.value.forEach((e) => {
             e.content.forEach((c) => {
                 if (c.checked) {
-                    selectedVideo.value = {
+                    selectedContent.value = {
                         id: e.id,
                         order: e.order,
                         name: e.name,
@@ -428,16 +437,15 @@ export const useCourseStore = defineStore("courseStore", () => {
         });
 
         if (
-            selectedVideo.value.content.id === 0 &&
-            selectedVideo.value.content.order === 0 &&
-            selectedVideo.value.id === 0 &&
-            selectedVideo.value.order === 0
+            selectedContent.value.content.id === 0 &&
+            selectedContent.value.content.order === 0 &&
+            selectedContent.value.id === 0 &&
+            selectedContent.value.order === 0
         ) {
-            console.log(selectedVideo.value);
             const firstModule = contentModule.value[0];
             const firstContent = firstModule.content[0];
 
-            selectedVideo.value = {
+            selectedContent.value = {
                 id: firstModule.id,
                 order: firstModule.order,
                 name: firstModule.name,
@@ -457,13 +465,17 @@ export const useCourseStore = defineStore("courseStore", () => {
     return {
         contentModule,
         courseVideoUrl,
-        selectedVideo,
+        isLoadingContent,
+        isLoadingContentTab,
+        selectedContent,
+        skipContent,
         videoUrlList,
-        skipVideo,
-        getContentModule,
         getContentExam,
+        getContentModule,
         getCourseVideoUrl,
         getSkipInfo,
+        setIsLoadingContent,
+        setIsLoadingContentTab,
         setSelectedContent,
         setSelectedContentManual,
     };

@@ -5,12 +5,12 @@
             @mouseenter="showControls = true"
             @mouseleave="showControls = false"
         >
-            <div v-if="isLoading" class="video-placeholder">
+            <div v-if="isLoadingContent" class="video-placeholder">
                 <div class="loader">Carregando vídeo...</div>
             </div>
 
             <video
-                v-show="!isLoading"
+                v-show="!isLoadingContent"
                 ref="playerRef"
                 playsinline
                 controls
@@ -23,7 +23,7 @@
                     variant="text"
                     color="white"
                     class="navigation-btn prev-btn"
-                    :disabled="!hasPreviousVideo || isLoading"
+                    :disabled="!hasPreviousVideo || isLoadingContent"
                     size="large"
                     @click="playPreviousVideo"
                 >
@@ -34,7 +34,7 @@
                     variant="text"
                     color="white"
                     class="navigation-btn next-btn"
-                    :disabled="!hasNextVideo || isLoading"
+                    :disabled="!hasNextVideo || isLoadingContent"
                     size="large"
                     @click="playNextVideo"
                 >
@@ -46,8 +46,15 @@
 
     <div class="d-flex align-center flex-wrap rounded-0" variant="text">
         <v-row no-gutters class="w-100 mx-3 border-b-sm d-flex flex-wrap justify-space-between">
-            <v-col cols="12" sm="12" md="12" lg="auto" class="font-weight-bold text-body-h6">
-                <div class="pa-3">{{ currentVideoTitle }}</div>
+            <v-col cols="12" sm="12" md="12" lg="auto">
+                <div
+                    v-if="isLoadingContent"
+                    class="d-flex align-center"
+                    style="width: 300px; height: 40px"
+                >
+                    <v-skeleton-loader type="heading" style="width: 100%"></v-skeleton-loader>
+                </div>
+                <div v-else class="pa-3 font-weight-bold text-body-h6">{{ currentVideoTitle }}</div>
             </v-col>
 
             <v-col
@@ -78,7 +85,10 @@
         <div></div>
     </div>
 
-    <v-card variant="tonal" class="text-body-2 my-4 border-b-sm pa-3 w-50 mx-3">
+    <div v-if="isLoadingContent" class="my-4 mx-3" style="width: 50%">
+        <v-skeleton-loader type="heading" style="width: 100"></v-skeleton-loader>
+    </div>
+    <v-card v-else variant="tonal" class="video-description-card">
         <span class="font-weight-bold">descrição:</span>
         {{ currentVideoDescription }}
     </v-card>
@@ -95,56 +105,48 @@ const courseVideoUrl = computed(() => courseStore.courseVideoUrl);
 
 const playerRef = ref<HTMLVideoElement | null>(null);
 const playerInstance = ref<Plyr | null>(null);
-const isLoading = ref(true);
 const showControls = ref(false);
 
-const selectedVideo = computed(() => courseStore.selectedVideo);
-const skipContent = computed(() => courseStore.skipVideo);
+const isLoadingContent = computed(() => courseStore.isLoadingContent);
+const selectedContent = computed(() => courseStore.selectedContent);
+const skipContent = computed(() => courseStore.skipContent);
 
-const currentVideoTitle = computed(() => {
-    return selectedVideo.value.content.name || "título indisponível";
-});
-
-const currentVideoDescription = computed(() => {
-    return selectedVideo.value.content.description || "indisponível no momento";
-});
-
-const hasPreviousVideo = computed(() => {
-    return skipContent.value.prevContentOrder;
-});
+const currentVideoTitle = computed(
+    () => selectedContent.value.content.name || "título indisponível",
+);
+const currentVideoDescription = computed(
+    () => selectedContent.value.content.description || "indisponível no momento",
+);
+const hasPreviousVideo = computed(() => skipContent.value.prevContentOrder);
 const hasNextVideo = computed(() => skipContent.value.nextContentOrder);
 
-const loadVideoByIndex = async (order: number, mode: string) => {
-    isLoading.value = true;
-    await courseStore.getCourseVideoUrl(order, mode);
+const loadVideoByIndex = async (mode: "next" | "prev") => {
+    if (!mode) return;
+    await courseStore.getCourseVideoUrl(mode);
 };
 
 const playPreviousVideo = () => {
     if (!hasPreviousVideo.value) return;
 
-    loadVideoByIndex(hasPreviousVideo.value, "prev");
+    loadVideoByIndex("prev");
 };
 
 const playNextVideo = () => {
     if (!hasNextVideo.value) return;
-    loadVideoByIndex(hasNextVideo.value, "next");
+    loadVideoByIndex("next");
 };
 
-// Carrega vídeo ao montar
 onMounted(async () => {
     await nextTick();
-    // Carrega o primeiro vídeo da list
     courseStore.setSelectedContent();
-    await courseStore.getCourseVideoUrl(1, "nada");
+    await courseStore.getCourseVideoUrl();
 });
 
-// Inicializa player quando URL estiver pronta
 watch(courseVideoUrl, async (newUrl) => {
     if (newUrl && playerRef.value) {
         if (!playerInstance.value) {
             playerInstance.value = new Plyr(playerRef.value, {
                 ratio: "16:9",
-                // Controlar o tamanho máximo do player
                 fullscreen: {
                     enabled: true,
                     fallback: true,
@@ -164,7 +166,7 @@ watch(courseVideoUrl, async (newUrl) => {
         };
 
         playerInstance.value.once("ready", () => {
-            isLoading.value = false;
+            courseStore.setIsLoadingContent(false);
         });
     }
 });
@@ -173,14 +175,14 @@ watch(courseVideoUrl, async (newUrl) => {
 <style scoped>
 .video-container {
     width: 100%;
-    max-height: 70vh; /* Limita a altura máxima do vídeo */
+    max-height: 70vh;
     overflow: hidden;
     background-color: #000;
 }
 
 .video-wrapper {
     width: 100%;
-    margin: 0 auto; /* Centraliza horizontalmente */
+    margin: 0 auto;
     aspect-ratio: 16 / 9;
     position: relative;
 }
@@ -208,7 +210,6 @@ watch(courseVideoUrl, async (newUrl) => {
     animation: pulse 1.5s infinite;
 }
 
-/* Estilos para os botões de navegação */
 .video-navigation {
     position: absolute;
     top: 0;
@@ -220,7 +221,7 @@ watch(courseVideoUrl, async (newUrl) => {
     align-items: center;
     padding: 0 16px;
     z-index: 5;
-    pointer-events: none; /* Permite clicar através da div de navegação */
+    pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -231,7 +232,7 @@ watch(courseVideoUrl, async (newUrl) => {
 
 .navigation-btn {
     background-color: rgba(0, 0, 0, 0.5) !important;
-    pointer-events: auto; /* Habilita cliques nos botões */
+    pointer-events: auto;
     transition:
         transform 0.3s ease,
         opacity 0.3s ease;
@@ -252,6 +253,10 @@ watch(courseVideoUrl, async (newUrl) => {
     margin-left: auto;
 }
 
+:deep(.v-skeleton-loader .v-skeleton-loader__bone) {
+    margin: 0 !important;
+}
+
 @keyframes pulse {
     0% {
         opacity: 0.4;
@@ -264,7 +269,17 @@ watch(courseVideoUrl, async (newUrl) => {
     }
 }
 
-/* Ajuste responsivo para telas menores */
+.video-description-card {
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 1rem;
+    width: 50%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
 @media (max-width: 768px) {
     .video-container {
         max-height: 50vh;
@@ -273,11 +288,10 @@ watch(courseVideoUrl, async (newUrl) => {
 </style>
 
 <style>
-/* Global - NÃO scoped */
 .plyr {
     --plyr-color-main: #461cdc;
     width: 100%;
     height: 100%;
-    max-height: 70vh; /* Controle adicional para o player Plyr */
+    max-height: 70vh;
 }
 </style>

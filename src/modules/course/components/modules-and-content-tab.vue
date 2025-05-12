@@ -1,7 +1,7 @@
 <template>
     <v-expansion-panels variant="accordion" elevation="0" class="text-body-2" multiple>
         <div
-            v-if="loadingContentCourse"
+            v-if="isLoadingContentTab"
             min-height="40"
             class="font-weight-medium d-flex justify-space-between align-center"
             style="height: 50px; width: 100%"
@@ -29,8 +29,8 @@
                     <v-card
                         class="content-course"
                         :variant="
-                            selectedVideo.order === courseTabContent.order &&
-                            selectedVideo.content.order === tabContent.order
+                            selectedContent.order === courseTabContent.order &&
+                            selectedContent.content.order === tabContent.order
                                 ? 'tonal'
                                 : 'text'
                         "
@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import { formatSecondsToHMS } from "@/utils/DateUtils";
 import { useIndexStore } from "@/stores/index.store";
 import { useCourseStore } from "../course.store";
@@ -74,20 +74,20 @@ import type { TContentModule } from "../course.types";
 const courseStore = useCourseStore();
 const indexStore = useIndexStore();
 
-const loadingContentCourse = ref(true);
 const eachCourseTabContent = ref<TContentModule[]>([]);
 
-const selectedVideo = computed(() => courseStore.selectedVideo);
+const isLoadingContentTab = computed(() => courseStore.isLoadingContentTab);
 const iconContentColor = computed(() => (indexStore.isDark ? "#FFFFFF" : "#461CDC"));
+const selectedContent = computed(() => courseStore.selectedContent);
 
 onBeforeMount(async () => {
     eachCourseTabContent.value = await courseStore.getContentModule();
-    loadingContentCourse.value = false;
+    courseStore.isLoadingContentTab = false;
 });
 
 const enterCourse = async (moduleOrder: number, contentOrder: number) => {
     courseStore.setSelectedContentManual(moduleOrder, contentOrder);
-    return await courseStore.getCourseVideoUrl(contentOrder, "nada");
+    await courseStore.getCourseVideoUrl();
 };
 </script>
 
