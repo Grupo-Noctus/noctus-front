@@ -1,79 +1,87 @@
-import { authHttp } from '@/plugins/api/http-instances';
+import { authHttp } from "@/plugins/api/http-instances";
 import { pushMessageNotification } from "@/utils/notivue-base";
 pushMessageNotification;
 
-export const AuthService  = () => {
-
-    const loginService = async( usernameOrEmail: string, password: string ) => {
+export const AuthService = () => {
+    const loginService = async (usernameOrEmail: string, password: string) => {
         try {
-          const data = await authHttp.loginHttp(usernameOrEmail, password)
-          return data;
-        } catch (error) {
-          if (error.response.status === 401) {
-            console.error(error)
-            pushMessageNotification({
-              type: "error",
-              title: "Erro na autenticação",
-              message: "Login inválido.",
-              duration: 3000,
-            });
-          } else if (error.request) {
-            console.error(error)
-            pushMessageNotification({
-              type: "error",
-              title: "Erro de conexão",
-              message: "Não foi possível se conectar ao servidor.",
-              duration: 3000,
-            });
-          } else {
-            console.error(error)
-            pushMessageNotification({
-              type: "error",
-              title: "Erro inesperado",
-              message: "Ocorreu um erro inesperado. Tente novamente.",
-              duration: 3000,
-            });
-          }
-        }
-      }
+            const data = await authHttp.loginHttp(usernameOrEmail, password);
 
-      const registerService = async( formData: string ) => {
+            localStorage.setItem("authToken", data.acess_token);
+            // localStorage.setItem("authToken", data.user); caso venha informação do usuário
+
+            return data;
+        } catch (error) {
+            if (error.code === "ERR_BAD_REQUEST") {
+                pushMessageNotification({
+                    type: "error",
+                    title: "Erro na autenticação",
+                    message: "Login inválido.",
+                    duration: 3000,
+                });
+                console.error(error);
+            } else if (error.request) {
+                console.error(error);
+                pushMessageNotification({
+                    type: "error",
+                    title: "Erro de conexão",
+                    message: "Não foi possível se conectar ao servidor.",
+                    duration: 3000,
+                });
+            } else {
+                console.error(error);
+                pushMessageNotification({
+                    type: "error",
+                    title: "Erro inesperado",
+                    message: "Ocorreu um erro inesperado. Tente novamente.",
+                    duration: 3000,
+                });
+            }
+        }
+    };
+
+    const registerService = async (formData: string) => {
         try {
-          const data = await authHttp.registerHttp(formData)
-          return data;
+            const data = await authHttp.registerHttp(formData);
+            return data;
         } catch (error) {
-          if (error.response.status == 400) {
-            console.error(error)
-            pushMessageNotification({
-              type: "error",
-              title: "Erro na autenticação",
-              message: "Dados inválidos. Por favor, verifique as informações enviadas e tente novamente.",
-              duration: 3000,
-            });    
-          } else if (error.request) {
-            console.error(error)
-            pushMessageNotification({
-              type: "error",
-              title: "Erro de conexão",
-              message: "Não foi possível se conectar ao servidor.",
-              duration: 3000,
-            });
-    
-          } else {
-            console.error(error)
-            pushMessageNotification({
-              type: "error",
-              title: "Erro inesperado",
-              message: "Ocorreu um erro inesperado. Tente novamente.",
-              duration: 3000,
-            });
+            if (error.response.status == 400) {
+                console.error(error);
+                pushMessageNotification({
+                    type: "error",
+                    title: "Erro na autenticação",
+                    message:
+                        "Dados inválidos. Por favor, verifique as informações enviadas e tente novamente.",
+                    duration: 3000,
+                });
+            } else if (error.request) {
+                console.error(error);
+                pushMessageNotification({
+                    type: "error",
+                    title: "Erro de conexão",
+                    message: "Não foi possível se conectar ao servidor.",
+                    duration: 3000,
+                });
+            } else {
+                console.error(error);
+                pushMessageNotification({
+                    type: "error",
+                    title: "Erro inesperado",
+                    message: "Ocorreu um erro inesperado. Tente novamente.",
+                    duration: 3000,
+                });
+            }
         }
-      }
-    }
+    };
 
-    return { loginService, registerService }
+    return { loginService, registerService };
+};
 
+user: {
+    username;
+    name;
+    email;
+    role;
+    phoneNumber;
+    image, acess_token;
 }
-
-
-  

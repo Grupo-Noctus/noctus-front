@@ -1,69 +1,41 @@
 <template>
-  <Login
-    v-model:email="email"
-    v-model:password="password" 
-    redirectRouteName="Register"
-    @updateCredencials="submitForm"
-    :onSubmit="submitForm"
-  />
+    <Login
+        v-model:email="email"
+        v-model:password="password"
+        redirectRouteName="Register"
+        @updateCredencials="submitForm"
+        :onSubmit="submitForm"
+    />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import Login from './components/login.vue';
-import * as yup from 'yup';
+import { ref } from "vue";
+import Login from "./components/login.vue";
+import * as yup from "yup";
 import router from "@/plugins/router/router";
-import { useAuthStore } from "@/stores/auth.store.ts";
-import { AuthService } from '../auth.service';
+import { useAuthStore } from "@/modules/auth/auth.store";
 import { pushMessageNotification } from "@/utils/notivue-base";
 pushMessageNotification;
 
-const email = ref('');
-const password = ref('');
+const email = ref("");
+const password = ref("");
 const authStore = useAuthStore();
-const { loginService } = AuthService();
 
 const emailSchema = yup
-.string()
-.required("E-mail é obrigatório")
-.email("Formato de e-mail inválido")
+    .string()
+    .required("E-mail é obrigatório")
+    .email("Formato de e-mail inválido");
 
-const passwordSchema = yup
-.string()
-.required("A senha é obrigatória")
+const passwordSchema = yup.string().required("A senha é obrigatória");
 
 const submitForm = async (givenEmail: string, givenPassword: string) => {
+    email.value = givenEmail.value;
+    password.value = givenPassword.value;
+    await emailSchema.validate(email.value);
+    await passwordSchema.validate(password.value);
 
-  email.value = givenEmail.value
-  password.value = givenPassword.value
-  console.log("email:", givenEmail)
-  console.log("password:", givenPassword)
-  await emailSchema.validate(email.value);
-  await passwordSchema.validate(password.value);
-  
-  try {
-    const response = await loginService(email.value, password.value);
-    const token = response.access_token;
-
-    // salvando token no local storage após a autenticação
-    authStore.setAuth({
-      token: token
-    });
-
-    router.push({ name: 'Student' });
-
-  } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      pushMessageNotification({
-        type: "error",
-        title: "Erro de validação",
-        message: error.message,
-        duration: 3000,
-      });
-    }
-  }
+    await authStore.loginStore(email.value, password.value);
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

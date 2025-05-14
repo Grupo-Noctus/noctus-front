@@ -11,8 +11,9 @@ export class AuthHttp {
         return data;
     }
 
+    // DEVEMOS CRIAR UM TYPE
     async registerHttp(formData: any) {
-        const { data } = await this.httpClient.post("/auth/register",  formData );
+        const { data } = await this.httpClient.post("/auth/register", formData);
         return data;
     }
 }
