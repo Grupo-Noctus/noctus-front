@@ -62,6 +62,7 @@ const listCourseTab = computed(() => {
     };
 });
 
+// there are two same colors because we can change the style more easily
 const sliderColor = computed(() => (indexStore.isDark ? "#6BFF50" : "#6BFF50"));
 </script>
 

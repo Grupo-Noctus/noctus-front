@@ -54,7 +54,9 @@
                 >
                     <v-skeleton-loader type="heading" style="width: 100%"></v-skeleton-loader>
                 </div>
-                <div v-else class="pa-3 font-weight-bold text-body-h6">{{ currentVideoTitle }}</div>
+                <div v-else class="pa-3 font-weight-bold text-body-h6 text-capitalize">
+                    {{ currentVideoTitle }}
+                </div>
             </v-col>
 
             <v-col
@@ -89,7 +91,7 @@
         <v-skeleton-loader type="heading" style="width: 100"></v-skeleton-loader>
     </div>
     <v-card v-else variant="tonal" class="video-description-card">
-        <span class="font-weight-bold">descrição:</span>
+        <span class="font-weight-bold">Descrição:</span>
         {{ currentVideoDescription }}
     </v-card>
 </template>

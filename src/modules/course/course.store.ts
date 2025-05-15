@@ -333,7 +333,7 @@ export const useCourseStore = defineStore("courseStore", () => {
             setSelectedContent();
             pushMessageNotification({
                 type: "error",
-                title: "erro ao selecionar o vídeo",
+                title: "Erro ao selecionar o vídeo",
                 message: "tente novamente mais tarde",
                 props: {
                     progress: true,

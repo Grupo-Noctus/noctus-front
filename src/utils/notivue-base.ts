@@ -1,6 +1,6 @@
 import { push, type PushOptions } from "notivue";
 
-// Tipos de notificação disponíveis
+// available types
 type NotificationType = "info" | "success" | "error" | "warning";
 
 export interface MessageNotificationProps {

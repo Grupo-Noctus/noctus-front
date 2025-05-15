@@ -84,16 +84,15 @@ const eachExamTabCourse = ref();
 const iconContentColor = computed(() => (indexStore.isDark ? "#FFFFFF" : "#461CDC"));
 
 onMounted(async () => {
-    // colocar um promisse all
     eachExamTabCourse.value = await courseStore.getContentExam();
     loadingExamCourse.value = false;
 });
 
 const enterExam = (idCourse: number) => {
     if (props.clickAndEnterMode) {
-        return; // chosose what to do
+        return;
     } else {
-        return; //"enter exam"
+        return;
     }
 };
 </script>

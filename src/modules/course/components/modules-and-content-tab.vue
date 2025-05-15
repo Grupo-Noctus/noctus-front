@@ -105,7 +105,7 @@ onBeforeMount(async () => {
 
 const enterCourse = async (moduleOrder: number, contentOrder: number) => {
     if (props.clickAndEnterMode) {
-        return; // chosose what to do
+        return;
     } else {
         courseStore.setSelectedContentManual(moduleOrder, contentOrder);
         await courseStore.getCourseVideoUrl();
