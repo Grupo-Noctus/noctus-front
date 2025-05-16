@@ -12,7 +12,8 @@ export const AuthService = () => {
 
             return data;
         } catch (error) {
-            if (error.code === "ERR_BAD_REQUEST") {
+            console.log(error);
+            if (error.response.status == 401) {
                 pushMessageNotification({
                     type: "error",
                     title: "Erro na autenticação",
@@ -76,12 +77,3 @@ export const AuthService = () => {
 
     return { loginService, registerService };
 };
-
-user: {
-    username;
-    name;
-    email;
-    role;
-    phoneNumber;
-    image, acess_token;
-}

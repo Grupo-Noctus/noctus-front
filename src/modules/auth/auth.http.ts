@@ -6,7 +6,11 @@ export class AuthHttp {
     }
 
     async loginHttp(usernameOrEmail: string, password: string) {
-        const { data } = await this.httpClient.post("/auth/login", { usernameOrEmail, password });
+        const { data } = await this.httpClient.post(
+            "/auth/login",
+            { usernameOrEmail, password },
+            { headers: { isPublic: true } },
+        );
 
         return data;
     }

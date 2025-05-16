@@ -1,14 +1,22 @@
-import { defineStore } from "pinia";
 import { ref } from "vue";
 import { AuthService } from "./auth.service";
 import router from "@/plugins/router/router";
+import { defineStore } from "pinia";
+import type { TUser } from "./auth.types";
 
 export const useAuthStore = defineStore("auth", () => {
-    const token = ref(localStorage.getItem("authToken") || "");
-    const isLogIn = ref(false);
+    const token = ref<string | null>(localStorage.getItem("authToken") || "");
+    const isLogIn = ref<boolean>(false);
+
+    const user = ref<TUser>({
+        name: "",
+        username: "",
+        phoneNumber: "",
+        acessToken: "",
+        role: "",
+        image: "",
+    });
     const useAuthService = AuthService();
-    // tipar
-    const user = ref();
 
     async function loginStore(email: string, password: string) {
         try {
@@ -16,17 +24,60 @@ export const useAuthStore = defineStore("auth", () => {
 
             if (!response) {
                 router.push({ name: "Login" });
+                return;
             }
 
             isLogIn.value = true;
             token.value = response.access_token;
+            localStorage.setItem("token", response.access_token);
+
+            if (response.user) {
+                user.value = response.user;
+                localStorage.setItem("user", JSON.stringify(response.user));
+            }
 
             router.push({ name: "Student" });
         } catch (error) {
-            user.value = null;
+            user.value = {
+                name: "",
+                username: "",
+                phoneNumber: "",
+                acessToken: "",
+                role: "",
+                image: "",
+            };
             throw error;
         }
     }
 
-    return { token, loginStore };
+    async function refetchCurrentUser() {
+        try {
+            if (token.value && user.value) {
+                return;
+            }
+            const localStorageUserData = localStorage.getItem("user");
+            const localStorageJwtToken = localStorage.getItem("token");
+
+            if (localStorageUserData && localStorageJwtToken) {
+                const parsedUserData = JSON.parse(localStorageUserData);
+
+                user.value = parsedUserData;
+                token.value = localStorageJwtToken;
+            } else {
+                throw error;
+            }
+        } catch (error) {
+            user.value = {
+                name: "",
+                username: "",
+                phoneNumber: "",
+                acessToken: "",
+                role: "",
+                image: "",
+            };
+            token.value = "";
+        }
+    }
+
+    return { token, loginStore, user, refetchCurrentUser };
 });

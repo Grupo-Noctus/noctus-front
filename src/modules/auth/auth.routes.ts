@@ -7,11 +7,13 @@ export const authRoutes: RouteRecordRaw[] = [
     {
         path: "login",
         name: "Login",
+        meta: { requiresAuth: false },
         component: Login,
     },
     {
         path: "register",
         name: "Register",
+        meta: { requiresAuth: false },
         component: Register,
-    }
+    },
 ];
