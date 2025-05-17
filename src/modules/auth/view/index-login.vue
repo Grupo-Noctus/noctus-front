@@ -29,12 +29,25 @@ const emailSchema = yup
 const passwordSchema = yup.string().required("A senha é obrigatória");
 
 const submitForm = async (givenEmail: string, givenPassword: string) => {
-    email.value = givenEmail.value;
+    email.value = givenEmail.value.trim();
     password.value = givenPassword.value;
-    await emailSchema.validate(email.value);
-    await passwordSchema.validate(password.value);
+    
+    try {
+        await emailSchema.validate(email.value);
+        await passwordSchema.validate(password.value);
 
-    await authStore.loginStore(email.value, password.value);
+        await authStore.loginStore(email.value, password.value);
+    } catch (error) {
+        if (error instanceof yup.ValidationError) {
+      pushMessageNotification({
+        type: "error",
+        title: "Erro de validação",
+        message: error.message,
+        duration: 3000,
+      });
+    }
+}
+
 };
 </script>
 

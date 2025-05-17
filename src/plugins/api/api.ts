@@ -23,8 +23,21 @@ api.interceptors.response.use(
     (error) => {
         const authStore = useAuthStore();
         if (error.response && error.response.status === 401) {
-            authStore.user = [];
+            authStore.user = {
+                name: "",
+                username: "",
+                phoneNumber: "",
+                acessToken: "",
+                role: "",
+                image: "", };
             authStore.token = "";
+
+            /*if ( window.location.href.endsWith("/auth/login")) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                return error
+            }*/
+           
             logOut();
         }
 

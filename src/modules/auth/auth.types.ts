@@ -6,3 +6,15 @@ export type TUser = {
     image: string;
     acessToken: string;
 };
+
+export type TRegisterFormData = {
+    dateBirth?: string; 
+    state?: string; 
+    ethnicity?: string; 
+    gender?: string; 
+    educationLevel?: string; 
+    hasDisability?: string; 
+    disabilityType?: boolean; 
+    needsSupportResources?: boolean; 
+    supportResourcesDescription?: string; 
+}

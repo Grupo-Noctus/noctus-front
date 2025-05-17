@@ -1,4 +1,5 @@
 import type { AxiosInstance } from "axios";
+import type { TRegisterFormData } from "./auth.types";
 
 export class AuthHttp {
     constructor(private readonly httpClient: AxiosInstance) {
@@ -6,18 +7,21 @@ export class AuthHttp {
     }
 
     async loginHttp(usernameOrEmail: string, password: string) {
-        const { data } = await this.httpClient.post(
+        const response = await this.httpClient.post(
             "/auth/login",
             { usernameOrEmail, password },
             { headers: { isPublic: true } },
         );
+        const { data } = response;
 
         return data;
     }
 
-    // DEVEMOS CRIAR UM TYPE
-    async registerHttp(formData: any) {
-        const { data } = await this.httpClient.post("/auth/register", formData);
+    async registerHttp(formData: TRegisterFormData ) {
+        const { data } = await this.httpClient.post("/auth/register",  
+            formData,
+            { headers: { isPublic: true } },
+         );
         return data;
     }
 }

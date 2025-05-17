@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 import type { TUser } from "./auth.types";
 
 export const useAuthStore = defineStore("auth", () => {
-    const token = ref<string | null>(localStorage.getItem("authToken") || "");
+    const token = ref<string | null>(localStorage.getItem("token") || "");
     const isLogIn = ref<boolean>(false);
 
     const user = ref<TUser>({
@@ -31,12 +31,13 @@ export const useAuthStore = defineStore("auth", () => {
             token.value = response.access_token;
             localStorage.setItem("token", response.access_token);
 
-            if (response.user) {
+            if (response.user || response.token) {
                 user.value = response.user;
                 localStorage.setItem("user", JSON.stringify(response.user));
+                router.push({ name: "Student" });
             }
-
-            router.push({ name: "Student" });
+            return
+            
         } catch (error) {
             user.value = {
                 name: "",

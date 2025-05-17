@@ -6,7 +6,6 @@ export function authMiddleware(to: any, from: any, next: any) {
     authStore.refetchCurrentUser();
     const token = authStore.token;
 
-    debugger;
     const isPublicRoute = to.name === "Login" || to.name === "Register";
 
     if (token && (to.name === "Login" || to.name === "Register")) {

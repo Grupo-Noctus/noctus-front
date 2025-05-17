@@ -12,7 +12,7 @@ export const AuthService = () => {
 
             return data;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             if (error.response.status == 401) {
                 pushMessageNotification({
                     type: "error",
@@ -46,7 +46,7 @@ export const AuthService = () => {
             const data = await authHttp.registerHttp(formData);
             return data;
         } catch (error) {
-            if (error.response.status == 400) {
+            if (error.response.status == 401) {
                 console.error(error);
                 pushMessageNotification({
                     type: "error",
