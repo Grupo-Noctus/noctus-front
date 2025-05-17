@@ -1,23 +1,206 @@
 <template>
     <div>
-        {{courses}}
+        <v-container fluid>
+      <v-row>
+        <v-col cols="12" class="pa-2">
+          <h1 class="text-h4 mb-0 text-center">Meus Cursos</h1>
+        </v-col>
+      </v-row>
+
+      <v-row justify="center" align="center">
+
+        <v-col v-if="!courses" cols="12" class="text-center">
+          <v-alert type="info">Nenhum curso encontrado.</v-alert>
+        </v-col>
+
+        <v-col
+          v-for="course in courses"
+          v-else
+          :key="course.id"
+          cols="auto"
+          sm="6"
+          md="4"
+          lg="4"
+          class="pa-4"
+        >
+
+
+          <v-card
+            class="course-card pa-4 mx-auto "
+            elevation="4"
+            :class="{ 'dark-theme': isDark }"
+          >
+            <v-img v-if="!course.image"
+              src="https://static.wikia.nocookie.net/7ee0e325-74c9-4079-b5a9-e18b027f2105/scale-to-width/755"
+              height="200"
+              cover
+              class="course-image"
+            >
+
+            </v-img>
+
+            <v-img v-else
+              :src="course.image"
+              height="200"
+              cover
+              class="course-image"
+            >
+              <v-chip
+                v-if-else="isExpired(courses)"
+                color="red"
+                class="ma-3 text-uppercase"
+                size="large"
+                label
+                style="font-weight: bold;"
+              >
+                expirado
+              </v-chip>
+            </v-img>
+
+            <v-card-title class="text-h5 mt-3">
+              {{ course.name }}
+            </v-card-title>
+
+
+
+            <div class="container-subtitle">
+                <v-card-subtitle class="mb-3 text-body-2">
+                Expira em: {{ formatDate(course.endDate) }}
+                </v-card-subtitle>
+
+                <div class="mb-3 text-body-2">
+                        <v-chip
+                        v-if-else="isExpired(courses)"
+                        color="red"
+                        class="text-body-2 text-uppercase"
+                        size="small"
+                        label
+                        style="font-weight: bold;"
+                        >
+                        expirado
+                         </v-chip>
+                        </div>
+
+
+            </div>
+
+
+            <v-card-text class="text-body-1 overflow-auto mb-0" >
+              {{ course.description }}
+            </v-card-text>
+
+            <v-card-actions>
+              <v-btn
+                color="warning"
+                variant="tonal"
+                size="large"
+                block
+                @click="viewCourse(course.id)"
+              >
+                Acessar Curso
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+
+
+        </v-col>
+      </v-row>
+    </v-container>
+
     </div>
 </template>
 
 
 <script setup lang="ts">
-import { onBeforeMount } from 'vue';
-import { CourseService } from '../course.service';
-import { ref } from 'vue';
-const courses = ref()
- const courseService = CourseService()
- onBeforeMount(async() => {
-    return courses.value = await courseService.getCourseService()
- })
+import { ref, computed, onMounted } from 'vue';
+import { useIndexStore } from '@/stores/index.store';
+import { useRouter } from 'vue-router';
+import { CourseService } from '@/modules/course/course.service';
+
+  interface Course {
+    id: number;
+    name: string;
+    endDate: string;
+    image: string;
+    description: string;
+  }
+
+  const router = useRouter();
+  const indexStore = useIndexStore();
+  const courses = ref<Course[]>([]);
+  const { getCourseService } = CourseService();
+  const fetchCourses = async () => {
+  try {
+    const response = await getCourseService();
+    courses.value = response;
+  } catch (error) {
+    console.error('Erro ao carregar cursos:', error);
+  }
+  };
+
+  onMounted(() => {
+    fetchCourses();
+  });
+
+
+  const isDark = computed(() => indexStore.isDark);
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR');
+  };
+
+  const isExpired = (dateString: string): boolean => {
+    console.log(dateString)
+    return new Date(dateString) < new Date();
+  };
+
+  const viewCourse = (courseId: number) => {
+    router.push(`/course/${courseId}`);
+  };
+
 </script>
 
 
 
 <style scoped>
+.course-card {
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+  }
 
+  .course-image {
+    position: relative;
+    border-radius: 8px;
+  }
+
+  .v-card-title {
+    word-break: break-word;
+    line-height: 1.4;
+  }
+
+  .v-card-text {
+    flex-grow: 1;
+    height: 120px;
+  }
+
+  .container-subtitle{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+
+  .dark-theme {
+    background-color: #2e323f;
+    color: #fff;
+  }
+
+
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
 </style>

@@ -8,7 +8,7 @@ export class CourseHttp {
     async getCourseHttp(){
         const {data} = await this.httpClient.get("/course/find-many", {
             headers: {
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJuYW1lIjoidGhheW1hdGVyYSIsInJvbGUiOiJBRE1JTiIsImFjdGl2ZSI6dHJ1ZSwiaWF0IjoxNzQ2NzUxMTQ0LCJleHAiOjE3NDY3NTQ3NDR9.u5AHyeT9vP-EBPF3yq2Vococ8rP32qwOJrP1Ou8o0iE`,
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInVzZXJuYW1lIjoiYm90aW5oYXMiLCJyb2xlIjoiQURNSU4iLCJhY3RpdmUiOnRydWUsImlhdCI6MTc0NzM1NDYzOSwiZXhwIjoxNzQ3OTU5NDM5fQ.HRZAuppdWlRj2IWrC6ENJ9fk6AElxYwltV2M285unsU`,
             },
         });
 

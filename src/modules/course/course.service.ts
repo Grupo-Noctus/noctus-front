@@ -1,5 +1,7 @@
 
 import { courseHttp } from "@/plugins/api/http-instances";
+import { pushMessageNotification } from "@/utils/notivue-base";
+  pushMessageNotification;
 
 export const CourseService  = () => {
     const getCourseService = async() => {
@@ -7,7 +9,12 @@ export const CourseService  = () => {
           const data = await courseHttp.getCourseHttp()
           return data;
         } catch (error) {
-          throw new Error("Erro ao buscar os cursos: " + error);
+        pushMessageNotification({
+          type: "error",
+          title: "Erro!",
+          message: "Nenhum curso encontrado :(!",
+          duration: 3000,
+      });
         }
       }
     return{getCourseService}
