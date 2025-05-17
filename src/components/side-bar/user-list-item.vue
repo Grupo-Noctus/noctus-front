@@ -85,7 +85,7 @@ const hoverOnMenuitem = computed(() => {
 
 const menuItems = [
     {
-        label: "Sign-in",
+        label: "Sign in",
         icon: "mdi-login",
         action: "signin",
     },
@@ -104,7 +104,7 @@ const menuItems = [
 ];
 
 function handleMenuClick(action) {
-    console.log("Menu item clicked:", action);
+    //console.log("Menu item clicked:", action); funcionadade de action
 }
 </script>
 
