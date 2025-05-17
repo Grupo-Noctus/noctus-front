@@ -25,11 +25,13 @@ api.interceptors.response.use(
         if (error.response && error.response.status === 401) {
             authStore.user = {
                 name: "",
+                email: "",
                 username: "",
                 phoneNumber: "",
                 acessToken: "",
                 role: "",
-                image: "", };
+                image: "",
+            };
             authStore.token = "";
 
             /*if ( window.location.href.endsWith("/auth/login")) {
@@ -37,7 +39,7 @@ api.interceptors.response.use(
                 localStorage.removeItem("user");
                 return error
             }*/
-           
+
             logOut();
         }
 

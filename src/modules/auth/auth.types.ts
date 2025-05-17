@@ -1,5 +1,6 @@
 export type TUser = {
     name: string;
+    email: string;
     username: string;
     role: string;
     phoneNumber: string;
@@ -8,13 +9,13 @@ export type TUser = {
 };
 
 export type TRegisterFormData = {
-    dateBirth?: string; 
-    state?: string; 
-    ethnicity?: string; 
-    gender?: string; 
-    educationLevel?: string; 
-    hasDisability?: string; 
-    disabilityType?: boolean; 
-    needsSupportResources?: boolean; 
-    supportResourcesDescription?: string; 
-}
+    dateBirth?: string;
+    state?: string;
+    ethnicity?: string;
+    gender?: string;
+    educationLevel?: string;
+    hasDisability?: string;
+    disabilityType?: boolean;
+    needsSupportResources?: boolean;
+    supportResourcesDescription?: string;
+};

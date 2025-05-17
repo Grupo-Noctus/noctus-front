@@ -10,6 +10,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     const user = ref<TUser>({
         name: "",
+        email: "",
         username: "",
         phoneNumber: "",
         acessToken: "",
@@ -36,11 +37,11 @@ export const useAuthStore = defineStore("auth", () => {
                 localStorage.setItem("user", JSON.stringify(response.user));
                 router.push({ name: "Student" });
             }
-            return
-            
+            return;
         } catch (error) {
             user.value = {
                 name: "",
+                email: "",
                 username: "",
                 phoneNumber: "",
                 acessToken: "",
@@ -70,6 +71,7 @@ export const useAuthStore = defineStore("auth", () => {
         } catch (error) {
             user.value = {
                 name: "",
+                email: "",
                 username: "",
                 phoneNumber: "",
                 acessToken: "",
