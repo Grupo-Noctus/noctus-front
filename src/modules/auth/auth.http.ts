@@ -1,5 +1,5 @@
 import type { AxiosInstance } from "axios";
-import type { TRegisterFormData } from "./auth.types";
+import type { TRegisterFormData, TRegisterFormDataTest } from "./auth.types";
 
 export class AuthHttp {
     constructor(private readonly httpClient: AxiosInstance) {
@@ -17,11 +17,10 @@ export class AuthHttp {
         return data;
     }
 
-    async registerHttp(formData: TRegisterFormData ) {
-        const { data } = await this.httpClient.post("/auth/register",  
-            formData,
-            { headers: { isPublic: true } },
-         );
+    async registerHttp(formData: TRegisterFormDataTest) {
+        const { data } = await this.httpClient.post("/auth/register", formData, {
+            headers: { isPublic: true },
+        });
         return data;
     }
 }

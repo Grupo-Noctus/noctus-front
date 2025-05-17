@@ -26,18 +26,17 @@ export const useAuthStore = defineStore("auth", () => {
                 router.push({ name: "Login" });
                 return;
             }
-
+            debugger;
             isLogIn.value = true;
             token.value = response.access_token;
             localStorage.setItem("token", response.access_token);
 
-            if (response.user || response.token) {
+            if (response.user || response.acess_token) {
                 user.value = response.user;
                 localStorage.setItem("user", JSON.stringify(response.user));
                 router.push({ name: "Student" });
             }
-            return
-            
+            return;
         } catch (error) {
             user.value = {
                 name: "",

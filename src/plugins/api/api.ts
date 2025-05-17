@@ -29,16 +29,16 @@ api.interceptors.response.use(
                 phoneNumber: "",
                 acessToken: "",
                 role: "",
-                image: "", };
+                image: "",
+            };
             authStore.token = "";
 
-            /*if ( window.location.href.endsWith("/auth/login")) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                return error
-            }*/
-           
-            logOut();
+            if (!window.location.href.endsWith("/auth/login")) {
+                logOut();
+            }
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
         }
 
         return Promise.reject(error);
@@ -68,7 +68,6 @@ api.interceptors.request.use(
             logOut();
             throw new axios.Cancel("Usuário não autenticado");
         }
-
         config.headers.Authorization = `Bearer ${token}`;
         return config;
     },
