@@ -6,6 +6,8 @@ import Home from "@/views/home.vue";
 import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
 import { CourseRoutes } from "@/modules/course/course.routes";
+import { authMiddleware } from "@/modules/auth/auth.middleware";
+
 
 const routes: RouteRecordRaw[] = [
     {
@@ -38,5 +40,7 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
 });
+
+router.beforeEach(authMiddleware);
 
 export default router;

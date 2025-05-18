@@ -15,19 +15,20 @@ import { useTheme } from "vuetify";
 import { useIndexStore } from "./stores/index.store";
 import { Notivue, Notification, NotificationProgress } from "notivue";
 
-const theme = useTheme();
-const indexStore = useIndexStore();
+  const theme = useTheme();
+  const indexStore = useIndexStore();
 
-onMounted(() => {
+  onMounted(() => {
     theme.global.name.value = localStorage.getItem("theme") || "light";
 
     indexStore.currentTheme = theme.global.name.value;
     if (indexStore.currentTheme === "dark") {
-        indexStore.isDark = true;
+      indexStore.isDark = true;
     } else {
-        indexStore.isDark = false;
+      indexStore.isDark = false;
     }
-});
-</script>
+  });
+  </script>
 
-<style scoped></style>
+  <style scoped>
+  </style>
