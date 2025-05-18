@@ -5,6 +5,7 @@ import FullPageContent from "@/layout/full-page-content.vue";
 import Home from "@/views/home.vue";
 import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
+import { authMiddleware } from "@/modules/auth/auth.middleware";
 
 
 
@@ -38,5 +39,7 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
 });
+
+router.beforeEach(authMiddleware);
 
 export default router;

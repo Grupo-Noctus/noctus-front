@@ -8,6 +8,7 @@
           ></v-app-bar-nav-icon>
 
 
+
           <v-avatar size="70" style="margin-right: 0px;">
             <v-img src="src/assets/matera-logo.png" alt="Logo Matera" />
           </v-avatar>
@@ -34,18 +35,23 @@
               :key="item.value"
               @click="navigateToMainContent(item.title)"
             >
-              {{ item.value }}
-            </v-list-item>
-          </v-list>
-        </v-navigation-drawer>
+                <v-list>
+                    <v-list-item
+                        v-for="item in items"
+                        :key="item.value"
+                        @click="navigateToMainContent(item.title)"
+                    >
+                        {{ item.value }}
+                    </v-list-item>
+                </v-list>
+            </v-navigation-drawer>
 
-        <v-main class="px-4" style=" height: 100vh;">
-          <router-view></router-view>
-        </v-main>
-      </v-layout>
+            <v-main>
+                <router-view></router-view>
+            </v-main>
+        </v-layout>
     </v-card>
-  </template>
-
+</template>
   <script setup lang="ts">
   import { ref } from 'vue';
   import router from '@/plugins/router/router';
