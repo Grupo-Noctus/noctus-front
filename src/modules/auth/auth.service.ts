@@ -1,5 +1,6 @@
 import { authHttp } from "@/plugins/api/http-instances";
 import { pushMessageNotification } from "@/utils/notivue-base";
+import type { TRegisterFormDataTest } from "./auth.types";
 pushMessageNotification;
 
 export const AuthService = () => {
@@ -41,7 +42,7 @@ export const AuthService = () => {
         }
     };
 
-    const registerService = async (formData: string) => {
+    const registerService = async (formData: TRegisterFormDataTest) => {
         try {
             const data = await authHttp.registerHttp(formData);
             return data;

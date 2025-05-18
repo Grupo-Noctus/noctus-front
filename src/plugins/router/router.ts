@@ -7,6 +7,8 @@ import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
 import { authMiddleware } from "@/modules/auth/auth.middleware";
 
+
+
 const routes: RouteRecordRaw[] = [
     {
         path: "",

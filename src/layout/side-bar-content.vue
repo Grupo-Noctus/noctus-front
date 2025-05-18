@@ -1,12 +1,15 @@
 <template>
     <v-card>
-        <v-layout color="secondary">
+        <v-layout>
             <v-app-bar color="primary">
                 <v-app-bar-nav-icon
                     variant="text"
                     @click.stop="drawer = !drawer"
                 ></v-app-bar-nav-icon>
 
+                <v-avatar size="70" style="margin-right: 0px">
+                    <v-img src="src/assets/matera-logo.png" alt="Logo Matera" />
+                </v-avatar>
                 <v-toolbar-title>Instituto Matera</v-toolbar-title>
 
                 <v-spacer></v-spacer>
@@ -14,7 +17,11 @@
                 <v-btn icon="mdi mdi-theme-light-dark" variant="text" @click="toggleTheme"></v-btn>
             </v-app-bar>
 
-            <v-navigation-drawer v-model="drawer">
+            <v-navigation-drawer
+                v-model="drawer"
+                :location="$vuetify.display.mobile ? 'bottom' : undefined"
+                temporary
+            >
                 <div class="w-100 h-100 d-flex flex-column justify-space-between">
                     <v-list :lines="false" density="compact" nav slim>
                         <side-bar-item
@@ -41,7 +48,6 @@
         </v-layout>
     </v-card>
 </template>
-
 <script setup lang="ts">
 import { ref } from "vue";
 import { useIndexStore } from "@/stores/index.store";

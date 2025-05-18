@@ -1,10 +1,10 @@
 <template>
-    <Login
+    <login
         v-model:email="email"
         v-model:password="password"
         redirectRouteName="Register"
-        @updateCredencials="submitForm"
         :onSubmit="submitForm"
+        @updateCredencials="submitForm"
     />
 </template>
 
@@ -31,7 +31,7 @@ const passwordSchema = yup.string().required("A senha é obrigatória");
 const submitForm = async (givenEmail: string, givenPassword: string) => {
     email.value = givenEmail.value.trim();
     password.value = givenPassword.value;
-    
+
     try {
         await emailSchema.validate(email.value);
         await passwordSchema.validate(password.value);
@@ -39,15 +39,14 @@ const submitForm = async (givenEmail: string, givenPassword: string) => {
         await authStore.loginStore(email.value, password.value);
     } catch (error) {
         if (error instanceof yup.ValidationError) {
-      pushMessageNotification({
-        type: "error",
-        title: "Erro de validação",
-        message: error.message,
-        duration: 3000,
-      });
+            pushMessageNotification({
+                type: "error",
+                title: "Erro de validação",
+                message: error.message,
+                duration: 3000,
+            });
+        }
     }
-}
-
 };
 </script>
 

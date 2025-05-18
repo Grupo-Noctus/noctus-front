@@ -1,9 +1,9 @@
 <template>
-    <Register
+    <register
         v-model:formData="formData"
         redirectRouteName="Login"
-        @updateFormData="submitForm"
         :onSubmit="submitForm"
+        @updateFormData="submitForm"
     />
 </template>
 
@@ -15,6 +15,7 @@ import router from "@/plugins/router/router";
 import { pushMessageNotification } from "@/utils/notivue-base";
 pushMessageNotification;
 import { AuthService } from "../auth.service";
+import type { TRegisterFormDataTest } from "../auth.types";
 
 const { registerService } = AuthService();
 
@@ -94,7 +95,7 @@ const submitForm = async () => {
 
         await fullSchema.validate(formData.value, { abortEarly: false });
 
-        const dataToSend = {
+        const dataToSend: TRegisterFormDataTest = {
             user: {
                 name: formData.value.name,
                 username: formData.value.username,
