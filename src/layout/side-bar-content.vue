@@ -71,7 +71,6 @@
 
   const navigateToMainContent = (title: string) => {
     router.push({ name: title });
-  };
   </script>
 
   <style scoped>
@@ -81,3 +80,4 @@
     align-items: center;
   }
   </style>
+
