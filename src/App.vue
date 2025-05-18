@@ -1,16 +1,13 @@
 <template>
-    <v-app>
-        <Notivue v-slot="item">
-          <Notification :item="item">
-              <div v-if="item.props.progress">
-                  <NotificationProgress :item="item" />
-              </div>
-          </Notification>
-      </Notivue>
-      <router-view></router-view>
-    </v-app>
-  </template>
-
+    <router-view></router-view>
+    <Notivue v-slot="item">
+        <Notification :item="item">
+            <div v-if="item.props.progress">
+                <NotificationProgress :item="item" />
+            </div>
+        </Notification>
+    </Notivue>
+</template>
 
 <script setup lang="ts">
 import { onMounted } from "vue";

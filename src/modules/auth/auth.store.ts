@@ -1,3 +1,4 @@
+
 import { ref } from "vue";
 import { AuthService } from "./auth.service";
 import router from "@/plugins/router/router";
@@ -27,7 +28,7 @@ export const useAuthStore = defineStore("auth", () => {
                 router.push({ name: "Login" });
                 return;
             }
-            debugger;
+         
             isLogIn.value = true;
             token.value = response.access_token;
             localStorage.setItem("token", response.access_token);
@@ -51,7 +52,6 @@ export const useAuthStore = defineStore("auth", () => {
             throw error;
         }
     }
-
     async function refetchCurrentUser() {
         try {
             if (token.value && user.value) {
