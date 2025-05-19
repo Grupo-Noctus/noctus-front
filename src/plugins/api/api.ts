@@ -1,10 +1,10 @@
 import { useAuthStore } from "@/modules/auth/auth.store";
 import axios from "axios";
 
-export const logOut = () => {
+export const logOut = (navigateTo: string = "auth/login") => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "/auth/login";
+    window.location.href = navigateTo;
 };
 
 export const api = axios.create({

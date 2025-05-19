@@ -35,7 +35,7 @@
                         <div
                             class="menu-item"
                             :class="hoverOnMenuitem"
-                            @click="handleMenuClick(item.action)"
+                            @click="handleMenuClick(item.navigateTo)"
                         >
                             <v-icon
                                 size="small"
@@ -61,6 +61,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useIndexStore } from "@/stores/index.store";
+import router from "@/plugins/router/router";
+import { logOut } from "@/plugins/api/api";
 
 const indexStore = useIndexStore();
 
@@ -88,23 +90,26 @@ const menuItems = [
         label: "Sign in",
         icon: "mdi-login",
         action: "signin",
+        navigateTo: "auth/register",
     },
     {
         label: "Sign up",
         icon: "mdi-account-plus",
         action: "signup",
         dividerAfter: true,
+        navigateTo: "auth/login",
     },
     {
         label: "Log out",
         icon: "mdi-logout",
         action: "logout",
         color: "red",
+        navigateTo: "auth/login",
     },
 ];
 
-function handleMenuClick(action) {
-    //console.log("Menu item clicked:", action); funcionadade de action
+function handleMenuClick(navigateTo: string) {
+    logOut(navigateTo);
 }
 </script>
 

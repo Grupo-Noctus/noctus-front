@@ -1,24 +1,20 @@
-
 import { courseHttp } from "@/plugins/api/http-instances";
 import { pushMessageNotification } from "@/utils/notivue-base";
-  pushMessageNotification;
+pushMessageNotification;
 
-export const CourseService  = () => {
-    const getCourseService = async() => {
+export const CourseService = () => {
+    const getCourseByEnrollmentService = async () => {
         try {
-          const data = await courseHttp.getCourseHttp()
-          return data;
+            const data = await courseHttp.getCourseByEnrollmentHttp();
+            return data;
         } catch (error) {
-        pushMessageNotification({
-          type: "error",
-          title: "Erro!",
-          message: "Nenhum curso encontrado :(!",
-          duration: 3000,
-      });
+            pushMessageNotification({
+                type: "error",
+                title: "Erro!",
+                message: "Nenhum curso em sua matricula encontrado :(!",
+                duration: 3000,
+            });
         }
-      }
-    return{getCourseService}
-
-
-
-  }
+    };
+    return { getCourseByEnrollmentService };
+};

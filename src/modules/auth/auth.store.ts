@@ -1,4 +1,3 @@
-
 import { ref } from "vue";
 import { AuthService } from "./auth.service";
 import router from "@/plugins/router/router";
@@ -28,12 +27,11 @@ export const useAuthStore = defineStore("auth", () => {
                 router.push({ name: "Login" });
                 return;
             }
-         
+
             isLogIn.value = true;
             token.value = response.access_token;
             localStorage.setItem("token", response.access_token);
-
-            if (response.user || response.acess_token) {
+            if (response.access_token) {
                 user.value = response.user;
                 localStorage.setItem("user", JSON.stringify(response.user));
                 router.push({ name: "Student" });
@@ -78,7 +76,7 @@ export const useAuthStore = defineStore("auth", () => {
                 role: "",
                 image: "",
             };
-            token.value = "";
+            //token.value = "";
         }
     }
 

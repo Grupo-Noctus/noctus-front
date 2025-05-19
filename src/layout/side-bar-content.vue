@@ -1,7 +1,7 @@
 <template>
-    <v-card>
+    <v-card style="min-height: 100vh">
         <v-layout>
-            <v-app-bar color="primary">
+            <v-app-bar color="primary" class="elevation-0">
                 <v-app-bar-nav-icon
                     variant="text"
                     @click.stop="drawer = !drawer"
@@ -42,7 +42,7 @@
                 </div>
             </v-navigation-drawer>
 
-            <v-main>
+            <v-main style="min-height: 100vh">
                 <router-view></router-view>
             </v-main>
         </v-layout>
