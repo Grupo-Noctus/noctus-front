@@ -61,7 +61,10 @@
 
                     <div class="container-subtitle">
                         <v-card-subtitle class="mb-3 text-body-2">
-                            Expira em: {{ formatDate(course.enrollmentEndDate) }}
+                            Expira em:
+                            <span :class="isExpired(course.enrollmentEndDate) ? 'text-red' : ''">{{
+                                formatDate(course.enrollmentEndDate)
+                            }}</span>
                         </v-card-subtitle>
 
                         <div class="mb-3 pe-4 text-body-2">
