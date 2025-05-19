@@ -1,10 +1,10 @@
 import { useAuthStore } from "@/modules/auth/auth.store";
 import axios from "axios";
 
-export const logOut = (navigateTo: string = "auth/login") => {
+export const logOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = navigateTo;
+    window.location.href = "/auth/login";
 };
 
 export const api = axios.create({
@@ -25,7 +25,6 @@ api.interceptors.response.use(
         if (error.response && error.response.status === 401) {
             authStore.user = {
                 name: "",
-                email: "",
                 username: "",
                 phoneNumber: "",
                 acessToken: "",

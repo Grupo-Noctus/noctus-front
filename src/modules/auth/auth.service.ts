@@ -7,6 +7,10 @@ export const AuthService = () => {
     const loginService = async (usernameOrEmail: string, password: string) => {
         try {
             const data = await authHttp.loginHttp(usernameOrEmail, password);
+
+            localStorage.setItem("authToken", data.acess_token);
+            // localStorage.setItem("authToken", data.user); caso venha informação do usuário
+
             return data;
         } catch (error) {
             console.error(error);
