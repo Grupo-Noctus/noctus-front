@@ -16,12 +16,12 @@
         <v-expansion-panel
             v-for="courseTabContent in eachCourseTabContent"
             v-else
-            :key="courseTabContent.order"
+            :key="courseTabContent.id"
             class="pa-0 rounded-0"
             static
         >
             <v-expansion-panel-title min-height="40" class="font-weight-medium">
-                Módulo {{ courseTabContent.order + ": " + courseTabContent.name }}
+                Módulo {{ courseTabContent.id + ": " + courseTabContent.name }}
             </v-expansion-panel-title>
             <v-expansion-panel-text class="pa-0">
                 <div v-for="tabContent in courseTabContent.content" :key="tabContent.id">
@@ -29,16 +29,16 @@
                     <v-card
                         class="content-course"
                         :variant="
-                            selectedContent.order === courseTabContent.order &&
-                            selectedContent.content.order === tabContent.order
+                            selectedContent.id === courseTabContent.id &&
+                            selectedContent.content.id === tabContent.id
                                 ? 'tonal'
                                 : 'text'
                         "
-                        @click="enterCourse(courseTabContent.order, tabContent.order)"
+                        @click="enterCourse(courseTabContent.id, tabContent.id)"
                     >
                         <div>
                             <v-btn
-                                v-if="tabContent.checked"
+                                v-if="tabContent.viewed"
                                 icon="mdi mdi-checkbox-multiple-marked-circle"
                                 density="comfortable"
                                 size="small"
@@ -103,11 +103,11 @@ onBeforeMount(async () => {
     courseStore.isLoadingContentTab = false;
 });
 
-const enterCourse = async (moduleOrder: number, contentOrder: number) => {
+const enterCourse = async (moduleId: number, contentId: number) => {
     if (props.clickAndEnterMode) {
         return;
     } else {
-        courseStore.setSelectedContentManual(moduleOrder, contentOrder);
+        courseStore.setSelectedContentManual(moduleId, contentId);
         await courseStore.getCourseVideoUrl();
     }
 };

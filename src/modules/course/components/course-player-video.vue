@@ -23,7 +23,7 @@
                     variant="text"
                     color="white"
                     class="navigation-btn prev-btn"
-                    :disabled="!hasPreviousVideo || isLoadingContent"
+                    :disabled="hasPreviousVideo === null || isLoadingContent"
                     size="large"
                     @click="playPreviousVideo"
                 >
@@ -34,7 +34,7 @@
                     variant="text"
                     color="white"
                     class="navigation-btn next-btn"
-                    :disabled="!hasNextVideo || isLoadingContent"
+                    :disabled="hasNextVideo === null || isLoadingContent"
                     size="large"
                     @click="playNextVideo"
                 >
@@ -101,6 +101,7 @@ import { ref, computed, onMounted, nextTick, watch } from "vue";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import { useCourseStore } from "../course.store";
+import { has } from "vuetify/lib/util/helpers.mjs";
 
 const courseStore = useCourseStore();
 const courseVideoUrl = computed(() => courseStore.courseVideoUrl);
@@ -119,8 +120,8 @@ const currentVideoTitle = computed(
 const currentVideoDescription = computed(
     () => selectedContent.value.content.description || "indisponível no momento",
 );
-const hasPreviousVideo = computed(() => skipContent.value.prevContentOrder);
-const hasNextVideo = computed(() => skipContent.value.nextContentOrder);
+const hasPreviousVideo = computed(() => skipContent.value.prevContentId);
+const hasNextVideo = computed(() => skipContent.value.nextContentId);
 
 const loadVideoByIndex = async (mode: "next" | "prev") => {
     if (!mode) return;
@@ -128,13 +129,13 @@ const loadVideoByIndex = async (mode: "next" | "prev") => {
 };
 
 const playPreviousVideo = () => {
-    if (!hasPreviousVideo.value) return;
+    if (hasPreviousVideo.value === null) return;
 
     loadVideoByIndex("prev");
 };
 
 const playNextVideo = () => {
-    if (!hasNextVideo.value) return;
+    if (hasNextVideo.value === null) return;
     loadVideoByIndex("next");
 };
 
