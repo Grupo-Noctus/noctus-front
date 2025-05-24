@@ -7,7 +7,7 @@
                     @click.stop="drawer = !drawer"
                 ></v-app-bar-nav-icon>
 
-                <v-avatar size="70" style="margin-right: 0px">
+                <v-avatar size="50" style="margin-right: 0px">
                     <v-img src="src/assets/matera-logo.png" alt="Logo Matera" />
                 </v-avatar>
                 <v-toolbar-title>Instituto Matera</v-toolbar-title>
