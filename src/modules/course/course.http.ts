@@ -6,7 +6,7 @@ export class CourseHttp {
     }
 
     async getCourseByEnrollmentHttp() {
-        const { data } = await this.httpClient.get("/enrollment/course");
+        const { data } = await this.httpClient.get("/enrollment-course/find-many");
 
         return data;
     }

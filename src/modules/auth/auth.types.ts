@@ -1,11 +1,11 @@
 export type TUser = {
-    name: string;
+    sub: number | null;
     email: string;
+    name: string;
     username: string;
+    image: string | null;
     role: string;
-    phoneNumber: string;
-    image: string;
-    acessToken: string;
+    active: boolean | null;
 };
 
 export type TRegisterFormData = {

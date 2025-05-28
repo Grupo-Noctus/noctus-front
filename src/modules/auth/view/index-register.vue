@@ -101,7 +101,6 @@ const submitForm = async () => {
                 username: formData.value.username,
                 email: formData.value.email,
                 password: formData.value.password,
-                image: null,
             },
             student: {
                 dateBirth: formData.value.dateBirth,
