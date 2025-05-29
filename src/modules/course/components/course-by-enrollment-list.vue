@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col cols="12" class="pa-2">
+        <v-col cols="12" class="mt-2">
             <h1 class="text-h4 mb-0 text-center">Meus Cursos</h1>
         </v-col>
     </v-row>
@@ -33,15 +33,11 @@
                 :class="{ 'dark-theme': isDark }"
             >
                 <v-img
-                    v-if="!course.courseImage"
-                    src="https://fakeimg.pl/600x400?text=sem+imagem&font=bebas"
+                    :src="getImageUrl(course.courseImage)"
                     height="200"
                     cover
                     class="course-image"
                 >
-                </v-img>
-
-                <v-img v-else :src="course.courseImage" height="200" cover class="course-image">
                     <v-chip
                         v-if="isExpired(course.expiresAt)"
                         color="red"
@@ -105,7 +101,7 @@ import { ref, computed, onMounted } from "vue";
 import { useIndexStore } from "@/stores/index.store";
 import { useRouter } from "vue-router";
 import { CourseService } from "@/modules/course/course.service";
-
+import { getImageUrl } from "@/utils/image-url";
 interface CourseByEnrollment {
     idEnrrolment: number;
     completed: boolean;
