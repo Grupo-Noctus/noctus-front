@@ -10,5 +10,5 @@ export type TCreateCourseData = {
     name: string;
     description: string;
     duration: number;
-    image: File | null;
+    imageCourse: File | null;
 };

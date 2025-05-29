@@ -4,7 +4,22 @@
             <h1 class="text-h4">Cursos</h1>
         </div>
         <div class="pa-0">
-            <create-course-dialog @confirm-create="handleCreateCourse"></create-course-dialog>
+            <v-btn
+                variant="elevated"
+                size="default"
+                prepend-icon="mdi-plus"
+                color="primary"
+                @click="handleWishToCreateCourse"
+            >
+                criar curso
+            </v-btn>
+            <create-course-dialog
+                v-model="isCreateDialogOpen"
+                :is-external-control="true"
+                :edit-data="selectedCourse"
+                @confirm-create="handleFormSubmit"
+                @cancel="handleDialogCancel"
+            ></create-course-dialog>
         </div>
     </v-card>
 
@@ -33,20 +48,17 @@
             class="pa-4"
         >
             <v-card
-                class="course-card pa-4 mx-auto"
+                class="course-card px-4 py-2 mx-auto"
                 elevation="4"
                 :class="{ 'dark-theme': isDark }"
             >
-                <v-img
-                    v-if="!course.image"
-                    src="https://fakeimg.pl/600x400?text=sem+imagem&font=bebas"
-                    height="200"
-                    cover
-                    class="course-image"
-                >
+                <delete-and-edit-menu
+                    :item="course"
+                    @delete="handleWishToDeleteCourse"
+                    @edit="handleWishToEditCourse"
+                />
+                <v-img :src="getImageUrl(course.image)" height="200" cover class="course-image">
                 </v-img>
-
-                <v-img v-else :src="course.image" height="200" cover class="course-image"> </v-img>
 
                 <v-card-title class="text-h5 mt-2">
                     {{ course.name }}
@@ -70,73 +82,107 @@
                 </v-card-actions>
             </v-card>
         </v-col>
+
+        <confirmation-dialog
+            :model-value="isDeleteDialogOpen"
+            :title="`Confirme para remover curso`"
+            :item-to-delete="selectedCourse?.name"
+            @confirm="handleConfirmDialog"
+            @cancel="handleCancelDialog"
+        ></confirmation-dialog>
     </v-row>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useIndexStore } from "@/stores/index.store";
 import { useRouter } from "vue-router";
-import { AdminService } from "../admin.service";
-import type { TCourses } from "../admin.types";
-import createCourseDialog from "@/modules/admin/views/create-course-dialog.vue";
 
-const allCourses = [
-    {
-        courseId: 201,
-        active: true,
-        completed: false,
-        courseName: "Lógica de Programação",
-        courseDescription:
-            "Entenda os princípios básicos de lógica computacional e resolução de problemas.",
-        courseImage: "https://pbs.twimg.com/media/GDEEo-fWcAAjQzw.jpg",
-    },
-    {
-        courseId: 202,
-        active: true,
-        completed: false,
-        courseName: "Frontend com React",
-        courseDescription: "Desenvolva interfaces interativas com React, Hooks e componentização.",
-        courseImage: "https://example.com/images/react.jpg",
-    },
-    {
-        courseId: 203,
-        active: false,
-        completed: true,
-        courseName: "Estrutura de Dados",
-        courseDescription:
-            "Aprenda a trabalhar com listas, pilhas, filas e árvores de forma eficiente.",
-        courseImage: "https://example.com/images/estruturas.jpg",
-    },
-    {
-        courseId: 204,
-        active: false,
-        completed: true,
-        courseName: "Engenharia de Software",
-        courseDescription:
-            "Explore metodologias ágeis, documentação técnica e modelagem de sistemas.",
-        courseImage: "https://example.com/images/engenharia.jpg",
-    },
-    {
-        courseId: 205,
-        active: true,
-        completed: false,
-        courseName: "DevOps com Docker",
-        courseDescription:
-            "Automatize o deploy e desenvolvimento de aplicações com Docker e CI/CD.",
-        courseImage: "https://example.com/images/devops.jpg",
-    },
-];
+import { AdminService } from "../admin.service";
+import { getImageUrl } from "@/utils/image-url";
+import type { TCourses, TCreateCourseData } from "../admin.types";
+import { useIndexStore } from "@/stores/index.store";
+
+import deleteAndEditMenu from "@/components/menus/delete-and-edit-menu.vue";
+import confirmationDialog from "@/components/dialogs/confirmation-dialog.vue";
+import createCourseDialog from "@/modules/admin/views/create-course-dialog.vue";
 
 const router = useRouter();
 const indexStore = useIndexStore();
 const adminService = AdminService();
 
+const isCreateDialogOpen = ref(false);
+const selectedCourse = ref<TCourses | null>(null);
+const isDeleteDialogOpen = ref<boolean>(false);
 const courses = ref<TCourses[]>([]);
 const loading = ref(false);
 
-const handleCreateCourse = async (form) => {
-    // await api.post("/courses", form);
+const isDark = computed(() => indexStore.isDark);
+
+const handleCreateCourse = async (form: TCreateCourseData) => {
+    const response = await adminService.createCourseService(form);
+
+    if (response) {
+        fetchCourses();
+    }
+};
+
+const handleFormSubmit = (form: TCreateCourseData & { id?: number }) => {
+    if (form.id) {
+        handleEditCourse(form);
+    } else {
+        handleCreateCourse(form);
+    }
+};
+
+const handleEditCourse = async (form: TCreateCourseData & { id?: number }) => {
+    console.info("edit", form);
+    const response = await adminService.updateCourseService(form);
+
+    if (response) {
+        fetchCourses();
+    }
+};
+
+const handleWishToEditCourse = (course: TCourses) => {
+    selectedCourse.value = course;
+    isCreateDialogOpen.value = true;
+};
+
+const handleWishToCreateCourse = () => {
+    selectedCourse.value = null;
+    isCreateDialogOpen.value = true;
+};
+
+const handleDeleteCourse = async () => {
+    isDeleteDialogOpen.value = false;
+    if (!selectedCourse.value?.id) {
+        return;
+    }
+
+    const response = await adminService.deleteCourseService(selectedCourse.value?.id);
+
+    if (response) {
+        fetchCourses();
+    }
+};
+
+const handleConfirmDialog = () => {
+    isDeleteDialogOpen.value = false;
+    handleDeleteCourse();
+};
+
+const handleCancelDialog = () => {
+    isDeleteDialogOpen.value = false;
+    selectedCourse.value = null;
+};
+
+const handleWishToDeleteCourse = (course: TCourses) => {
+    selectedCourse.value = course;
+    isDeleteDialogOpen.value = true;
+};
+
+const handleDialogCancel = () => {
+    selectedCourse.value = null;
 };
 
 const fetchCourses = async () => {
@@ -153,8 +199,6 @@ const fetchCourses = async () => {
 onMounted(() => {
     fetchCourses();
 });
-
-const isDark = computed(() => indexStore.isDark);
 
 const viewCourse = (courseId: number) => {
     router.push({ name: "CourseDetail", params: { id: String(courseId) } });

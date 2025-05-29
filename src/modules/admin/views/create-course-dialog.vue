@@ -1,6 +1,6 @@
 <template>
-    <v-dialog v-model="isDialogOpen" max-width="600">
-        <template v-slot:activator="{ props: activatorProps }">
+    <v-dialog v-model="dialogModel" max-width="600">
+        <template v-if="!isExternalControl" v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
                 variant="elevated"
@@ -14,6 +14,9 @@
         </template>
 
         <v-card elevation="0">
+            <v-card-title class="text-h5 px-4 pt-4">
+                {{ isEditMode ? "Editar Curso" : "Criar Curso" }}
+            </v-card-title>
             <Form @submit="submit">
                 <v-container>
                     <v-row>
@@ -51,7 +54,7 @@
                         </v-col>
                         <v-col>
                             <v-file-input
-                                v-model="createCourseForm.image"
+                                v-model="createCourseForm.imageCourse"
                                 accept="image/png, image/jpeg"
                                 label="imagem do curso"
                                 placeholder="Upload your photos"
@@ -60,8 +63,10 @@
                             ></v-file-input>
                         </v-col>
                         <v-col cols="12" class="d-flex justify-end">
-                            <v-btn class="me-4" @click="resetValues"> reiniciar </v-btn>
-                            <v-btn type="submit"> criar </v-btn>
+                            <v-btn class="me-4" @click="handleCancel">Cancelar</v-btn>
+                            <v-btn type="submit" color="primary">
+                                {{ isEditMode ? "Salvar" : "Criar" }}
+                            </v-btn>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -73,19 +78,45 @@
 <script setup lang="ts">
 import { pushMessageNotification } from "@/utils/notivue-base";
 import { Form } from "vee-validate";
-import { reactive, ref } from "vue";
+import { computed, reactive, watch } from "vue";
 import * as yup from "yup";
+import type { TCourses } from "../admin.types";
 
-const emits = defineEmits(["confirmCreate"]);
+const props = defineProps<{
+    modelValue?: boolean;
+    isExternalControl?: boolean;
+    editData?: TCourses | null;
+}>();
 
-const isDialogOpen = ref(false);
+const emits = defineEmits(["confirmCreate", "update:modelValue", "cancel"]);
+
+const dialogModel = computed({
+    get: () => props.modelValue ?? false,
+    set: (value) => emits("update:modelValue", value),
+});
+
+const isEditMode = computed(() => !!props.editData);
 
 const createCourseForm = reactive({
     name: "",
     description: "",
     duration: 1,
-    image: null,
+    imageCourse: null as File | null,
 });
+
+watch(
+    () => props.editData,
+    (newValue) => {
+        if (newValue) {
+            createCourseForm.name = newValue.name;
+            createCourseForm.description = newValue.description;
+            createCourseForm.duration = newValue.duration;
+        } else {
+            resetValues();
+        }
+    },
+    { immediate: true },
+);
 
 const MAX_FILE_SIZE_KB = 1024 * 1000;
 
@@ -99,7 +130,7 @@ const courseCreateRules = yup.object({
         .number()
         .min(1, "A duração deve ser no mínimo 1 dia")
         .required("Duração é obrigatória"),
-    image: yup
+    imageCourse: yup
         .mixed()
         .optional()
         .nullable()
@@ -160,22 +191,31 @@ function resetValues() {
     createCourseForm.name = "";
     createCourseForm.description = "";
     createCourseForm.duration = 1;
-    createCourseForm.image = null;
+    createCourseForm.imageCourse = null;
+}
+
+function handleCancel() {
+    dialogModel.value = false;
+    resetValues();
+    emits("cancel");
 }
 
 async function submit() {
     try {
         await courseCreateRules.validate(createCourseForm);
 
-        emits("confirmCreate", createCourseForm);
+        emits("confirmCreate", {
+            ...createCourseForm,
+            id: props.editData?.id,
+        });
 
-        isDialogOpen.value = false;
+        dialogModel.value = false;
         resetValues();
     } catch (error: any) {
         if (error instanceof yup.ValidationError) {
             pushMessageNotification({
                 type: "error",
-                title: "Erro ao criar vídeo",
+                title: isEditMode.value ? "Erro ao editar curso" : "Erro ao criar curso",
                 message: error.message,
                 duration: 3000,
             });
