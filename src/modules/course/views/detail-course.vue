@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { vuetify } from "@/plugins/vuetify";
 
 import { useIndexStore } from "@/stores/index.store";
@@ -27,8 +27,13 @@ import { useIndexStore } from "@/stores/index.store";
 import CoursePlayerVideo from "../components/course-player-video.vue";
 import CourseTab from "../components/course-tab.vue";
 import courseChatVue from "../../../components/chat/course-chat.vue";
+import { useRoute } from "vue-router";
+import { CourseService } from "../course.service";
+import { TContentVideoModule } from "../course.types";
 
+const route = useRoute();
 const indexStore = useIndexStore();
+const courseService = CourseService();
 
 const infoAreaStyle = computed(() => {
     return vuetify.display.mobile.value ? "height: fit-content" : "height: 93vh";

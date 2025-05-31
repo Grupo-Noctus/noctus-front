@@ -16,5 +16,35 @@ export const CourseService = () => {
             });
         }
     };
-    return { getCourseByEnrollmentService };
+
+    const getEnrollmentCoursesService = async () => {
+        try {
+            const data = await courseHttp.getEnrollmentCoursesHttp();
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                title: "Erro!",
+                message: "Nenhum curso em sua matricula encontrado :(!",
+            });
+        }
+    };
+
+    const getStreamingVideoUrlService = async (idVideo: number) => {
+        try {
+            const data = await courseHttp.getStreamingVideoUrlHttp(idVideo);
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                title: "Erro!",
+                message: "Não foi possível obter o link do vídeo :(!",
+            });
+        }
+    };
+    return {
+        getEnrollmentCoursesService,
+        getCourseByEnrollmentService,
+        getStreamingVideoUrlService,
+    };
 };

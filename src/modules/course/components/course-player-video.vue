@@ -101,16 +101,21 @@ import { ref, computed, onMounted, nextTick, watch } from "vue";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import { useCourseStore } from "../course.store";
+import { CourseService } from "../course.service";
+import { useCourseSecondStore } from "../course-second.store";
 
+const courseSecondStore = useCourseSecondStore();
 const courseStore = useCourseStore();
-const courseVideoUrl = computed(() => courseStore.courseVideoUrl);
+const courseService = CourseService();
+const videoUrl = computed(() => courseSecondStore.videoUrl);
 
 const playerRef = ref<HTMLVideoElement | null>(null);
 const playerInstance = ref<Plyr | null>(null);
 const showControls = ref(false);
 
-const isLoadingContent = computed(() => courseStore.isLoadingContent);
-const selectedContent = computed(() => courseStore.selectedContent);
+const isLoadingUrlVideo = computed(() => courseSecondStore.isLoadingUrlVideo);
+const isLoadingContent = computed(() => courseSecondStore.isLoadingUrlVideo);
+const selectedContent = computed(() => courseSecondStore.selectedContent);
 const skipContent = computed(() => courseStore.skipContent);
 
 const currentVideoTitle = computed(
@@ -141,11 +146,16 @@ const playNextVideo = () => {
 onMounted(async () => {
     await nextTick();
     courseStore.setSelectedContent();
-    await courseStore.getCourseVideoUrl();
 });
 
-watch(courseVideoUrl, async (newUrl) => {
-    if (newUrl && playerRef.value) {
+watch(selectedContent, async (newContent) => {
+    if (newContent.content.id) {
+        await courseSecondStore.getUrlVideo(newContent.content.id);
+    }
+});
+
+watch(videoUrl, async () => {
+    if (videoUrl.value && playerRef.value) {
         if (!playerInstance.value) {
             playerInstance.value = new Plyr(playerRef.value, {
                 ratio: "16:9",
@@ -154,20 +164,34 @@ watch(courseVideoUrl, async (newUrl) => {
                     fallback: true,
                     iosNative: true,
                 },
+                quality: {
+                    default: 720,
+                    options: [720],
+                },
             });
         }
 
-        playerInstance.value.source = {
+        const videoSrc = {
             type: "video",
+            title: currentVideoTitle.value,
             sources: [
                 {
-                    src: newUrl,
+                    src: `/api/streaming/${selectedContent.value.content.id}`,
                     type: "video/mp4",
+                    size: 720,
                 },
             ],
         };
 
+        playerInstance.value.source = videoSrc;
+
         playerInstance.value.once("ready", () => {
+            courseStore.setIsLoadingContent(false);
+        });
+
+        // Handle errors
+        playerInstance.value.on("error", (error) => {
+            console.error("Plyr error:", error);
             courseStore.setIsLoadingContent(false);
         });
     }
