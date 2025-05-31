@@ -3,7 +3,7 @@ export type TContentModule = {
     order: number;
     name: string;
     description: string;
-    content: TContentVideoModule[];
+    videos: TContentVideoModule[];
 };
 
 export type TSelectedContent = {
@@ -20,7 +20,8 @@ export type TContentVideoModule = {
     description: string;
     duration: number;
     order: number;
-    checked: boolean;
+    idProgressVideo: number | null;
+    viewed: boolean;
 };
 
 export type TContentExam = {

@@ -1,12 +1,13 @@
 <template>
-    <v-card class="d-flex justify-space-between align-end px-2 pt-2" variant="text">
+    <v-card class="pa-3 d-flex justify-space-between align-center" variant="text">
         <div class="d-flex pa-0">
-            <h1 class="text-h4">Cursos</h1>
+            <h1 class="text-h5">Cursos</h1>
         </div>
         <div class="pa-0">
             <v-btn
                 variant="elevated"
-                size="default"
+                size="small"
+                density="default"
                 prepend-icon="mdi-plus"
                 color="primary"
                 @click="handleWishToCreateCourse"
@@ -23,7 +24,7 @@
         </div>
     </v-card>
 
-    <v-divider class="mb-5 mt-3"></v-divider>
+    <v-divider class="mb-4"></v-divider>
 
     <v-row justify="center">
         <v-col v-if="loading" class="text-center">
@@ -57,7 +58,12 @@
                     @delete="handleWishToDeleteCourse"
                     @edit="handleWishToEditCourse"
                 />
-                <v-img :src="getImageUrl(course.image)" height="200" cover class="course-image">
+                <v-img
+                    :src="getImageUrl(course.image)"
+                    height="200"
+                    cover
+                    class="course-image mt-3"
+                >
                 </v-img>
 
                 <v-card-title class="text-h5 mt-2">
@@ -85,7 +91,7 @@
 
         <confirmation-dialog
             :model-value="isDeleteDialogOpen"
-            :title="`Confirme para remover curso`"
+            :title="`remover curso`"
             :item-to-delete="selectedCourse?.name"
             @confirm="handleConfirmDialog"
             @cancel="handleCancelDialog"
@@ -104,7 +110,7 @@ import { useIndexStore } from "@/stores/index.store";
 
 import deleteAndEditMenu from "@/components/menus/delete-and-edit-menu.vue";
 import confirmationDialog from "@/components/dialogs/confirmation-dialog.vue";
-import createCourseDialog from "@/modules/admin/views/create-course-dialog.vue";
+import createCourseDialog from "@/modules/admin/components/create-course-dialog.vue";
 
 const router = useRouter();
 const indexStore = useIndexStore();
@@ -201,7 +207,7 @@ onMounted(() => {
 });
 
 const viewCourse = (courseId: number) => {
-    router.push({ name: "CourseDetail", params: { id: String(courseId) } });
+    router.push({ name: "Modules", params: { id: String(courseId) } });
 };
 </script>
 

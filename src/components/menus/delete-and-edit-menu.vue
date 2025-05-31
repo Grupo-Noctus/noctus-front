@@ -1,7 +1,7 @@
 <template>
     <v-menu>
         <template v-slot:activator="{ props }">
-            <div class="d-flex justify-end mb-3">
+            <div class="d-flex justify-end">
                 <v-btn
                     v-bind="props"
                     icon="mdi-dots-vertical"
