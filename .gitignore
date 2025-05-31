@@ -29,5 +29,4 @@ coverage
 .env
 .env.production
 *.tsbuildinfo
-.cursorrules.md
 .cursorrules

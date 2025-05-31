@@ -222,7 +222,7 @@ async function submit() {
         } else {
             pushMessageNotification({
                 type: "error",
-                title: "um erro inesperado ocorreu",
+                title: "Um erro inesperado ocorreu",
                 message: error.message,
                 duration: 3000,
             });
