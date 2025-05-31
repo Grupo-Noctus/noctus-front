@@ -16,7 +16,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao buscar o curso",
+                message: "Erro ao buscar o curso",
                 duration: 3000,
             });
 
@@ -32,7 +32,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "curso criado com sucesso",
+                    message: "Curso criado com sucesso",
                     duration: 3000,
                 });
 
@@ -43,7 +43,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao criar o curso",
+                message: "Erro ao criar o curso",
                 duration: 3000,
             });
 
@@ -59,7 +59,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "curso atualizado com sucesso",
+                    message: "Curso atualizado com sucesso",
                     duration: 3000,
                 });
             }
@@ -68,7 +68,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao atualizar o curso",
+                message: "Erro ao atualizar o curso",
                 duration: 3000,
             });
 
@@ -82,7 +82,7 @@ export const AdminService = () => {
             await adminHttp.deleteCourseHttp(id);
             pushMessageNotification({
                 type: "success",
-                message: "curso deletado com sucesso",
+                message: "Curso deletado com sucesso",
                 duration: 3000,
             });
 
@@ -90,7 +90,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao deletar o curso",
+                message: "Erro ao deletar o curso",
                 duration: 3000,
             });
 
@@ -106,7 +106,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "módulo criado com sucesso",
+                    message: "Módulo criado com sucesso",
                     duration: 3000,
                 });
 
@@ -117,7 +117,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao criar o módulo",
+                message: "Erro ao criar o módulo",
                 duration: 3000,
             });
 
@@ -133,7 +133,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "módulo atualizado com sucesso",
+                    message: "Módulo atualizado com sucesso",
                     duration: 3000,
                 });
 
@@ -144,7 +144,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao atualizar o módulo",
+                message: "Erro ao atualizar o módulo",
                 duration: 3000,
             });
 
@@ -158,7 +158,7 @@ export const AdminService = () => {
             await adminHttp.deleteModuleHttp(moduleId);
             pushMessageNotification({
                 type: "success",
-                message: "módulo deletado com sucesso",
+                message: "Módulo deletado com sucesso",
                 duration: 3000,
             });
 
@@ -166,7 +166,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao deletar o módulo",
+                message: "Erro ao deletar o módulo",
                 duration: 3000,
             });
 
@@ -182,7 +182,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "conteúdo criado com sucesso",
+                    message: "Conteúdo criado com sucesso",
                     duration: 3000,
                 });
 
@@ -193,7 +193,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao criar o conteúdo",
+                message: "Erro ao criar o conteúdo",
                 duration: 3000,
             });
 
@@ -232,7 +232,7 @@ export const AdminService = () => {
             await adminHttp.deleteContentHttp(videoId);
             pushMessageNotification({
                 type: "success",
-                message: "conteúdo deletado com sucesso",
+                message: "Conteúdo deletado com sucesso",
                 duration: 3000,
             });
 
@@ -240,7 +240,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao deletar o conteúdo",
+                message: "Erro ao deletar o conteúdo",
                 duration: 3000,
             });
 
