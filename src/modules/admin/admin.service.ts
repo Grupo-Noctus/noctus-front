@@ -11,7 +11,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao buscar o curso",
+                message: "Erro ao buscar o curso",
                 duration: 3000,
             });
 
@@ -27,7 +27,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "curso criado com sucesso",
+                    message: "Curso criado com sucesso",
                     duration: 3000,
                 });
 
@@ -38,7 +38,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao criar o curso",
+                message: "Erro ao criar o curso",
                 duration: 3000,
             });
 
@@ -54,7 +54,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "curso atualizado com sucesso",
+                    message: "Curso atualizado com sucesso",
                     duration: 3000,
                 });
             }
@@ -63,7 +63,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao atualizar o curso",
+                message: "Erro ao atualizar o curso",
                 duration: 3000,
             });
 
@@ -75,10 +75,9 @@ export const AdminService = () => {
     const deleteCourseService = async (id: number): Promise<boolean | null> => {
         try {
             await adminHttp.deleteCourseHttp(id);
-            debugger;
             pushMessageNotification({
                 type: "success",
-                message: "curso deletado com sucesso",
+                message: "Curso deletado com sucesso",
                 duration: 3000,
             });
 
@@ -86,7 +85,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao deletar o curso",
+                message: "Erro ao deletar o curso",
                 duration: 3000,
             });
 
