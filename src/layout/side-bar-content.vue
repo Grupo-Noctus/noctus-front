@@ -7,7 +7,7 @@
                     @click.stop="drawer = !drawer"
                 ></v-app-bar-nav-icon>
 
-                <v-avatar size="70" style="margin-right: 0px">
+                <v-avatar size="50" style="margin-right: 0px">
                     <v-img src="src/assets/matera-logo.png" alt="Logo Matera" />
                 </v-avatar>
                 <v-toolbar-title>Instituto Matera</v-toolbar-title>
@@ -25,7 +25,7 @@
                 <div class="w-100 h-100 d-flex flex-column justify-space-between">
                     <v-list :lines="false" density="compact" nav slim>
                         <side-bar-item
-                            v-for="(item, i) in items"
+                            v-for="(item, i) in filteredItems"
                             :key="i"
                             :text="item.text"
                             :icon="item.icon"
@@ -49,7 +49,7 @@
     </v-card>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useIndexStore } from "@/stores/index.store";
 import SideBarItem from "@/components/side-bar/side-bar-item.vue";
 import UserListItem from "@/components/side-bar/user-list-item.vue";
@@ -67,8 +67,20 @@ const toggleTheme = () => {
     indexStore.changeTheme();
 };
 
+const filteredItems = computed(() => {
+    if (authStore.user.role === "ADMIN") {
+        return items;
+    }
+    const filtered = items.filter((e) => {
+        return e.requireAdminAccess === false;
+    });
+
+    return filtered;
+});
+
 const items = [
-    { text: "estudante", icon: "mdi-account", navigateTo: "Student" },
-    { text: "curso", icon: "mdi-bookshelf", navigateTo: "Course" },
+    { text: "estudante", icon: "mdi-school", navigateTo: "Student", requireAdminAccess: false },
+    { text: "curso", icon: "mdi-bookshelf", navigateTo: "Course", requireAdminAccess: false },
+    { text: "admin", icon: "mdi-crown", navigateTo: "Admin", requireAdminAccess: true },
 ];
 </script>

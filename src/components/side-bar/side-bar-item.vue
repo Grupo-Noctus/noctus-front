@@ -1,6 +1,6 @@
 <template>
     <div @click="navigateToMainContent(navigaTo)">
-        <v-list-item :value="value" color="primary">
+        <v-list-item :value="value" color="primary" class="mb-2">
             <template v-slot:prepend>
                 <v-icon :icon="icon" />
             </template>

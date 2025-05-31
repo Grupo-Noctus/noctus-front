@@ -11,6 +11,10 @@
                 <course-tab :click-and-enter-mode="false" />
             </v-sheet>
         </v-col>
+
+        <div>
+            <course-chat-vue></course-chat-vue>
+        </div>
     </v-row>
 </template>
 
@@ -22,6 +26,7 @@ import { useIndexStore } from "@/stores/index.store";
 
 import CoursePlayerVideo from "../components/course-player-video.vue";
 import CourseTab from "../components/course-tab.vue";
+import courseChatVue from "../../../components/chat/course-chat.vue";
 
 const indexStore = useIndexStore();
 

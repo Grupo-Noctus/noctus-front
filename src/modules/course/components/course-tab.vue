@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100%; overflow-y: auto" class="overflow-y">
+    <div style="height: 100%; overflow-y: auto" class="overflow-y messages-container">
         <v-tabs v-model="selectedTab" grow :slider-color="sliderColor" class="tabs-header">
             <v-tab
                 v-for="courseTab in listCourseTab.title"
