@@ -61,7 +61,7 @@ const authStore = useAuthStore();
 const drawer = ref(false);
 const userEmail = ref(authStore.user.email || "E-mail inválido");
 const userName = ref(authStore.user.username || "desconhecido");
-const userImage = ref(authStore.user.image || "https://cdn.vuetifyjs.com/images/john.png");
+const userImage = ref(authStore.user.image || "src/assets/logo-matera.png");
 
 const toggleTheme = () => {
     indexStore.changeTheme();
