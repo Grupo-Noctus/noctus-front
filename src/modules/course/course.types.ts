@@ -32,9 +32,9 @@ export type TContentExam = {
 
 export type TVskipContent = {
     moduleId: number;
-    contentOrder: number;
-    nextModuleOrder: number | null;
-    nextContentOrder: number | null;
-    prevModuleOrder: number | null;
-    prevContentOrder: number | null;
+    contentId: number;
+    nextModuleId: number | null;
+    nextContentId: number | null;
+    prevModuleId: number | null;
+    prevContentId: number | null;
 };

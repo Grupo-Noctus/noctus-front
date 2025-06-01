@@ -78,11 +78,9 @@
 import { ref, computed, onBeforeMount } from "vue";
 import { formatSecondsToHMS } from "@/utils/DateUtils";
 import { useIndexStore } from "@/stores/index.store";
-import { useCourseStore } from "../course.store";
 import type { TContentModule } from "../course.types";
 import { useCourseSecondStore } from "../course-second.store";
 
-const courseStore = useCourseStore();
 const indexStore = useIndexStore();
 
 const courseSecondStore = useCourseSecondStore();

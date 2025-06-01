@@ -151,7 +151,6 @@ const selectedContent = ref<TContentVideoModule | null>(null);
 const isDeleteDialogOpen = ref(false);
 const moduleToDelete = ref<TContentModule | null>(null);
 const contentToDelete = ref<TContentVideoModule | null>(null);
-const isLoading = ref(false);
 
 const contentButtons = ref([
     {

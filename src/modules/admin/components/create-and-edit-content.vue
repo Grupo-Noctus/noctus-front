@@ -97,7 +97,7 @@ watch(
     { immediate: true },
 );
 
-const MAX_VIDEO_SIZE = 8 * 1024 * 1024; // 8MB em bytes
+const MAX_VIDEO_SIZE = 30 * 1024 * 1024; // 30MB em bytes
 
 const contentCreateRules = yup.object({
     name: yup.string().required("Nome é obrigatório"),
@@ -111,7 +111,7 @@ const contentCreateRules = yup.object({
             if (isEditMode.value) return true;
             return value !== null && value !== undefined;
         })
-        .test("fileSize", "O arquivo deve ter no máximo 8MB", (value) => {
+        .test("fileSize", "O arquivo deve ter no máximo 30MB", (value) => {
             if (!value || isEditMode.value) return true;
 
             let file: File | null = null;

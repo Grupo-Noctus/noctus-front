@@ -21,15 +21,15 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
 import { vuetify } from "@/plugins/vuetify";
+import SecondPlayer from "../components/second-player.vue";
+import CoursePlayerVideo from "../components/course-player-video.vue";
 
 import { useIndexStore } from "@/stores/index.store";
 
-import CoursePlayerVideo from "../components/course-player-video.vue";
 import CourseTab from "../components/course-tab.vue";
 import courseChatVue from "../../../components/chat/course-chat.vue";
 import { useRoute } from "vue-router";
 import { CourseService } from "../course.service";
-import { TContentVideoModule } from "../course.types";
 
 const route = useRoute();
 const indexStore = useIndexStore();

@@ -30,21 +30,8 @@ export const CourseService = () => {
         }
     };
 
-    const getStreamingVideoUrlService = async (idVideo: number) => {
-        try {
-            const data = await courseHttp.getStreamingVideoUrlHttp(idVideo);
-            return data;
-        } catch (error) {
-            pushMessageNotification({
-                type: "error",
-                title: "Erro!",
-                message: "Não foi possível obter o link do vídeo :(!",
-            });
-        }
-    };
     return {
         getEnrollmentCoursesService,
         getCourseByEnrollmentService,
-        getStreamingVideoUrlService,
     };
 };
