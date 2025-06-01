@@ -1,10 +1,6 @@
 <template>
-    <div
-        v-if="loadingExamCourse"
-        min-height="40"
-        class="font-weight-medium d-flex justify-space-between align-center"
-        style="height: 50px; width: 100%"
-    >
+    <div v-if="loadingExamCourse" min-height="40" class="font-weight-medium d-flex justify-space-between align-center"
+        style="height: 50px; width: 100%">
         <v-skeleton-loader type="heading" style="width: 15%"></v-skeleton-loader>
         <v-skeleton-loader type="heading" style="width: 60%"></v-skeleton-loader>
         <v-skeleton-loader type="heading" style="width: 30%"></v-skeleton-loader>
@@ -12,46 +8,21 @@
     <div v-else-if="!eachExamTabCourse.length" class="text-center text-weight-bold pa-1 py-3">
         Erro ao buscar tarefas do curso
     </div>
-    <v-card
-        v-for="examTabCourse in eachExamTabCourse"
-        v-else
-        :key="examTabCourse.id"
-        class="rounded-0"
-        @click="enterExam(1)"
-    >
+    <v-card v-for="examTabCourse in eachExamTabCourse" v-else :key="examTabCourse.id" class="rounded-0"
+        @click="enterExam" :disabled="true">
         <v-divider v-if="examTabCourse.id > 1"></v-divider>
         <div class="content-course justify-space-between align-center">
             <div>
-                <v-btn
-                    v-if="examTabCourse.checked"
-                    icon="mdi mdi-checkbox-multiple-marked-circle"
-                    density="comfortable"
-                    size="small"
-                    variant="tonal"
-                    :color="iconContentColor"
-                    class="pa-1 rounded-lg"
-                ></v-btn>
-                <v-btn
-                    v-else
-                    icon="mdi mdi-checkbox-multiple-blank-circle-outline"
-                    density="comfortable"
-                    size="small"
-                    variant="tonal"
-                    :color="iconContentColor"
-                    class="pa-1 rounded-lg"
-                ></v-btn>
+                <v-btn v-if="examTabCourse.checked" icon="mdi mdi-checkbox-multiple-marked-circle" density="comfortable"
+                    size="small" variant="tonal" :color="iconContentColor" class="pa-1 rounded-lg"></v-btn>
+                <v-btn v-else icon="mdi mdi-checkbox-multiple-blank-circle-outline" density="comfortable" size="small"
+                    variant="tonal" :color="iconContentColor" class="pa-1 rounded-lg"></v-btn>
             </div>
             <div class="ml-4 mt-1">
                 <div class="text-capitalize">Avaliação: {{ examTabCourse.name }}</div>
             </div>
             <div>
-                <v-chip
-                    variant="tonal"
-                    color="primary"
-                    style="width: fit-content"
-                    size="small"
-                    density="compact"
-                >
+                <v-chip variant="tonal" color="primary" style="width: fit-content" size="small" density="compact">
                     <template #append>
                         <div>{{ examTabCourse.questionCount }}</div>
                     </template>
@@ -64,9 +35,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useCourseStore } from "../course.store";
+import { useCourseStore } from "../../auth/course.store";
 import { useIndexStore } from "@/stores/index.store";
+import router from "@/plugins/router/router";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const indexStore = useIndexStore();
 const courseStore = useCourseStore();
 
@@ -88,7 +62,9 @@ onMounted(async () => {
     loadingExamCourse.value = false;
 });
 
-const enterExam = (idCourse: number) => {
+const enterExam = () => {
+    const idCourse = route.params.id
+    router.push({ name: "ActivityInitial", params: { courseId: String(idCourse) } })
     if (props.clickAndEnterMode) {
         return;
     } else {

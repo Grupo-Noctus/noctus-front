@@ -7,6 +7,7 @@ import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
 import { CourseRoutes } from "@/modules/course/course.routes";
 import { authMiddleware } from "@/modules/auth/auth.middleware";
+import { ActivityRoutes } from "@/modules/activity/activity.routes";
 
 const routes: RouteRecordRaw[] = [
     {
@@ -20,6 +21,7 @@ const routes: RouteRecordRaw[] = [
                 component: Student,
             },
             ...CourseRoutes,
+            ...ActivityRoutes,
         ],
     },
     {
