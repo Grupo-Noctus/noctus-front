@@ -9,25 +9,48 @@
         <div v-else-if="!eachCourseTabContent.length" class="text-weight-bold pa-1 py-3">
             Erro ao buscar módulos do curso
         </div>
-        <v-expansion-panel v-for="courseTabContent in eachCourseTabContent" v-else :key="courseTabContent.order"
-            class="pa-0 rounded-0" static>
+        <v-expansion-panel
+            v-for="courseTabContent in eachCourseTabContent"
+            v-else
+            :key="courseTabContent.id"
+            class="pa-0 rounded-0"
+            static
+        >
             <v-expansion-panel-title min-height="40" class="font-weight-medium">
-                Módulo {{ courseTabContent.order + ": " + courseTabContent.name }}
+                Módulo {{ courseTabContent.id + ": " + courseTabContent.name }}
             </v-expansion-panel-title>
             <v-expansion-panel-text class="pa-0">
-                <div v-for="tabContent in courseTabContent.content" :key="tabContent.id">
+                <div v-for="tabContent in courseTabContent.videos" :key="tabContent.id">
                     <v-divider v-if="tabContent.id > 1"></v-divider>
-                    <v-card class="content-course" :variant="selectedContent.order === courseTabContent.order &&
-                            selectedContent.content.order === tabContent.order
-                            ? 'tonal'
-                            : 'text'
-                        " @click="enterCourse(courseTabContent.order, tabContent.order)">
+                    <v-card
+                        class="content-course"
+                        :variant="
+                            selectedContent.id === courseTabContent.id &&
+                            selectedContent.content.id === tabContent.id
+                                ? 'tonal'
+                                : 'text'
+                        "
+                        @click="enterCourse(courseTabContent.id, tabContent.id)"
+                    >
                         <div>
-                            <v-btn v-if="tabContent.checked" icon="mdi mdi-checkbox-multiple-marked-circle"
-                                density="comfortable" size="small" variant="tonal" :color="iconContentColor"
-                                class="pa-1 rounded-lg"></v-btn>
-                            <v-btn v-else icon="mdi mdi-checkbox-multiple-blank-circle-outline" density="comfortable"
-                                size="small" variant="tonal" :color="iconContentColor" class="pa-1 rounded-lg"></v-btn>
+                            <v-btn
+                                v-if="tabContent.viewed"
+                                icon="mdi mdi-checkbox-multiple-marked-circle"
+                                density="comfortable"
+                                size="small"
+                                variant="tonal"
+                                :color="iconContentColor"
+                                class="pa-1 rounded-lg"
+                            ></v-btn>
+                            <v-btn
+                                v-else
+                                icon="mdi mdi-checkbox-multiple-blank-circle-outline"
+                                density="comfortable"
+                                size="small"
+                                variant="tonal"
+                                :color="iconContentColor"
+                                class="pa-1 rounded-lg"
+                            ></v-btn>
                         </div>
                         <div class="d-flex flex-column ml-4 mt-1">
                             <div class="font-weight-bold text-capitalize">
@@ -51,11 +74,12 @@
 import { ref, computed, onBeforeMount } from "vue";
 import { formatSecondsToHMS } from "@/utils/DateUtils";
 import { useIndexStore } from "@/stores/index.store";
-import { useCourseStore } from "../../auth/course.store";
 import type { TContentModule } from "../course.types";
+import { useCourseSecondStore } from "../course-second.store";
 
-const courseStore = useCourseStore();
 const indexStore = useIndexStore();
+
+const courseSecondStore = useCourseSecondStore();
 
 const props = defineProps({
     clickAndEnterMode: {
@@ -65,23 +89,23 @@ const props = defineProps({
     },
 });
 
-const eachCourseTabContent = ref<TContentModule[]>([]);
+const eachCourseTabContent = computed(() => courseSecondStore.modules);
 
-const isLoadingContentTab = computed(() => courseStore.isLoadingContentTab);
+const isLoadingContentTab = computed(() => courseSecondStore.isLoadingModules);
 const iconContentColor = computed(() => (indexStore.isDark ? "#FFFFFF" : "#461CDC"));
-const selectedContent = computed(() => courseStore.selectedContent);
+const selectedContent = computed(() => courseSecondStore.selectedContent);
 
 onBeforeMount(async () => {
-    eachCourseTabContent.value = await courseStore.getContentModule();
-    courseStore.isLoadingContentTab = false;
+    await courseSecondStore.fetchModules();
+    courseSecondStore.setSelectedContent();
 });
 
-const enterCourse = async (moduleOrder: number, contentOrder: number) => {
+const enterCourse = async (moduleId: number, videoId: number) => {
     if (props.clickAndEnterMode) {
         return;
     } else {
-        courseStore.setSelectedContentManual(moduleOrder, contentOrder);
-        await courseStore.getCourseVideoUrl();
+        courseSecondStore.setSelectedContentManual(moduleId, videoId);
+        // await courseSecondStore.fetchModules();
     }
 };
 </script>

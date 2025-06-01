@@ -35,14 +35,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useCourseStore } from "../../auth/course.store";
 import { useIndexStore } from "@/stores/index.store";
-import router from "@/plugins/router/router";
-import { useRoute } from "vue-router";
+import { useCourseSecondStore } from "../course-second.store";
 
 const route = useRoute();
 const indexStore = useIndexStore();
-const courseStore = useCourseStore();
+
+const courseSecondStore = useCourseSecondStore();
 
 const props = defineProps({
     clickAndEnterMode: {
@@ -52,14 +51,13 @@ const props = defineProps({
     },
 });
 
-const loadingExamCourse = ref(true);
-const eachExamTabCourse = ref();
+const loadingExamCourse = computed(() => courseSecondStore.isLoadingExams);
+const eachExamTabCourse = computed(() => courseSecondStore.exams);
 
 const iconContentColor = computed(() => (indexStore.isDark ? "#FFFFFF" : "#461CDC"));
 
 onMounted(async () => {
-    eachExamTabCourse.value = await courseStore.getContentExam();
-    loadingExamCourse.value = false;
+    await courseSecondStore.fetchExams();
 });
 
 const enterExam = () => {

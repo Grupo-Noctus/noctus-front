@@ -16,5 +16,22 @@ export const CourseService = () => {
             });
         }
     };
-    return { getCourseByEnrollmentService };
+
+    const getEnrollmentCoursesService = async () => {
+        try {
+            const data = await courseHttp.getEnrollmentCoursesHttp();
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                title: "Erro!",
+                message: "Nenhum curso em sua matricula encontrado :(!",
+            });
+        }
+    };
+
+    return {
+        getEnrollmentCoursesService,
+        getCourseByEnrollmentService,
+    };
 };
