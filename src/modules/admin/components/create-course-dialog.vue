@@ -57,7 +57,7 @@
                                 v-model="createCourseForm.imageCourse"
                                 accept="image/png, image/jpeg"
                                 label="imagem do curso"
-                                placeholder="Upload your photos"
+                                placeholder="Carregue sua imagem"
                                 prepend-icon="mdi-image-area"
                                 variant="outlined"
                             ></v-file-input>
