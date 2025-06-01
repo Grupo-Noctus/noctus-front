@@ -91,7 +91,7 @@
 
         <confirmation-dialog
             :model-value="isDeleteDialogOpen"
-            :title="`remover curso`"
+            :title="`Remover curso`"
             :item-to-delete="selectedCourse?.name"
             @confirm="handleConfirmDialog"
             @cancel="handleCancelDialog"

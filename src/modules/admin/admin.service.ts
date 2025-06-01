@@ -209,7 +209,7 @@ export const AdminService = () => {
             if (data) {
                 pushMessageNotification({
                     type: "success",
-                    message: "conteúdo atualizado com sucesso",
+                    message: "Conteúdo atualizado com sucesso",
                     duration: 3000,
                 });
             }
@@ -218,7 +218,7 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "erro ao atualizar o conteúdo",
+                message: "Erro ao atualizar o conteúdo",
                 duration: 3000,
             });
 
