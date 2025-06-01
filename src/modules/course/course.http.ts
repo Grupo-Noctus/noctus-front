@@ -10,4 +10,10 @@ export class CourseHttp {
 
         return data;
     }
+
+    async getEnrollmentCoursesHttp() {
+        const { data } = await this.httpClient.get("/enrollment-course/find-many");
+
+        return data;
+    }
 }

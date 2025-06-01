@@ -12,7 +12,7 @@ export class AdminHttp {
     }
 
     async getCoursesHttp(): Promise<TCourses[]> {
-        const { data } = await this.httpAdmin.get("/course/admin/find-many?");
+        const { data } = await this.httpAdmin.get("/course/admin/find-many");
 
         return data.courses as TCourses[];
     }

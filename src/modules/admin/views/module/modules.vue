@@ -40,7 +40,10 @@ import type { TContentModule } from "@/modules/course/course.types";
 import Content from "../../components/content.vue";
 import CreateAndEditModule from "../../components/create-and-edit-module.vue";
 import type { TCreateModuleData } from "../../admin.types";
+import { useAdminStore } from "@/modules/admin/admin.store";
+
 const route = useRoute();
+const adminStore = useAdminStore();
 const adminService = AdminService();
 
 const modules = ref<TContentModule[]>([]);
@@ -73,11 +76,13 @@ onMounted(() => {
 });
 
 const fetchModules = async () => {
+    adminStore.loadingModulesAndContents = true;
     const response = await adminService.getCoursesService();
     const findCourse = response.find((course) => course.id === Number(courseId.value));
     if (findCourse) {
         modules.value = findCourse.modules;
     }
+    adminStore.loadingModulesAndContents = false;
 };
 </script>
 
