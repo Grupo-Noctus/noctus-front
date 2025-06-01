@@ -31,7 +31,13 @@
             class="text-body-2"
             multiple
         >
-            <div v-if="!modules.length" class="text-weight-bold pa-1 py-3">carregando...</div>
+            <div v-if="!modules.length && loading" class="text-weight-bold pa-1 py-3">
+                carregando...
+            </div>
+            <div v-else-if="!modules.length && !loading" class="text-weight-bold pa-1 py-3">
+                Nenhum conteúdo encontrado
+            </div>
+
             <v-expansion-panel
                 v-for="(courseTabContent, index) in modules"
                 v-else
@@ -118,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import { formatSecondsToHMS } from "@/utils/DateUtils";
 import type { TContentModule } from "@/modules/course/course.types";
 import DeleteAndEditMenu from "@/components/menus/delete-and-edit-menu.vue";
@@ -127,12 +133,13 @@ import ConfirmationDialog from "@/components/dialogs/confirmation-dialog.vue";
 import { AdminService } from "../admin.service";
 import CreateAndEditContent from "./create-and-edit-content.vue";
 import type { TContentVideoModule, TCreateContentData } from "../admin.types";
-
+import { useAdminStore } from "../admin.store";
 defineOptions({
     name: "ModuleContent",
 });
 
 const adminService = AdminService();
+const adminStore = useAdminStore();
 
 const emit = defineEmits(["update:modules"]);
 
@@ -151,6 +158,7 @@ const selectedContent = ref<TContentVideoModule | null>(null);
 const isDeleteDialogOpen = ref(false);
 const moduleToDelete = ref<TContentModule | null>(null);
 const contentToDelete = ref<TContentVideoModule | null>(null);
+const loading = computed(() => adminStore.loadingModulesAndContents);
 
 const contentButtons = ref([
     {
