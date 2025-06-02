@@ -5,11 +5,12 @@ import FullPageContent from "@/layout/full-page-content.vue";
 
 import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
+import Material from "@/views/material.vue";
 import { CourseRoutes } from "@/modules/course/course.routes";
 import { authMiddleware } from "@/modules/auth/auth.middleware";
 
 const routes: RouteRecordRaw[] = [
-    {
+     {
         path: "",
         component: SideBarContent,
         redirect: "/student",
@@ -18,6 +19,11 @@ const routes: RouteRecordRaw[] = [
                 path: "student",
                 name: "Student",
                 component: Student,
+            },
+            {
+                path: "material",
+                name: "Material",
+                component: Material,
             },
             ...CourseRoutes,
         ],
