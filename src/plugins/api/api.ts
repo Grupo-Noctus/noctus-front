@@ -24,13 +24,13 @@ api.interceptors.response.use(
         const authStore = useAuthStore();
         if (error.response && error.response.status === 401) {
             authStore.user = {
+                sub: null,
                 name: "",
                 email: "",
                 username: "",
-                phoneNumber: "",
-                acessToken: "",
                 role: "",
-                image: "",
+                image: null,
+                active: null,
             };
             authStore.token = "";
 

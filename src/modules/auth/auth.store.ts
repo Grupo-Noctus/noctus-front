@@ -9,13 +9,13 @@ export const useAuthStore = defineStore("auth", () => {
     const isLogIn = ref<boolean>(false);
 
     const user = ref<TUser>({
+        sub: null,
         name: "",
         email: "",
         username: "",
-        phoneNumber: "",
-        acessToken: "",
         role: "",
-        image: "",
+        image: null,
+        active: null,
     });
     const useAuthService = AuthService();
 
@@ -32,29 +32,26 @@ export const useAuthStore = defineStore("auth", () => {
             token.value = response.access_token;
             localStorage.setItem("token", response.access_token);
             if (response.access_token) {
-                user.value = response.user;
-                localStorage.setItem("user", JSON.stringify(response.user));
+                user.value = response.payload;
+                localStorage.setItem("user", JSON.stringify(response.payload));
                 router.push({ name: "Student" });
             }
             return;
         } catch (error) {
             user.value = {
+                sub: null,
                 name: "",
                 email: "",
                 username: "",
-                phoneNumber: "",
-                acessToken: "",
                 role: "",
-                image: "",
+                image: null,
+                active: null,
             };
             throw error;
         }
     }
     async function refetchCurrentUser() {
         try {
-            if (token.value && user.value) {
-                return;
-            }
             const localStorageUserData = localStorage.getItem("user");
             const localStorageJwtToken = localStorage.getItem("token");
 
@@ -68,15 +65,15 @@ export const useAuthStore = defineStore("auth", () => {
             }
         } catch (error) {
             user.value = {
+                sub: null,
                 name: "",
                 email: "",
                 username: "",
-                phoneNumber: "",
-                acessToken: "",
                 role: "",
-                image: "",
+                image: null,
+                active: null,
             };
-            //token.value = "";
+            token.value = "";
         }
     }
 

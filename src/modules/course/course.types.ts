@@ -3,7 +3,7 @@ export type TContentModule = {
     order: number;
     name: string;
     description: string;
-    content: TContentVideoModule[];
+    videos: TContentVideoModule[];
 };
 
 export type TSelectedContent = {
@@ -19,8 +19,8 @@ export type TContentVideoModule = {
     name: string;
     description: string;
     duration: number;
-    order: number;
-    checked: boolean;
+    idProgressVideo: number | null;
+    viewed: number | null;
 };
 
 export type TContentExam = {
@@ -32,9 +32,9 @@ export type TContentExam = {
 
 export type TVskipContent = {
     moduleId: number;
-    contentOrder: number;
-    nextModuleOrder: number | null;
-    nextContentOrder: number | null;
-    prevModuleOrder: number | null;
-    prevContentOrder: number | null;
+    contentId: number;
+    nextModuleId: number | null;
+    nextContentId: number | null;
+    prevModuleId: number | null;
+    prevContentId: number | null;
 };

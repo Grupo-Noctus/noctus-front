@@ -1,12 +1,11 @@
 import type { RouteRecordRaw } from "vue-router";
-import CoursePlayerVideo from "./components/course-player-video.vue";
-import Courses from "./views/courses.vue";
+import DetailCourse from "./views/detail-course.vue";
 
 export const courseRoutes: RouteRecordRaw[] = [
     {
         path: "courses/:id/detail",
         name: "CourseDetail",
-        component: CoursePlayerVideo,
+        component: DetailCourse,
         props: true,
     },
 ];

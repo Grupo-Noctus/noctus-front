@@ -6,8 +6,10 @@ import FullPageContent from "@/layout/full-page-content.vue";
 import SideBarContent from "@/layout/side-bar-content.vue";
 import Student from "@/views/student.vue";
 import Material from "@/views/material.vue";
-import { CourseRoutes } from "@/modules/course/course.routes";
+import { courseRoutes } from "@/modules/course/couse.routes";
 import { authMiddleware } from "@/modules/auth/auth.middleware";
+import { adminRoutes } from "@/modules/admin/admin.routes";
+import { adminMiddleware } from "@/modules/admin/admin.middleware";
 
 const routes: RouteRecordRaw[] = [
      {
@@ -25,7 +27,8 @@ const routes: RouteRecordRaw[] = [
                 name: "Material",
                 component: Material,
             },
-            ...CourseRoutes,
+            ...courseRoutes,
+            ...adminRoutes,
         ],
     },
     {

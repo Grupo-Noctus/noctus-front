@@ -9,13 +9,9 @@
                 <div class="loader">Carregando vídeo...</div>
             </div>
 
-            <video
-                v-show="!isLoadingContent"
-                ref="playerRef"
-                playsinline
-                controls
-                class="video-element"
-            ></video>
+            <video v-show="!isLoadingContent" ref="videoRef" playsinline class="video-element">
+                Seu navegador não suporta o elemento de vídeo.
+            </video>
 
             <div class="video-navigation" :class="{ 'controls-visible': showControls }">
                 <v-btn
@@ -97,21 +93,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, nextTick, watch } from "vue";
+import { ref, computed, onMounted, nextTick, watch, onUnmounted } from "vue";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
-import { useCourseStore } from "../course.store";
+import { useCourseSecondStore } from "../course-second.store";
 
-const courseStore = useCourseStore();
-const courseVideoUrl = computed(() => courseStore.courseVideoUrl);
-
-const playerRef = ref<HTMLVideoElement | null>(null);
+const courseSecondStore = useCourseSecondStore();
+const videoRef = ref<HTMLVideoElement | null>(null);
 const playerInstance = ref<Plyr | null>(null);
 const showControls = ref(false);
 
-const isLoadingContent = computed(() => courseStore.isLoadingContent);
-const selectedContent = computed(() => courseStore.selectedContent);
-const skipContent = computed(() => courseStore.skipContent);
+const videoUrl = computed(() => courseSecondStore.videoUrl);
+const isLoadingContent = computed(() => courseSecondStore.isLoadingContent);
+const selectedContent = computed(() => courseSecondStore.selectedContent);
+const skipContent = computed(() => courseSecondStore.skipContent);
 
 const currentVideoTitle = computed(
     () => selectedContent.value.content.name || "título indisponível",
@@ -119,17 +114,72 @@ const currentVideoTitle = computed(
 const currentVideoDescription = computed(
     () => selectedContent.value.content.description || "indisponível no momento",
 );
-const hasPreviousVideo = computed(() => skipContent.value.prevContentOrder);
-const hasNextVideo = computed(() => skipContent.value.nextContentOrder);
+const hasPreviousVideo = computed(
+    () => skipContent.value.prevContentId !== null && skipContent.value.prevModuleId !== null,
+);
+const hasNextVideo = computed(
+    () => skipContent.value.nextContentId !== null && skipContent.value.nextModuleId !== null,
+);
 
-const loadVideoByIndex = async (mode: "next" | "prev") => {
-    if (!mode) return;
-    await courseStore.getCourseVideoUrl(mode);
+const initPlayer = () => {
+    if (videoRef.value && !playerInstance.value) {
+        playerInstance.value = new Plyr(videoRef.value, {
+            controls: [
+                "play-large",
+                "play",
+                "progress",
+                "current-time",
+                "mute",
+                "volume",
+                "settings",
+                "pip",
+                "airplay",
+                "fullscreen",
+            ],
+            ratio: "16:9",
+            seekTime: 10,
+            keyboard: { focused: true, global: true },
+        });
+
+        playerInstance.value.on("ready", () => {
+            courseSecondStore.setIsLoadingContent(false);
+        });
+
+        playerInstance.value.on("error", (error) => {
+            console.error("Plyr error:", error);
+            courseSecondStore.setIsLoadingContent(false);
+        });
+    } else if (videoRef.value && playerInstance.value) {
+        courseSecondStore.setIsLoadingContent(false);
+    }
 };
+
+watch(videoUrl, async (newUrl) => {
+    if (newUrl && videoRef.value) {
+        courseSecondStore.setIsLoadingContent(true);
+        try {
+            videoRef.value.src = newUrl;
+            await initPlayer();
+        } catch (error) {
+            console.error("Error loading video:", error);
+            courseSecondStore.setIsLoadingContent(false);
+        }
+    }
+});
+
+watch(selectedContent, async (newContent, oldContent) => {
+    if (newContent.content.id !== oldContent.content.id) {
+        try {
+            await courseSecondStore.getUrlVideo(newContent.content.id);
+        } catch (error) {
+            console.error("Error loading content:", error);
+            courseSecondStore.setIsLoadingContent(false);
+        }
+    }
+});
 
 const playPreviousVideo = () => {
     if (!hasPreviousVideo.value) return;
-
     loadVideoByIndex("prev");
 };
 
@@ -138,38 +188,32 @@ const playNextVideo = () => {
     loadVideoByIndex("next");
 };
 
+const loadVideoByIndex = async (mode: "next" | "prev") => {
+    if (!mode) return;
+    try {
+        await courseSecondStore.getCourseVideoUrl(mode);
+    } catch (error) {
+        console.error("Error loading video by index:", error);
+        courseSecondStore.setIsLoadingContent(false);
+    }
+};
+
 onMounted(async () => {
     await nextTick();
-    courseStore.setSelectedContent();
-    await courseStore.getCourseVideoUrl();
+    if (selectedContent.value.content.id) {
+        try {
+            await courseSecondStore.getUrlVideo(selectedContent.value.content.id);
+        } catch (error) {
+            console.error("Error on mount:", error);
+            courseSecondStore.setIsLoadingContent(false);
+        }
+    }
 });
 
-watch(courseVideoUrl, async (newUrl) => {
-    if (newUrl && playerRef.value) {
-        if (!playerInstance.value) {
-            playerInstance.value = new Plyr(playerRef.value, {
-                ratio: "16:9",
-                fullscreen: {
-                    enabled: true,
-                    fallback: true,
-                    iosNative: true,
-                },
-            });
-        }
-
-        playerInstance.value.source = {
-            type: "video",
-            sources: [
-                {
-                    src: newUrl,
-                    type: "video/mp4",
-                },
-            ],
-        };
-
-        playerInstance.value.once("ready", () => {
-            courseStore.setIsLoadingContent(false);
-        });
+onUnmounted(() => {
+    courseSecondStore.cleanupVideoResources();
+    if (playerInstance.value) {
+        playerInstance.value.destroy();
     }
 });
 </script>
@@ -193,6 +237,39 @@ watch(courseVideoUrl, async (newUrl) => {
     width: 100%;
     height: 100%;
     display: block;
+    background: #000;
+}
+
+video::-webkit-media-controls {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+video::-webkit-media-controls-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 10px;
+}
+
+video::-webkit-media-controls-play-button {
+    background-color: transparent;
+    border: none;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+video::-webkit-media-controls-timeline {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin: 0 10px;
+}
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display {
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
 }
 
 .video-placeholder {

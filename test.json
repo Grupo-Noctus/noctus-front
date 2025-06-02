@@ -1,0 +1,8 @@
+  {
+        id: 2,
+        mensagem: "Sim! Tive que usar recursão. Vocês tentaram essa abordagem?",
+        horario: "2025-05-22T13:47:00Z",
+        nome: "Maria Santos",
+        isCurrentUser: false,
+        admin: false,
+    },
