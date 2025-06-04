@@ -1,5 +1,7 @@
 import type { RouteRecordRaw } from "vue-router";
 import DetailCourse from "./views/detail-course.vue";
+import materialVue from "../material/views/material.vue";
+
 
 export const courseRoutes: RouteRecordRaw[] = [
     {
@@ -8,4 +10,10 @@ export const courseRoutes: RouteRecordRaw[] = [
         component: DetailCourse,
         props: true,
     },
+    {
+        path: "courses/:id/material",
+        name: "Material",
+        component: materialVue,
+        props: true,
+    }
 ];
