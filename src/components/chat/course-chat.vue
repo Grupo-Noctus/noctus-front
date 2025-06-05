@@ -392,7 +392,7 @@ onBeforeUnmount(() => {
 .chat-container-base-nonfixed.chat-container-open {
     width: 100%;
     height: 100%;
-    max-height: calc(85vh + 5px);
+    max-height: 75vh;
 }
 
 .chat-header-container {

@@ -34,7 +34,7 @@ export const state = ref<TChatState>({
     error: null,
 });
 
-const URL = "http://localhost:3000";
+const URL = import.meta.env.VITE_WEBSOCKET_URL;
 
 export const socket: Socket = io(URL, {
     query: {
