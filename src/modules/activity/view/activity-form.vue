@@ -29,7 +29,7 @@
           <v-icon icon="mdi-chevron-right"></v-icon>
         </v-btn>
         <div>
-          <ActivityAlert v-if="finalizar" v-model="dialog" @response="handleResponse" />
+          <ActivityAlert v-if="finish" v-model="dialog" :dialog="false" @response="handleResponse" />
         </div>
 
       </div>
@@ -40,17 +40,19 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import router from "@/plugins/router/router";
-import { programmingEvaluation } from './data/activity-form-data'
-import ActivityAlert from '@/modules/activity/activity-alert.vue'
-import { userEvaluationStore } from './activity.store';
+import { programmingEvaluation } from '../data/activity-form-data'
+import ActivityAlert from '@/modules/activity/dialog/activity-alert.vue'
+import { userEvaluationStore } from '../activity.store';
 import { pushMessageNotification } from "@/utils/notivue-base";
 pushMessageNotification;
-
 
 const power = ref(10)
 const idQuestion = ref(0);
 const dialog = ref(false)
 const selectedAnswer = ref<number | null>(null);
+const showPreviousQuestion = computed(() => idQuestion.value > 0)
+const showNextQuestion = computed(() => idQuestion.value < programmingEvaluation.exam.questions.length - 1)
+const finish = computed(() => idQuestion.value === programmingEvaluation.exam.questions.length - 1)
 let userAnswers = ref<(number | null)[]>([]);
 userAnswers.value = Array(programmingEvaluation.exam.questions.length).fill(null)
 let correctAnswers = ref<typeof programmingEvaluation.exam.questions>([]);
@@ -73,14 +75,6 @@ function updateProgress() {
   power.value = ((idQuestion.value + 1) / total) * 100;
 }
 
-function nextQuestion() {
-  if (idQuestion.value < programmingEvaluation.exam.questions.length - 1) {
-    idQuestion.value++;
-    selectedAnswer.value = userAnswers.value[idQuestion.value];
-  }
-  updateProgress()
-}
-
 function previousQuestion() {
   if (idQuestion.value > 0) {
     idQuestion.value--;
@@ -89,9 +83,13 @@ function previousQuestion() {
   updateProgress()
 }
 
-const showPreviousQuestion = computed(() => idQuestion.value > 0)
-const showNextQuestion = computed(() => idQuestion.value < programmingEvaluation.exam.questions.length - 1)
-const finalizar = computed(() => idQuestion.value === programmingEvaluation.exam.questions.length - 1)
+function nextQuestion() {
+  if (idQuestion.value < programmingEvaluation.exam.questions.length - 1) {
+    idQuestion.value++;
+    selectedAnswer.value = userAnswers.value[idQuestion.value];
+  }
+  updateProgress()
+}
 
 function handleResponse(value: 'sim' | 'nao') {
 

@@ -9,7 +9,7 @@
         Erro ao buscar tarefas do curso
     </div>
     <v-card v-for="examTabCourse in eachExamTabCourse" v-else :key="examTabCourse.id" class="rounded-0"
-        @click="enterExam" :disabled="true">
+        :disabled="!disabledBtnExam" @click="enterExam">
         <v-divider v-if="examTabCourse.id > 1"></v-divider>
         <div class="content-course justify-space-between align-center">
             <div>
@@ -37,11 +37,16 @@
 import { computed, onMounted, ref } from "vue";
 import { useIndexStore } from "@/stores/index.store";
 import { useCourseSecondStore } from "../course-second.store";
+import router from "@/plugins/router/router";
+import { useRoute } from "vue-router";
+import { userEvaluationStore } from "@/modules/activity/activity.store";
 
 const route = useRoute();
 const indexStore = useIndexStore();
 
 const courseSecondStore = useCourseSecondStore();
+const evaluationStore = userEvaluationStore();
+const correctAnswers = evaluationStore.correctAnswers
 
 const props = defineProps({
     clickAndEnterMode: {
@@ -50,6 +55,7 @@ const props = defineProps({
         default: false,
     },
 });
+
 
 const loadingExamCourse = computed(() => courseSecondStore.isLoadingExams);
 const eachExamTabCourse = computed(() => courseSecondStore.exams);
@@ -68,7 +74,11 @@ const enterExam = () => {
     } else {
         return;
     }
+
 };
+
+const disabledBtnExam = computed(() => correctAnswers.valueOf !== null)
+
 </script>
 
 <style scoped>

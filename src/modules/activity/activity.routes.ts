@@ -1,7 +1,8 @@
 import type { RouteRecordRaw } from "vue-router";
-import ActivityInitial from "@/modules/activity/activity-initial.vue";
-import ActivityForm from "@/modules/activity/activity-form.vue";
-import ActivityCompleted from "./activity-completed.vue";
+import ActivityInitial from "./view/activity-initial.vue";
+import ActivityForm from "./view/activity-form.vue";
+import ActivityCompleted from "./view/activity-completed.vue";
+
 
 export const ActivityRoutes: RouteRecordRaw[] = [
     {

@@ -31,14 +31,11 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useSecureNavigation } from './composables/routes.composables'
-import { programmingEvaluation } from './data/activity-form-data'
+import { programmingEvaluation } from '../data/activity-form-data'
 
 const router = useRouter()
-const preventBack = useSecureNavigation;
 
 const accessActivity = () => {
-  preventBack();
   router.replace({ name: "ActivityForm" })
 }
 

@@ -52,8 +52,8 @@
 <script setup lang="ts">
 import router from "@/plugins/router/router";
 import { useRoute } from "vue-router";
-import { programmingEvaluation } from './data/activity-form-data'
-import { userEvaluationStore } from './activity.store';
+import { programmingEvaluation } from '../data/activity-form-data'
+import { userEvaluationStore } from '../activity.store';
 
 
 const route = useRoute();

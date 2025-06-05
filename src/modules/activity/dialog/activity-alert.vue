@@ -27,15 +27,23 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue'
+import { defineProps, defineEmits, ref, watch } from 'vue'
 
 const props = defineProps<{
   dialog: boolean;
 }>()
 
-const emit = defineEmits(['response']);
+const emit = defineEmits(['update:dialog', 'response']);
 
 const internalDialog = ref(props.dialog);
+
+watch(() => props.dialog, (newVal) => {
+  internalDialog.value = newVal
+})
+
+watch(internalDialog, (newVal) => {
+  emit('update:dialog', newVal)
+})
 
 function handleConfirm() {
   emit('response', 'sim')
