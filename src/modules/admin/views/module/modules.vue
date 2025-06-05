@@ -21,13 +21,22 @@
         </div>
     </v-card>
     <v-divider class="mb-4"></v-divider>
-    <v-card
-        class="d-flex justify-center border-sm"
-        elevation="0"
-        style="width: 80%; margin: 0 auto"
-    >
-        <content :modules="modules" @update:modules="fetchModules" />
-    </v-card>
+    <v-row class="h-100">
+        <v-col cols="12" md="8">
+            <v-card
+                class="d-flex justify-center border-sm"
+                elevation="0"
+                style="width: 80%; margin: 0 auto"
+            >
+                <content :modules="modules" @update:modules="fetchModules" />
+            </v-card>
+        </v-col>
+        <v-col cols="12" md="4">
+            <div class="h-100">
+                <course-chat :non-fixed="true" :course-id="courseId"></course-chat>
+            </div>
+        </v-col>
+    </v-row>
 </template>
 
 <script setup lang="ts">
@@ -41,6 +50,7 @@ import Content from "../../components/content.vue";
 import CreateAndEditModule from "../../components/create-and-edit-module.vue";
 import type { TCreateModuleData } from "../../admin.types";
 import { useAdminStore } from "@/modules/admin/admin.store";
+import CourseChat from "@/components/chat/course-chat.vue";
 
 const route = useRoute();
 const adminStore = useAdminStore();

@@ -1,10 +1,11 @@
 <template>
     <v-card
-        :class="['chat-container-base', chatCollapsedBorder, chatContainerClass]"
+        :class="[chatContainerBaseClass, chatCollapsedBorder, chatContainerClass]"
         :loading="isLoadingOpenChat"
         elevation="0"
     >
         <v-card
+            v-if="!props.nonFixed"
             class="chat-header-container rounded-0"
             elevation="0"
             variant="elevated"
@@ -37,13 +38,23 @@
             ></v-btn>
         </v-card>
 
-        <div v-if="isChatOpen" class="chat-content">
+        <div v-if="isChatOpen || props.nonFixed" class="chat-content">
             <div
                 ref="messagesContainer"
                 class="messages-container flex-grow-1"
                 @scroll="handleScroll"
             >
-                <div class="pa-3">
+                <div v-if="messages.length === 0" class="empty-chat pa-4">
+                    <v-icon
+                        icon="mdi-message-text-outline"
+                        size="64"
+                        color="grey-lighten-1"
+                    ></v-icon>
+                    <div class="text-grey text-body-1 mt-4">
+                        Nenhuma mensagem ainda. Seja o primeiro a enviar uma mensagem!
+                    </div>
+                </div>
+                <div v-else class="pa-3">
                     <div
                         v-for="msg in messages"
                         :key="msg.id"
@@ -164,7 +175,18 @@ import { useIndexStore } from "@/stores/index.store";
 import { useAuthStore } from "@/modules/auth/auth.store";
 import { formatRelative } from "date-fns";
 import { pt } from "date-fns/locale";
-import { computed, ref, nextTick, watch, onBeforeUnmount } from "vue";
+import { computed, ref, nextTick, watch, onBeforeUnmount, onMounted } from "vue";
+
+const props = defineProps({
+    nonFixed: {
+        type: Boolean,
+        required: true,
+    },
+    courseId: {
+        type: [String, Number],
+        required: true,
+    },
+});
 
 const indexStore = useIndexStore();
 const authStore = useAuthStore();
@@ -197,7 +219,14 @@ const chatCollapsedBorder = computed(() => {
 });
 
 const chatContainerClass = computed(() => {
+    if (props.nonFixed) {
+        return "chat-container-open";
+    }
     return isChatOpen.value ? "chat-container-open" : "chat-container-collapsed";
+});
+
+const chatContainerBaseClass = computed(() => {
+    return props.nonFixed ? "chat-container-base-nonfixed" : "chat-container-base";
 });
 
 const handleToggleChat = () => {
@@ -213,11 +242,13 @@ const openChat = async () => {
         isLoadingOpenChat.value = true;
 
         await joinCourse({
-            courseId: "1",
+            courseId: props.courseId.toString(),
             userName: currentUser.value.username,
         });
 
-        isChatOpen.value = true;
+        if (!props.nonFixed) {
+            isChatOpen.value = true;
+        }
 
         await nextTick();
         scrollToBottom(false);
@@ -231,11 +262,13 @@ const openChat = async () => {
 const closeChat = () => {
     try {
         leaveCourse({
-            courseId: "1",
+            courseId: props.courseId.toString(),
             userName: currentUser.value.username,
         });
 
-        isChatOpen.value = false;
+        if (!props.nonFixed) {
+            isChatOpen.value = false;
+        }
     } catch (error) {
         console.error("Error closing chat:", error);
     }
@@ -290,7 +323,7 @@ const sendMessage = async () => {
         try {
             await emitMessage({
                 message: messageInput.value,
-                courseId: "1",
+                courseId: props.courseId.toString(),
                 userName: currentUser.value.username,
                 userId: currentUser.value.sub?.toString() || "",
                 admin: isAdmin.value,
@@ -314,6 +347,12 @@ watch(
     },
 );
 
+onMounted(() => {
+    if (props.nonFixed) {
+        openChat();
+    }
+});
+
 onBeforeUnmount(() => {
     if (isChatOpen.value) {
         closeChat();
@@ -330,6 +369,13 @@ onBeforeUnmount(() => {
     transition: all 0.3s ease-in-out;
 }
 
+.chat-container-base-nonfixed {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .chat-container-collapsed {
     width: 25%;
     min-width: 200px;
@@ -341,6 +387,12 @@ onBeforeUnmount(() => {
 .chat-container-open {
     width: 25%;
     height: 60%;
+}
+
+.chat-container-base-nonfixed.chat-container-open {
+    width: 100%;
+    height: 100%;
+    max-height: calc(85vh + 5px);
 }
 
 .chat-header-container {
@@ -357,6 +409,7 @@ onBeforeUnmount(() => {
     opacity: 0;
     animation: fadeIn 0.3s ease-in-out 0.1s forwards;
     height: calc(100% - 52px);
+    flex: 1;
 }
 
 .user-name-message {
@@ -462,6 +515,16 @@ onBeforeUnmount(() => {
         height: 60vh;
     }
 
+    .chat-container-base-nonfixed {
+        width: 100%;
+    }
+
+    .chat-container-base-nonfixed.chat-container-open {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+    }
+
     .message-container {
         max-width: 85%;
     }
@@ -482,5 +545,15 @@ onBeforeUnmount(() => {
 
 .messages-container::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
+}
+
+.empty-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    opacity: 0.8;
 }
 </style>
