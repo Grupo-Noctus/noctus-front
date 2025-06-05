@@ -33,7 +33,7 @@
                 variant="text"
                 icon="mdi-unfold-more-horizontal"
                 :loading="isLoadingOpenChat"
-                @click="openChat"
+                @click="handleToggleChat"
             ></v-btn>
         </v-card>
 
@@ -49,12 +49,19 @@
                         :key="msg.id"
                         :class="[
                             'message-wrapper',
-                            msg.id === currentUserId ? 'message-right' : 'message-left',
-                            msg.admin && msg.id !== currentUserId ? 'admin-message-wrapper' : '',
+                            msg.userName === currentUser.username
+                                ? 'message-right'
+                                : 'message-left',
+                            msg.admin && msg.userName !== currentUser.username
+                                ? 'admin-message-wrapper'
+                                : '',
                         ]"
                     >
                         <div class="message-container">
-                            <div v-if="msg.id !== currentUserId" class="d-flex align-center mb-1">
+                            <div
+                                v-if="msg.userName !== currentUser.username"
+                                class="d-flex align-center mb-1"
+                            >
                                 <v-icon
                                     :icon="msg.admin ? 'mdi-crown' : 'mdi-account'"
                                     size="10"
@@ -71,15 +78,19 @@
 
                             <div
                                 class="d-flex align-end"
-                                :class="msg.id === currentUserId ? 'justify-end' : 'justify-start'"
+                                :class="
+                                    msg.userName === currentUser.username
+                                        ? 'justify-end'
+                                        : 'justify-start'
+                                "
                             >
                                 <v-card
                                     class="message-bubble pa-2"
                                     :class="[
-                                        msg.id === currentUserId
+                                        msg.userName === currentUser.username
                                             ? 'current-user-message'
                                             : 'other-user-message',
-                                        msg.admin && msg.id === currentUserId
+                                        msg.admin && msg.userName === currentUser.username
                                             ? 'admin-message'
                                             : '',
                                     ]"
@@ -95,12 +106,14 @@
                             <div
                                 :class="[
                                     'text-caption text-grey mt-1',
-                                    msg.id === currentUserId ? 'text-right' : 'text-left',
+                                    msg.userName === currentUser.username
+                                        ? 'text-right'
+                                        : 'text-left',
                                 ]"
                             >
                                 <div class="d-flex justify-end">
                                     {{ formatMessageSendDate(msg.time) }}
-                                    <div v-if="msg.id === currentUserId && msg.admin">
+                                    <div v-if="msg.userName === currentUser.username && msg.admin">
                                         <v-icon
                                             icon="mdi-crown"
                                             size="10"
@@ -146,20 +159,25 @@
 </template>
 
 <script setup lang="ts">
+import { state, joinCourse, sendMessage as emitMessage, leaveCourse } from "@/socket";
 import { useIndexStore } from "@/stores/index.store";
+import { useAuthStore } from "@/modules/auth/auth.store";
 import { formatRelative } from "date-fns";
 import { pt } from "date-fns/locale";
-import { computed, ref, nextTick, watch } from "vue";
+import { computed, ref, nextTick, watch, onBeforeUnmount } from "vue";
 
 const indexStore = useIndexStore();
+const authStore = useAuthStore();
 
 const isChatOpen = ref(false);
 const isLoadingOpenChat = ref(false);
 const messageInput = ref("");
-const currentUserId = ref(1);
 const messagesContainer = ref<HTMLElement | null>(null);
 const isUserScrolling = ref(false);
 
+const currentUser = computed(() => authStore.user);
+const isAdmin = computed(() => currentUser.value.role === "ADMIN");
+const messages = computed(() => state.value.messages);
 const isDarkTheme = computed(() => indexStore.isDark);
 
 const chatHeaderColor = computed(() => {
@@ -182,77 +200,46 @@ const chatContainerClass = computed(() => {
     return isChatOpen.value ? "chat-container-open" : "chat-container-collapsed";
 });
 
-const openChat = async () => {
-    isLoadingOpenChat.value = true;
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    isChatOpen.value = !isChatOpen.value;
-    isLoadingOpenChat.value = false;
-
-    if (isChatOpen.value) {
-        await nextTick();
-        scrollToBottom(false);
+const handleToggleChat = () => {
+    if (!isChatOpen.value) {
+        openChat();
+    } else {
+        closeChat();
     }
 };
 
-const messages = ref([
-    {
-        id: 1,
-        message: "Pessoal, alguém conseguiu resolver o exercício 3?",
-        time: "2025-05-22T13:45:00Z",
-        userName: "joaosilva",
-        admin: false,
-    },
-    {
-        id: 2,
-        message: "Me ajude admin",
-        time: "2025-05-22T14:45:00Z",
-        userName: "messinaldo",
-        admin: false,
-    },
-    {
-        id: 3,
-        message: "Sim! Tive que usar recursão. Vocês tentaram essa abordagem?",
-        time: "2025-05-22T13:47:00Z",
-        userName: "mariasantos",
-        admin: false,
-    },
-    {
-        id: 4,
-        message: "Ainda estou travado na parte da validação. Alguém pode dar uma dica?",
-        time: "2025-05-22T23:15:00Z",
-        userName: "icaro",
-        admin: false,
-    },
-    {
-        id: 5,
-        message: "⚠️ ATENÇÃO: Lembrem-se de que o prazo para entrega do projeto é amanhã às 23:59!",
-        time: "2025-05-22T23:39:00Z",
-        userName: "Prof. Ricardo",
-        admin: true,
-    },
-    {
-        id: 6,
-        message: "Obrigado pelo lembrete, professor!",
-        time: "2025-05-22T23:39:00Z",
-        userName: "icaro",
-        admin: true,
-    },
-    {
-        id: 1,
-        message:
-            "Para quem está com dúvidas, estarei disponível no horário de atendimento das 14h às 16h.",
-        time: "2025-05-22T23:40:00Z",
-        userName: "Prof. Ricardo",
-        admin: true,
-    },
-    {
-        id: 8,
-        message: "Também estou interessada no código do Pedro. Pode compartilhar no grupo?",
-        time: "2025-05-22T23:41:00Z",
-        userName: "anacosta",
-        admin: false,
-    },
-]);
+const openChat = async () => {
+    try {
+        isLoadingOpenChat.value = true;
+
+        await joinCourse({
+            courseId: "1",
+            userName: currentUser.value.username,
+        });
+
+        isChatOpen.value = true;
+
+        await nextTick();
+        scrollToBottom(false);
+    } catch (error) {
+        console.error("Error opening chat:", error);
+    } finally {
+        isLoadingOpenChat.value = false;
+    }
+};
+
+const closeChat = () => {
+    try {
+        leaveCourse({
+            courseId: "1",
+            userName: currentUser.value.username,
+        });
+
+        isChatOpen.value = false;
+    } catch (error) {
+        console.error("Error closing chat:", error);
+    }
+};
 
 const scrollToBottom = (smooth = false) => {
     if (messagesContainer.value) {
@@ -269,7 +256,6 @@ const isAtBottom = () => {
     return scrollTop + clientHeight >= scrollHeight - 10;
 };
 
-// Função para lidar com o scroll manual do usuário
 const handleScroll = () => {
     if (!messagesContainer.value) return;
 
@@ -301,21 +287,38 @@ const formatMessageSendDate = (dateMessage: string) => {
 
 const sendMessage = async () => {
     if (messageInput.value.trim()) {
-        const newMessage = {
-            id: 1,
-            message: messageInput.value,
-            time: new Date().toISOString(),
-            userName: "icaro",
-            admin: true,
-        };
+        try {
+            await emitMessage({
+                message: messageInput.value,
+                courseId: "1",
+                userName: currentUser.value.username,
+                userId: currentUser.value.sub?.toString() || "",
+                admin: isAdmin.value,
+            });
 
-        messages.value.push(newMessage);
-        messageInput.value = "";
-
-        await nextTick();
-        scrollToBottom(false);
+            messageInput.value = "";
+            await nextTick();
+            scrollToBottom(true);
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
     }
 };
+
+watch(
+    () => state.value.error,
+    (error) => {
+        if (error) {
+            console.error("Socket error:", error);
+        }
+    },
+);
+
+onBeforeUnmount(() => {
+    if (isChatOpen.value) {
+        closeChat();
+    }
+});
 </script>
 
 <style scoped>
@@ -448,7 +451,6 @@ const sendMessage = async () => {
     }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .chat-container-collapsed,
     .chat-container-open {
