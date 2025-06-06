@@ -5,6 +5,7 @@ import type {
     TCreateContentData,
     TCreateCourseData,
     TCreateModuleData,
+    TEnrollment,
 } from "./admin.types";
 
 export const AdminService = () => {
@@ -249,6 +250,81 @@ export const AdminService = () => {
         }
     };
 
+    const getEnrollmentService = async (courseId: number): Promise<TEnrollment[]> => {
+        try {
+            const data = await adminHttp.getEnrollmentHttp(courseId);
+
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao buscar as matrículas",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return [];
+        }
+    };
+
+    const createEnrollmentService = async (studentEmail: string, courseId: number) => {
+        try {
+            const data = await adminHttp.createEnrollmentHttp(studentEmail, courseId);
+
+            if (data) {
+                pushMessageNotification({
+                    type: "success",
+                    message: "Matrícula criada com sucesso",
+                    duration: 3000,
+                });
+            }
+
+            return true;
+        } catch (error) {
+            if (
+                error.response.data.message ===
+                "Duplicate value for: Enrollment_idStudent_idCourse_key"
+            ) {
+                pushMessageNotification({
+                    type: "error",
+                    message: "Aluno já matriculado no curso",
+                    duration: 3000,
+                });
+            } else {
+                pushMessageNotification({
+                    type: "error",
+                    message: "Erro ao criar a matrícula",
+                    duration: 3000,
+                });
+            }
+
+            console.error(error);
+            return false;
+        }
+    };
+
+    const deleteEnrollmentService = async (enrollmentId: number): Promise<boolean> => {
+        try {
+            await adminHttp.deleteEnrollmentHttp(enrollmentId);
+            pushMessageNotification({
+                type: "success",
+                message: "Matrícula deletada com sucesso",
+                duration: 3000,
+            });
+
+            return true;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao deletar a matrícula",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return false;
+        }
+    };
+
     return {
         getCoursesService,
         createCourseService,
@@ -260,5 +336,8 @@ export const AdminService = () => {
         createContentService,
         updateContentService,
         deleteContentService,
+        getEnrollmentService,
+        createEnrollmentService,
+        deleteEnrollmentService,
     };
 };
