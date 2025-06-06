@@ -1,10 +1,11 @@
 <template>
     <v-card
-        :class="['chat-container-base', chatCollapsedBorder, chatContainerClass]"
+        :class="[chatContainerBaseClass, chatCollapsedBorder, chatContainerClass]"
         :loading="isLoadingOpenChat"
         elevation="0"
     >
         <v-card
+            v-if="!props.nonFixed"
             class="chat-header-container rounded-0"
             elevation="0"
             variant="elevated"
@@ -33,28 +34,45 @@
                 variant="text"
                 icon="mdi-unfold-more-horizontal"
                 :loading="isLoadingOpenChat"
-                @click="openChat"
+                @click="handleToggleChat"
             ></v-btn>
         </v-card>
 
-        <div v-if="isChatOpen" class="chat-content">
+        <div v-if="isChatOpen || props.nonFixed" class="chat-content">
             <div
                 ref="messagesContainer"
                 class="messages-container flex-grow-1"
                 @scroll="handleScroll"
             >
-                <div class="pa-3">
+                <div v-if="messages.length === 0" class="empty-chat pa-4">
+                    <v-icon
+                        icon="mdi-message-text-outline"
+                        size="64"
+                        color="grey-lighten-1"
+                    ></v-icon>
+                    <div class="text-grey text-body-1 mt-4">
+                        Nenhuma mensagem ainda. Seja o primeiro a enviar uma mensagem!
+                    </div>
+                </div>
+                <div v-else class="pa-3">
                     <div
                         v-for="msg in messages"
                         :key="msg.id"
                         :class="[
                             'message-wrapper',
-                            msg.id === currentUserId ? 'message-right' : 'message-left',
-                            msg.admin && msg.id !== currentUserId ? 'admin-message-wrapper' : '',
+                            msg.userName === currentUser.username
+                                ? 'message-right'
+                                : 'message-left',
+                            msg.admin && msg.userName !== currentUser.username
+                                ? 'admin-message-wrapper'
+                                : '',
                         ]"
                     >
                         <div class="message-container">
-                            <div v-if="msg.id !== currentUserId" class="d-flex align-center mb-1">
+                            <div
+                                v-if="msg.userName !== currentUser.username"
+                                class="d-flex align-center mb-1"
+                            >
                                 <v-icon
                                     :icon="msg.admin ? 'mdi-crown' : 'mdi-account'"
                                     size="10"
@@ -71,15 +89,19 @@
 
                             <div
                                 class="d-flex align-end"
-                                :class="msg.id === currentUserId ? 'justify-end' : 'justify-start'"
+                                :class="
+                                    msg.userName === currentUser.username
+                                        ? 'justify-end'
+                                        : 'justify-start'
+                                "
                             >
                                 <v-card
                                     class="message-bubble pa-2"
                                     :class="[
-                                        msg.id === currentUserId
+                                        msg.userName === currentUser.username
                                             ? 'current-user-message'
                                             : 'other-user-message',
-                                        msg.admin && msg.id === currentUserId
+                                        msg.admin && msg.userName === currentUser.username
                                             ? 'admin-message'
                                             : '',
                                     ]"
@@ -95,12 +117,14 @@
                             <div
                                 :class="[
                                     'text-caption text-grey mt-1',
-                                    msg.id === currentUserId ? 'text-right' : 'text-left',
+                                    msg.userName === currentUser.username
+                                        ? 'text-right'
+                                        : 'text-left',
                                 ]"
                             >
                                 <div class="d-flex justify-end">
                                     {{ formatMessageSendDate(msg.time) }}
-                                    <div v-if="msg.id === currentUserId && msg.admin">
+                                    <div v-if="msg.userName === currentUser.username && msg.admin">
                                         <v-icon
                                             icon="mdi-crown"
                                             size="10"
@@ -146,20 +170,36 @@
 </template>
 
 <script setup lang="ts">
+import { state, joinCourse, sendMessage as emitMessage, leaveCourse } from "@/socket";
 import { useIndexStore } from "@/stores/index.store";
+import { useAuthStore } from "@/modules/auth/auth.store";
 import { formatRelative } from "date-fns";
 import { pt } from "date-fns/locale";
-import { computed, ref, nextTick, watch } from "vue";
+import { computed, ref, nextTick, watch, onBeforeUnmount, onMounted } from "vue";
+
+const props = defineProps({
+    nonFixed: {
+        type: Boolean,
+        required: true,
+    },
+    courseId: {
+        type: [String, Number],
+        required: true,
+    },
+});
 
 const indexStore = useIndexStore();
+const authStore = useAuthStore();
 
 const isChatOpen = ref(false);
 const isLoadingOpenChat = ref(false);
 const messageInput = ref("");
-const currentUserId = ref(1);
 const messagesContainer = ref<HTMLElement | null>(null);
 const isUserScrolling = ref(false);
 
+const currentUser = computed(() => authStore.user);
+const isAdmin = computed(() => currentUser.value.role === "ADMIN");
+const messages = computed(() => state.value.messages);
 const isDarkTheme = computed(() => indexStore.isDark);
 
 const chatHeaderColor = computed(() => {
@@ -179,80 +219,60 @@ const chatCollapsedBorder = computed(() => {
 });
 
 const chatContainerClass = computed(() => {
+    if (props.nonFixed) {
+        return "chat-container-open";
+    }
     return isChatOpen.value ? "chat-container-open" : "chat-container-collapsed";
 });
 
-const openChat = async () => {
-    isLoadingOpenChat.value = true;
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    isChatOpen.value = !isChatOpen.value;
-    isLoadingOpenChat.value = false;
+const chatContainerBaseClass = computed(() => {
+    return props.nonFixed ? "chat-container-base-nonfixed" : "chat-container-base";
+});
 
-    if (isChatOpen.value) {
-        await nextTick();
-        scrollToBottom(false);
+const handleToggleChat = () => {
+    if (!isChatOpen.value) {
+        openChat();
+    } else {
+        closeChat();
     }
 };
 
-const messages = ref([
-    {
-        id: 1,
-        message: "Pessoal, alguém conseguiu resolver o exercício 3?",
-        time: "2025-05-22T13:45:00Z",
-        userName: "joaosilva",
-        admin: false,
-    },
-    {
-        id: 2,
-        message: "Me ajude admin",
-        time: "2025-05-22T14:45:00Z",
-        userName: "messinaldo",
-        admin: false,
-    },
-    {
-        id: 3,
-        message: "Sim! Tive que usar recursão. Vocês tentaram essa abordagem?",
-        time: "2025-05-22T13:47:00Z",
-        userName: "mariasantos",
-        admin: false,
-    },
-    {
-        id: 4,
-        message: "Ainda estou travado na parte da validação. Alguém pode dar uma dica?",
-        time: "2025-05-22T23:15:00Z",
-        userName: "icaro",
-        admin: false,
-    },
-    {
-        id: 5,
-        message: "⚠️ ATENÇÃO: Lembrem-se de que o prazo para entrega do projeto é amanhã às 23:59!",
-        time: "2025-05-22T23:39:00Z",
-        userName: "Prof. Ricardo",
-        admin: true,
-    },
-    {
-        id: 6,
-        message: "Obrigado pelo lembrete, professor!",
-        time: "2025-05-22T23:39:00Z",
-        userName: "icaro",
-        admin: true,
-    },
-    {
-        id: 1,
-        message:
-            "Para quem está com dúvidas, estarei disponível no horário de atendimento das 14h às 16h.",
-        time: "2025-05-22T23:40:00Z",
-        userName: "Prof. Ricardo",
-        admin: true,
-    },
-    {
-        id: 8,
-        message: "Também estou interessada no código do Pedro. Pode compartilhar no grupo?",
-        time: "2025-05-22T23:41:00Z",
-        userName: "anacosta",
-        admin: false,
-    },
-]);
+const openChat = async () => {
+    try {
+        isLoadingOpenChat.value = true;
+
+        await joinCourse({
+            courseId: props.courseId.toString(),
+            userName: currentUser.value.username,
+        });
+
+        if (!props.nonFixed) {
+            isChatOpen.value = true;
+        }
+
+        await nextTick();
+        scrollToBottom(false);
+    } catch (error) {
+        console.error("Error opening chat:", error);
+    } finally {
+        isLoadingOpenChat.value = false;
+    }
+};
+
+const closeChat = () => {
+    try {
+        leaveCourse({
+            courseId: props.courseId.toString(),
+            userName: currentUser.value.username,
+        });
+
+        if (!props.nonFixed) {
+            isChatOpen.value = false;
+        }
+    } catch (error) {
+        console.error("Error closing chat:", error);
+    }
+};
 
 const scrollToBottom = (smooth = false) => {
     if (messagesContainer.value) {
@@ -269,7 +289,6 @@ const isAtBottom = () => {
     return scrollTop + clientHeight >= scrollHeight - 10;
 };
 
-// Função para lidar com o scroll manual do usuário
 const handleScroll = () => {
     if (!messagesContainer.value) return;
 
@@ -301,21 +320,44 @@ const formatMessageSendDate = (dateMessage: string) => {
 
 const sendMessage = async () => {
     if (messageInput.value.trim()) {
-        const newMessage = {
-            id: 1,
-            message: messageInput.value,
-            time: new Date().toISOString(),
-            userName: "icaro",
-            admin: true,
-        };
+        try {
+            await emitMessage({
+                message: messageInput.value,
+                courseId: props.courseId.toString(),
+                userName: currentUser.value.username,
+                userId: currentUser.value.sub?.toString() || "",
+                admin: isAdmin.value,
+            });
 
-        messages.value.push(newMessage);
-        messageInput.value = "";
-
-        await nextTick();
-        scrollToBottom(false);
+            messageInput.value = "";
+            await nextTick();
+            scrollToBottom(true);
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
     }
 };
+
+watch(
+    () => state.value.error,
+    (error) => {
+        if (error) {
+            console.error("Socket error:", error);
+        }
+    },
+);
+
+onMounted(() => {
+    if (props.nonFixed) {
+        openChat();
+    }
+});
+
+onBeforeUnmount(() => {
+    if (isChatOpen.value) {
+        closeChat();
+    }
+});
 </script>
 
 <style scoped>
@@ -325,6 +367,13 @@ const sendMessage = async () => {
     right: 0;
     z-index: 2;
     transition: all 0.3s ease-in-out;
+}
+
+.chat-container-base-nonfixed {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .chat-container-collapsed {
@@ -338,6 +387,12 @@ const sendMessage = async () => {
 .chat-container-open {
     width: 25%;
     height: 60%;
+}
+
+.chat-container-base-nonfixed.chat-container-open {
+    width: 100%;
+    height: 100%;
+    max-height: 75vh;
 }
 
 .chat-header-container {
@@ -354,6 +409,7 @@ const sendMessage = async () => {
     opacity: 0;
     animation: fadeIn 0.3s ease-in-out 0.1s forwards;
     height: calc(100% - 52px);
+    flex: 1;
 }
 
 .user-name-message {
@@ -448,7 +504,6 @@ const sendMessage = async () => {
     }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .chat-container-collapsed,
     .chat-container-open {
@@ -458,6 +513,16 @@ const sendMessage = async () => {
 
     .chat-container-open {
         height: 60vh;
+    }
+
+    .chat-container-base-nonfixed {
+        width: 100%;
+    }
+
+    .chat-container-base-nonfixed.chat-container-open {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
     }
 
     .message-container {
@@ -480,5 +545,15 @@ const sendMessage = async () => {
 
 .messages-container::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
+}
+
+.empty-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    opacity: 0.8;
 }
 </style>

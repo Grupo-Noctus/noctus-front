@@ -13,7 +13,7 @@
         </v-col>
 
         <div>
-            <course-chat-vue></course-chat-vue>
+            <course-chat-vue :non-fixed="false" :course-id="courseId"></course-chat-vue>
         </div>
     </v-row>
 </template>
@@ -42,6 +42,8 @@ const infoAreaStyle = computed(() => {
 const infoAreaBackGround = computed(() =>
     indexStore.isDark ? "background-color: #212121" : "background-color: #ffffff",
 );
+
+const courseId = computed(() => route.params.id);
 </script>
 
 <style scoped>

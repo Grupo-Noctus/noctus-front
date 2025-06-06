@@ -83,7 +83,7 @@
                         :disabled="!course"
                         @click="viewCourse(course.id)"
                     >
-                        Acessar Módulos
+                        Acessar detalhes
                     </v-btn>
                 </v-card-actions>
             </v-card>
