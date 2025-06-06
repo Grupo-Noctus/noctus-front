@@ -47,7 +47,9 @@ import { computed, onMounted } from "vue";
 import { useCourseSecondStore } from "../course-second.store";
 import router from "@/plugins/router/router";
 import { userEvaluationStore } from "@/modules/activity/activity.store";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const courseSecondStore = useCourseSecondStore();
 const evaluationStore = userEvaluationStore();
 const correctAnswers = evaluationStore.correctAnswers;
@@ -70,7 +72,11 @@ onMounted(async () => {
 
 const enterExam = () => {
     const idModule = fistModule.value;
-    router.push({ name: "ActivityInitial", params: { firstModule: String(idModule) } });
+    const idCourse = route.params.id;
+    router.push({
+        name: "ActivityInitial",
+        params: { courseId: String(idCourse), moduleId: String(idModule) },
+    });
     if (props.clickAndEnterMode) {
         return;
     } else {

@@ -221,10 +221,11 @@ export const useCourseSecondStore = defineStore("courseSecondStore", () => {
         }
     };
 
-    const fetchExams = async () => {
+    const fetchExams = async (moduleId?: number) => {
         isLoadingExams.value = true;
         try {
-            const response = await courseService.getExamByModuleIdService(modules.value[0].id);
+            const idModule = moduleId || modules.value[0].id;
+            const response = await courseService.getExamByModuleIdService(idModule);
             exams.value = response;
             return exams.value;
         } finally {
