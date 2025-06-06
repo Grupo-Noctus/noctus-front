@@ -1,37 +1,27 @@
-import { courseHttp } from "@/plugins/api/http-instances";
 import { pushMessageNotification } from "@/utils/notivue-base";
-pushMessageNotification;
+import type { TMaterial } from "./material.types";
+import { materialHttp } from "@/plugins/api/http-instances";
 
-export const CourseService = () => {
-    const getCourseByEnrollmentService = async () => {
+
+export const MaterialService = () => {
+    async function getMaterialsByCourseIdService( courseId : number) : Promise <TMaterial[] | [] >  {
         try {
-            const data = await courseHttp.getCourseByEnrollmentHttp();
-            return data;
+            const data = await materialHttp.getMaterialsByCourseIdHttp(courseId)
+            return data
         } catch (error) {
-            pushMessageNotification({
+                pushMessageNotification({
                 type: "error",
                 title: "Erro!",
-                message: "Nenhum curso em sua matricula encontrado :(!",
+                message: "Nenhum material encontrado :(!",
                 duration: 3000,
             });
+            console.error( error )
+            return[]
         }
-    };
 
-    const getEnrollmentCoursesService = async () => {
-        try {
-            const data = await courseHttp.getEnrollmentCoursesHttp();
-            return data;
-        } catch (error) {
-            pushMessageNotification({
-                type: "error",
-                title: "Erro!",
-                message: "Nenhum curso em sua matricula encontrado :(!",
-            });
-        }
-    };
+    }
 
-    return {
-        getEnrollmentCoursesService,
-        getCourseByEnrollmentService,
-    };
-};
+  return { getMaterialsByCourseIdService }
+
+
+  }

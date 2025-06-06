@@ -23,7 +23,7 @@
           class="mx-auto"
           max-width="300"
           height="300"
-          @click="downloadFile(file.fileName)"
+        :href="getMaterialUrl(file.filename)"
         >
           <v-sheet color="primary" height="200px" width="100%" class="d-flex justify-center align-center">
             <v-icon color="white" size="200">mdi-folder</v-icon>
@@ -51,30 +51,18 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/plugins/router/router";
-
+import { MaterialService } from "../material.service";
+import  {getMaterialUrl} from "@/utils/image-url";
 
 const courseFiles = ref<any[]>([]);
 
+const materialService = MaterialService()
 
 const route = useRoute();
 
 const fetchCourseFiles = async () => {
-  try {
-    const I = route.params.courseId;
-    const response = await fetch(`http://localhost:3000/material/find-many/4`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-
-      }
-    });
-    if (!response.ok) throw new Error("Erro ao buscar arquivos do curso");
-    const data = await response.json();
-    courseFiles.value = data.files || [];
-  } catch (error) {
-    console.error("Erro na chamada à API:", error);
-    courseFiles.value = [];
-  }
+  const courseId = route.params.id
+  courseFiles.value = await materialService.getMaterialsByCourseIdService(+courseId)
 };
 
 
@@ -90,6 +78,11 @@ const downloadFile = (fileName: string) => {
   link.click();
   document.body.removeChild(link);
 };
+
+const handleGetMaterialUrl = (fileName: string) => {
+    return getMaterialUrl(fileName)
+}
+
 </script>
 
 <style scoped>

@@ -1,19 +1,15 @@
 import type { AxiosInstance } from "axios";
+import type { TMaterial } from "./material.types";
 
-export class CourseHttp {
-    constructor(private readonly httpClient: AxiosInstance) {
-        this.httpClient = httpClient;
-    }
+export class MaterialHttp {
 
-    async getCourseByEnrollmentHttp() {
-        const { data } = await this.httpClient.get("");
+   constructor(private readonly httpClient: AxiosInstance)  {
+    this.httpClient = httpClient;
+  }
 
-        return data;
-    }
+  async getMaterialsByCourseIdHttp(courseId: number) : Promise <TMaterial[]>  {
+    const { data } = await this.httpClient.get(`/material/find-many/${courseId}`);
+    return data as TMaterial[];
+  }
 
-    async getEnrollmentCoursesHttp() {
-        const { data } = await this.httpClient.get("");
-
-        return data;
-    }
 }
