@@ -38,3 +38,27 @@ export type TVskipContent = {
     prevModuleId: number | null;
     prevContentId: number | null;
 };
+
+export type exam = {
+    id: number;
+    idModule: number;
+    title: string;
+    description: string;
+    questions: question[];
+};
+
+export type question = {
+    id: number;
+    idExam: number;
+    questionText: string;
+    type: string;
+    order: number;
+    options: option[];
+};
+
+export type option = {
+    id: number;
+    idQuestion: number;
+    optionText: string;
+    correct: boolean;
+};
