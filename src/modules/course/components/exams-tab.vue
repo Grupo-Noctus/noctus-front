@@ -46,11 +46,7 @@
 import { computed, onMounted } from "vue";
 import { useCourseSecondStore } from "../course-second.store";
 import router from "@/plugins/router/router";
-import { useRoute } from "vue-router";
 import { userEvaluationStore } from "@/modules/activity/activity.store";
-
-const route = useRoute();
-const indexStore = useIndexStore();
 
 const courseSecondStore = useCourseSecondStore();
 const evaluationStore = userEvaluationStore();
@@ -66,14 +62,15 @@ const props = defineProps({
 
 const loadingExamCourse = computed(() => courseSecondStore.isLoadingExams);
 const eachExamTabCourse = computed(() => courseSecondStore.exams);
+const fistModule = computed(() => courseSecondStore.modules[0].id);
 
 onMounted(async () => {
     await courseSecondStore.fetchExams();
 });
 
 const enterExam = () => {
-    const idCourse = route.params.id;
-    router.push({ name: "ActivityInitial", params: { courseId: String(idCourse) } });
+    const idModule = fistModule.value;
+    router.push({ name: "ActivityInitial", params: { firstModule: String(idModule) } });
     if (props.clickAndEnterMode) {
         return;
     } else {
