@@ -1,8 +1,16 @@
 <template>
   <div class="pa-0 ma-4">
+
     <div class="text-h6 text-center" variant="text">Arquivos do curso</div>
 
-    <v-row class="mt-4" no-gutters>
+
+    <div v-if="!courseFiles" class="loading-container text-center">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <p>Carregando arquivos...</p>
+    </div>
+
+
+    <v-row class="mt-4" no-gutters v-else>
       <v-col
         v-for="(file, index) in courseFiles"
         :key="index"
@@ -29,32 +37,53 @@
           </div>
         </v-card>
       </v-col>
+
+
+      <div v-if="courseFiles.length === 0" class="error-container text-center" >
+        <v-icon color="red" size="50">mdi-alert-circle</v-icon>
+        <p class="text-h6 mt-2">Desculpe, não há arquivos disponíveis para este curso no momento.</p>
+      </div>
     </v-row>
   </div>
 </template>
 
 <script setup lang="ts">
-const courseFiles = [
-  {
-    name: 'Arquivo 1',
-    type: 'PDF',
-    fileName: 'Arquivo1.pdf',
-  },
-  {
-    name: 'Arquivo 2',
-    type: 'PDF',
-    fileName: 'Arquivo2.pdf',
-  },
-  {
-    name: 'Arquivo 3',
-    type: 'PDF',
-    fileName: 'Arquivo3.pdf',
-  },
-];
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import router from "@/plugins/router/router";
+
+
+const courseFiles = ref<any[]>([]);
+
+
+const route = useRoute();
+
+const fetchCourseFiles = async () => {
+  try {
+    const I = route.params.courseId;
+    const response = await fetch(`http://localhost:3000/material/find-many/4`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+
+      }
+    });
+    if (!response.ok) throw new Error("Erro ao buscar arquivos do curso");
+    const data = await response.json();
+    courseFiles.value = data.files || [];
+  } catch (error) {
+    console.error("Erro na chamada à API:", error);
+    courseFiles.value = [];
+  }
+};
+
+
+onMounted(() => {
+  fetchCourseFiles();
+});
 
 const downloadFile = (fileName: string) => {
-  const fileUrl = `https://example.com/files/${fileName}`;
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = fileUrl;
   link.download = fileName;
   document.body.appendChild(link);
@@ -62,3 +91,29 @@ const downloadFile = (fileName: string) => {
   document.body.removeChild(link);
 };
 </script>
+
+<style scoped>
+.loading-container {
+  margin-top: 2rem;
+}
+
+.loading-container p {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+.error-container {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #ffebee;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-container p {
+  color: #d32f2f;
+}
+</style>

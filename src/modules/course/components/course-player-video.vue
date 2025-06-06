@@ -66,15 +66,15 @@
                     append-icon="mdi mdi-book-education-outline "
                     variant="text"
                     class="text-capitalize text"
-                    size="small"
+                    size="small" @click="enterCertificate"
                 >
-                    detalhado
+                    certificado
                 </v-btn>
                 <v-btn
                     append-icon="mdi-book-arrow-down-outline"
                     variant="text"
                     class="text-capitalize"
-                    size="small"
+                    size="small" @click="enterMaterial"
                 >
                     material
                 </v-btn>
@@ -97,6 +97,8 @@ import { ref, computed, onMounted, nextTick, watch, onUnmounted } from "vue";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import { useCourseSecondStore } from "../course-second.store";
+import router from "@/plugins/router/router";
+import { useRoute } from "vue-router";
 
 const courseSecondStore = useCourseSecondStore();
 const videoRef = ref<HTMLVideoElement | null>(null);
@@ -107,6 +109,16 @@ const videoUrl = computed(() => courseSecondStore.videoUrl);
 const isLoadingContent = computed(() => courseSecondStore.isLoadingContent);
 const selectedContent = computed(() => courseSecondStore.selectedContent);
 const skipContent = computed(() => courseSecondStore.skipContent);
+const route = useRoute();
+
+
+const enterCertificate = () => {
+  router.replace({ name: "Certificate" });
+};
+
+const enterMaterial = () => {
+  router.replace({ name: "Material" });
+};
 
 const currentVideoTitle = computed(
     () => selectedContent.value.content.name || "título indisponível",
