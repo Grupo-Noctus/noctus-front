@@ -1,7 +1,6 @@
 import type { RouteRecordRaw } from "vue-router";
 import DetailCourse from "./views/detail-course.vue";
 import materialVue from "../material/views/material.vue";
-import certificateVue from "../certificate/views/certificate.vue";
 
 export const courseRoutes: RouteRecordRaw[] = [
     {
@@ -16,11 +15,4 @@ export const courseRoutes: RouteRecordRaw[] = [
         component: materialVue,
         props: true,
     },
-    {
-        path: "courses/:id/certificate",
-        name: "Certificate",
-        component: certificateVue,
-        props: true,
-    },
-    
 ];
