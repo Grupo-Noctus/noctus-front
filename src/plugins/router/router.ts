@@ -12,7 +12,7 @@ import { adminRoutes } from "@/modules/admin/admin.routes";
 import { adminMiddleware } from "@/modules/admin/admin.middleware";
 
 const routes: RouteRecordRaw[] = [
-    {
+     {
         path: "",
         component: SideBarContent,
         redirect: "/student",
