@@ -35,15 +35,11 @@ import { useRoute } from "vue-router";
 const courseData = {
   idEnroll: 1,
   completed: 0,
-  expiredAt: "2025-06-03T13:47:45Z",
+  expiredAt: "",
   idCourse: 1,
-  nameCourse: "Lengo tengo",
-  courseDescription: "Lengo tengo lengo tengo",
-  courseImage: "/images-courses/1/faqohehvaywjaiijf-58968002-0dc5-488b-a23e-7510eaee0c6.jpeg",
-  modules: [
-    { id: 1, name: "kfold5fd", description: "5fd5fd", order: 1 },
-    { id: 2, name: "terter", description: "terterter", order: 2 }
-  ],
+  nameCourse: "",
+  courseDescription: "",
+  courseImage: "",
   videos: []
 };
 

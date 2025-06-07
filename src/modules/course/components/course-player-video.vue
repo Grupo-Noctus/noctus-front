@@ -99,12 +99,13 @@ import "plyr/dist/plyr.css";
 import { useCourseSecondStore } from "../course-second.store";
 import router from "@/plugins/router/router";
 import { useRoute } from "vue-router";
+import { CourseService } from "../course.service";
 
 const courseSecondStore = useCourseSecondStore();
 const videoRef = ref<HTMLVideoElement | null>(null);
 const playerInstance = ref<Plyr | null>(null);
 const showControls = ref(false);
-
+const courseService = CourseService();
 const videoUrl = computed(() => courseSecondStore.videoUrl);
 const isLoadingContent = computed(() => courseSecondStore.isLoadingContent);
 const selectedContent = computed(() => courseSecondStore.selectedContent);
@@ -113,11 +114,16 @@ const route = useRoute();
 
 
 const enterCertificate = () => {
-  router.replace({ name: "Certificate" });
+const courseId = route.params.id
+  router.push({ name: "Certificate" , params:{id:courseId} });
 };
 
+
+
+
+
 const enterMaterial = () => {
-  router.replace({ name: "Material" });
+  router.push({ name: "Material" });
 };
 
 const currentVideoTitle = computed(
@@ -211,6 +217,9 @@ const loadVideoByIndex = async (mode: "next" | "prev") => {
 };
 
 onMounted(async () => {
+    const coursesbyEnrollment = await courseService.getCourseByEnrollmentService();
+    const enrollmentId = coursesbyEnrollment.filter(e => enrollmentId.courseId)
+
     await nextTick();
     if (selectedContent.value.content.id) {
         try {
