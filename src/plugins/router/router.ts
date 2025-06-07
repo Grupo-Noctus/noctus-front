@@ -10,9 +10,10 @@ import { authMiddleware } from "@/modules/auth/auth.middleware";
 import { ActivityRoutes } from "@/modules/activity/activity.routes";
 import { adminRoutes } from "@/modules/admin/admin.routes";
 import { adminMiddleware } from "@/modules/admin/admin.middleware";
+import { certificateRoutes } from "@/modules/certificate/certificate.routes";
 
 const routes: RouteRecordRaw[] = [
-     {
+    {
         path: "",
         component: SideBarContent,
         redirect: "/student",
@@ -25,6 +26,7 @@ const routes: RouteRecordRaw[] = [
             ...ActivityRoutes,
             ...courseRoutes,
             ...adminRoutes,
+            ...certificateRoutes,
         ],
     },
     {

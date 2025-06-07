@@ -44,7 +44,8 @@
                     append-icon="mdi mdi-book-education-outline "
                     variant="text"
                     class="text-capitalize text"
-                    size="small" @click="enterCertificate"
+                    size="small"
+                    @click="enterCertificate"
                 >
                     certificado
                 </v-btn>
@@ -52,7 +53,8 @@
                     append-icon="mdi-book-arrow-down-outline"
                     variant="text"
                     class="text-capitalize"
-                    size="small" @click="enterMaterial"
+                    size="small"
+                    @click="enterMaterial"
                 >
                     material
                 </v-btn>
@@ -77,11 +79,15 @@ import "plyr/dist/plyr.css";
 import { useCourseSecondStore } from "../course-second.store";
 import router from "@/plugins/router/router";
 import { useRoute } from "vue-router";
+import { CourseService } from "../course.service";
+
+const courseService = CourseService();
 
 const courseSecondStore = useCourseSecondStore();
 const videoRef = ref<HTMLVideoElement | null>(null);
 const playerInstance = ref<Plyr | null>(null);
 const showControls = ref(false);
+const enrollmentId = ref<number | null>(null);
 
 const videoUrl = computed(() => courseSecondStore.videoUrl);
 const isLoadingContent = computed(() => courseSecondStore.isLoadingContent);
@@ -89,13 +95,25 @@ const selectedContent = computed(() => courseSecondStore.selectedContent);
 const skipContent = computed(() => courseSecondStore.skipContent);
 const route = useRoute();
 
-
 const enterCertificate = () => {
-  router.replace({ name: "Certificate" });
+    const courseId = route.params.id;
+    router.push({
+        name: "UploadCertificate",
+        params: {
+            id: String(courseId),
+            enrollmentId: String(enrollmentId.value),
+        },
+    });
 };
 
 const enterMaterial = () => {
-  router.replace({ name: "Material" });
+    const courseId = route.params.id;
+    router.push({
+        name: "Material",
+        params: {
+            id: String(courseId),
+        },
+    });
 };
 
 const currentVideoTitle = computed(
@@ -188,8 +206,15 @@ const loadVideoByIndex = async (mode: "next" | "prev") => {
     }
 };
 
+const getEnrollmentId = async () => {
+    const courses = await courseService.getCourseByEnrollmentService();
+    const courseId = courses.find((e) => e.idCourse === +route.params.id);
+    enrollmentId.value = courseId?.idEnrrolment;
+};
+
 onMounted(async () => {
     await nextTick();
+    await getEnrollmentId();
     if (selectedContent.value.content.id) {
         try {
             await courseSecondStore.getUrlVideo(selectedContent.value.content.id);

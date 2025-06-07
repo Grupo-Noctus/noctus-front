@@ -39,6 +39,16 @@ export type TVskipContent = {
     prevContentId: number | null;
 };
 
+export interface CourseByEnrollment {
+    idEnrrolment: number;
+    completed: boolean;
+    expiresAt: string;
+    active: boolean;
+    idCourse: number;
+    nameCourse: string;
+    courseDescription: string;
+    courseImage: string;
+}
 export type exam = {
     id: number;
     idModule: number;
