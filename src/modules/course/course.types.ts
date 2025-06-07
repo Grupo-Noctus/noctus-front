@@ -49,3 +49,26 @@ export interface CourseByEnrollment {
     courseDescription: string;
     courseImage: string;
 }
+export type exam = {
+    id: number;
+    idModule: number;
+    title: string;
+    description: string;
+    questions: question[];
+};
+
+export type question = {
+    id: number;
+    idExam: number;
+    questionText: string;
+    type: string;
+    order: number;
+    options: option[];
+};
+
+export type option = {
+    id: number;
+    idQuestion: number;
+    optionText: string;
+    correct: boolean;
+};

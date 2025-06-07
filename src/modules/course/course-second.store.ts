@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type {
-    TContentExam,
+    exam,
     TContentModule,
     TContentVideoModule,
     TSelectedContent,
@@ -15,7 +15,7 @@ export const useCourseSecondStore = defineStore("courseSecondStore", () => {
     const route = useRoute();
 
     const modules = ref<TContentModule[]>([]);
-    const exams = ref<TContentExam[]>([]);
+    const exams = ref<exam[]>([]);
     const videoUrl = ref("");
     const videoBlob = ref<string>("");
 
@@ -221,23 +221,12 @@ export const useCourseSecondStore = defineStore("courseSecondStore", () => {
         }
     };
 
-    const fetchExams = async () => {
+    const fetchExams = async (moduleId?: number) => {
         isLoadingExams.value = true;
         try {
-            exams.value = [
-                {
-                    id: 1,
-                    name: "Prova final",
-                    questionCount: 7,
-                    checked: true,
-                },
-                {
-                    id: 2,
-                    name: "Prova média",
-                    questionCount: 5,
-                    checked: false,
-                },
-            ];
+            const idModule = moduleId || modules.value[0].id;
+            const response = await courseService.getExamByModuleIdService(idModule);
+            exams.value = response;
             return exams.value;
         } finally {
             isLoadingExams.value = false;

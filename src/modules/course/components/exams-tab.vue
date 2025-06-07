@@ -17,32 +17,13 @@
         v-else
         :key="examTabCourse.id"
         class="rounded-0"
-        @click="enterExam(1)"
+        :disabled="disabledBtnExam"
+        @click="enterExam"
     >
         <v-divider v-if="examTabCourse.id > 1"></v-divider>
         <div class="content-course justify-space-between align-center">
-            <div>
-                <v-btn
-                    v-if="examTabCourse.checked"
-                    icon="mdi mdi-checkbox-multiple-marked-circle"
-                    density="comfortable"
-                    size="small"
-                    variant="tonal"
-                    :color="iconContentColor"
-                    class="pa-1 rounded-lg"
-                ></v-btn>
-                <v-btn
-                    v-else
-                    icon="mdi mdi-checkbox-multiple-blank-circle-outline"
-                    density="comfortable"
-                    size="small"
-                    variant="tonal"
-                    :color="iconContentColor"
-                    class="pa-1 rounded-lg"
-                ></v-btn>
-            </div>
             <div class="ml-4 mt-1">
-                <div class="text-capitalize">Avaliação: {{ examTabCourse.name }}</div>
+                <div class="text-capitalize">Avaliação: {{ examTabCourse.title }}</div>
             </div>
             <div>
                 <v-chip
@@ -53,9 +34,8 @@
                     density="compact"
                 >
                     <template #append>
-                        <div>{{ examTabCourse.questionCount }}</div>
+                        <div>Questões: {{ examTabCourse.questions.length }}</div>
                     </template>
-                    Questões:
                 </v-chip>
             </div>
         </div>
@@ -63,13 +43,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useIndexStore } from "@/stores/index.store";
+import { computed, onMounted } from "vue";
 import { useCourseSecondStore } from "../course-second.store";
+import router from "@/plugins/router/router";
+import { userEvaluationStore } from "@/modules/activity/activity.store";
+import { useRoute } from "vue-router";
 
-const indexStore = useIndexStore();
-
+const route = useRoute();
 const courseSecondStore = useCourseSecondStore();
+const evaluationStore = userEvaluationStore();
+const correctAnswers = evaluationStore.correctAnswers;
+const courseId = computed(() => route.params.id);
+
 
 const props = defineProps({
     clickAndEnterMode: {
@@ -81,20 +66,29 @@ const props = defineProps({
 
 const loadingExamCourse = computed(() => courseSecondStore.isLoadingExams);
 const eachExamTabCourse = computed(() => courseSecondStore.exams);
-
-const iconContentColor = computed(() => (indexStore.isDark ? "#FFFFFF" : "#461CDC"));
+const fistModule = computed(() => courseSecondStore.modules[0].id);
 
 onMounted(async () => {
     await courseSecondStore.fetchExams();
 });
 
-const enterExam = (idCourse: number) => {
+const enterExam = () => {
+    const idModule = fistModule.value;
+    const idCourse = route.params.id;
+    router.push({
+        name: "ActivityInitial",
+        params: { courseId: String(idCourse), moduleId: String(idModule) },
+    });
     if (props.clickAndEnterMode) {
         return;
     } else {
         return;
     }
 };
+
+
+
+const disabledBtnExam = computed(() => {return evaluationStore.getCourseExam(+courseId.value)});
 </script>
 
 <style scoped>

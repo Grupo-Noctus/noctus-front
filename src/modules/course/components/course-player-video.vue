@@ -1,10 +1,6 @@
 <template>
     <div class="video-container">
-        <div
-            class="video-wrapper"
-            @mouseenter="showControls = true"
-            @mouseleave="showControls = false"
-        >
+        <div class="video-wrapper" @mouseenter="showControls = true" @mouseleave="showControls = false">
             <div v-if="isLoadingContent" class="video-placeholder">
                 <div class="loader">Carregando vídeo...</div>
             </div>
@@ -14,26 +10,12 @@
             </video>
 
             <div class="video-navigation" :class="{ 'controls-visible': showControls }">
-                <v-btn
-                    icon
-                    variant="text"
-                    color="white"
-                    class="navigation-btn prev-btn"
-                    :disabled="!hasPreviousVideo || isLoadingContent"
-                    size="large"
-                    @click="playPreviousVideo"
-                >
+                <v-btn icon variant="text" color="white" class="navigation-btn prev-btn"
+                    :disabled="!hasPreviousVideo || isLoadingContent" size="large" @click="playPreviousVideo">
                     <v-icon size="large">mdi-skip-previous</v-icon>
                 </v-btn>
-                <v-btn
-                    icon
-                    variant="text"
-                    color="white"
-                    class="navigation-btn next-btn"
-                    :disabled="!hasNextVideo || isLoadingContent"
-                    size="large"
-                    @click="playNextVideo"
-                >
+                <v-btn icon variant="text" color="white" class="navigation-btn next-btn"
+                    :disabled="!hasNextVideo || isLoadingContent" size="large" @click="playNextVideo">
                     <v-icon size="large">mdi-skip-next</v-icon>
                 </v-btn>
             </div>
@@ -43,11 +25,7 @@
     <div class="d-flex align-center flex-wrap rounded-0" variant="text">
         <v-row no-gutters class="w-100 mx-3 border-b-sm d-flex flex-wrap justify-space-between">
             <v-col cols="12" sm="12" md="12" lg="auto">
-                <div
-                    v-if="isLoadingContent"
-                    class="d-flex align-center"
-                    style="width: 300px; height: 40px"
-                >
+                <div v-if="isLoadingContent" class="d-flex align-center" style="width: 300px; height: 40px">
                     <v-skeleton-loader type="heading" style="width: 100%"></v-skeleton-loader>
                 </div>
                 <div v-else class="pa-3 font-weight-bold text-body-h6 text-capitalize">
@@ -377,9 +355,11 @@ video::-webkit-media-controls-time-remaining-display {
     0% {
         opacity: 0.4;
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         opacity: 0.4;
     }

@@ -90,14 +90,14 @@ const menuItems = [
         label: "Sign in",
         icon: "mdi-login",
         action: "signin",
-        navigateTo: "auth/register",
+        navigateTo: "auth/login",
     },
     {
         label: "Sign up",
         icon: "mdi-account-plus",
         action: "signup",
         dividerAfter: true,
-        navigateTo: "auth/login",
+        navigateTo: "auth/register",
     },
     {
         label: "Log out",
