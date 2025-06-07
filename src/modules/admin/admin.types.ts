@@ -36,3 +36,13 @@ export type TCreateContentData = {
     video: File | null;
     id?: number;
 };
+
+
+export type TMaterial = {
+  name: string;
+  description: string;
+  link: string;
+  type: 'PDF' | 'VIDEO' | 'AUDIO' | 'DOC' | string;
+  courseId: number;
+};
+

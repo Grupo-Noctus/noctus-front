@@ -5,6 +5,7 @@ import type {
     TCreateContentData,
     TCreateCourseData,
     TCreateModuleData,
+    TMaterial,
 } from "./admin.types";
 
 export const AdminService = () => {
@@ -249,6 +250,23 @@ export const AdminService = () => {
         }
     };
 
+    const getMaterialsService = async (courseId: number): Promise<TMaterial[]> => {
+        try {
+            const data = await adminHttp.getMaterialsHttp(courseId);
+
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao buscar o curso",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return [];
+        }
+    };
+
     return {
         getCoursesService,
         createCourseService,
@@ -260,5 +278,6 @@ export const AdminService = () => {
         createContentService,
         updateContentService,
         deleteContentService,
+        getMaterialsService
     };
 };

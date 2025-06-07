@@ -4,6 +4,7 @@ import type {
     TCreateContentData,
     TCreateCourseData,
     TCreateModuleData,
+    TMaterial,
 } from "./admin.types";
 
 export class AdminHttp {
@@ -120,5 +121,11 @@ export class AdminHttp {
         const { data } = await this.httpAdmin.delete(`/streaming/delete/${videoId}`);
 
         return data;
+    }
+
+    async getMaterialsHttp(courseId: number): Promise<TMaterial[]> {
+        const { data } = await this.httpAdmin.get(`/material/find-many/${courseId}`);
+
+        return data.courses as TMaterial[];
     }
 }

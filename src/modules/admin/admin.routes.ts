@@ -3,6 +3,8 @@ import Admin from "./views/admin.vue";
 import { adminMiddleware } from "./admin.middleware";
 import TCourses from "./views/courses.vue";
 import TModules from "./views/module/modules.vue";
+import ManagementMaterialDetaild from "./management-material/management-material-detaild.vue";
+
 
 export const adminRoutes: RouteRecordRaw[] = [
     {
@@ -22,6 +24,13 @@ export const adminRoutes: RouteRecordRaw[] = [
         path: "all-courses/:id/modules",
         name: "Modules",
         component: TModules,
+        props: true,
+        beforeEnter: adminMiddleware,
+    },
+    {
+        path: "materials/:id",
+        name: "ManagementMaterialDetaild",
+        component: ManagementMaterialDetaild,
         props: true,
         beforeEnter: adminMiddleware,
     },

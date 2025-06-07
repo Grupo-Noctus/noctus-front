@@ -61,9 +61,9 @@ const cards = [
         navigateTo: "Enrollment",
     },
     {
-        title: "Alunos",
-        description: "gerencie e visualize dados de alunos.",
-        navigateTo: "Users",
+        title: "Materiais",
+        description: "gerencie e visualize os materiais adicionados.",
+        navigateTo: "ManagementMaterial",
     },
     {
         title: "Certificado",
