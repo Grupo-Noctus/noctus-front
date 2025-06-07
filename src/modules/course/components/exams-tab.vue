@@ -17,7 +17,7 @@
         v-else
         :key="examTabCourse.id"
         class="rounded-0"
-        :disabled="!disabledBtnExam"
+        :disabled="disabledBtnExam"
         @click="enterExam"
     >
         <v-divider v-if="examTabCourse.id > 1"></v-divider>
@@ -53,6 +53,8 @@ const route = useRoute();
 const courseSecondStore = useCourseSecondStore();
 const evaluationStore = userEvaluationStore();
 const correctAnswers = evaluationStore.correctAnswers;
+const courseId = computed(() => route.params.id);
+
 
 const props = defineProps({
     clickAndEnterMode: {
@@ -84,7 +86,9 @@ const enterExam = () => {
     }
 };
 
-const disabledBtnExam = computed(() => correctAnswers.valueOf !== null);
+
+
+const disabledBtnExam = computed(() => {return evaluationStore.getCourseExam(+courseId.value)});
 </script>
 
 <style scoped>

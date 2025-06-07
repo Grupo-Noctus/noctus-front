@@ -6,7 +6,7 @@
       </v-card-title>
 
       <v-card-title>
-        Acertos {{ correctAnswers }} / {{ programmingEvaluation.exam.questions.length }}
+        Acertos {{ correctAnswers }} / {{ questions.length }}
       </v-card-title>
 
       <v-card-subtitle class="subtitle">
@@ -50,15 +50,17 @@
 </template>
 
 <script setup lang="ts">
-import router from "@/plugins/router/router";
-import { useRoute } from "vue-router";
-import { programmingEvaluation } from '../data/activity-form-data'
+import { computed } from 'vue'
+import { useRoute, useRouter } from "vue-router";
 import { userEvaluationStore } from '../activity.store';
-
+import { useCourseSecondStore } from '@/modules/course/course-second.store';
 
 const route = useRoute();
+const router = useRouter();
 const evaluationStore = userEvaluationStore();
 const correctAnswers = evaluationStore.correctAnswers
+const courseSecondStore = useCourseSecondStore();
+const questions = computed(() => courseSecondStore.exams[0].questions)
 
 const returnStudentPage = () => {
   router.replace({ name: "Student" });

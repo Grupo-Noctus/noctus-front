@@ -1,38 +1,45 @@
 <template>
     <div class="container" color="secondary">
-        <v-card class="card" color="secondary">
-            <v-card-title class="title"> Avaliação </v-card-title>
+        <div v-if="loading" class="text-center">
+            <v-progress-circular indeterminate size="32" color="primary" />
+        </div>
 
-            <div class="description">
-                <v-card-subtitle class="subtitle">
-                    {{ programmingEvaluation.module.title }}
-                </v-card-subtitle>
-                <v-card-subtitle class="subtitle">
-                    {{ programmingEvaluation.module.description }}
-                </v-card-subtitle>
+        <div v-else>
+            <div v-if="exams.length === 0" class="text-center">
+                <v-alert type="info">Nenhuma avaliação encontrada.</v-alert>
             </div>
+            <div v-else>
+                <v-card v-for="exam in exams" :key="exam.id" class="card" color="secondary">
+                    <v-card-title class="title"> Avaliação </v-card-title>
 
-            <div class="info">
-                <span class="icon-check mdi mdi-check-bold"></span>
-                <p>{{ programmingEvaluation.exam.questions.length }} Questões</p>
-            </div>
+                    <div class="description">
+                        <v-card-subtitle class="subtitle">
+                            {{ exam.title}}
+                        </v-card-subtitle>
+                        <v-card-subtitle class="subtitle">
+                            {{ exam.description }}
+                        </v-card-subtitle>
+                    </div>
 
-            <v-btn class="btn-start" size="large" color="primary" @click="accessActivity">
-                Iniciar a atividade
-            </v-btn>
-            <v-btn class="btn-courses" color="secondary" @click="accessCourses">
-                Voltar aos cursos
-            </v-btn>
-            <div>
-                aqui está os dados do exercício: <span class="text-primary">{{ exams }}</span>
+                    <div class="info">
+                        <span class="icon-check mdi mdi-check-bold"></span>
+                        <p>{{ exam.questions.length }} Questões</p>
+                    </div>
+
+                    <v-btn class="btn-start" size="large" color="primary" @click="accessActivity">
+                        Iniciar a atividade
+                    </v-btn>
+                    <v-btn class="btn-courses" color="secondary" @click="accessCourses">
+                        Voltar aos cursos
+                    </v-btn>
+                </v-card>
             </div>
-        </v-card>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import { programmingEvaluation } from "../data/activity-form-data";
 import { useCourseSecondStore } from "@/modules/course/course-second.store";
 import { computed, onMounted, ref } from "vue";
 import type { exam } from "@/modules/course/course.types";
@@ -56,7 +63,6 @@ const accessCourses = () => {
 onMounted(async () => {
     loading.value = true;
     const response = await courseSecondStore.fetchExams(+moduleId.value);
-    console.log(response);
     exams.value = response;
     loading.value = false;
 });

@@ -1,79 +1,103 @@
 <template>
   <div class="evaluation-container" color="secondary">
-    <v-card class="card" color="secondary">
-      <v-progress-linear v-model="power" class="progress-bar" color="accent" height="10"></v-progress-linear>
-      <div>
-        <v-card-title class="question-card" color="warning">
-          {{ programmingEvaluation.exam.questions[idQuestion].questionText }}
+    <div v-if="loading" class="text-center">
+      <v-progress-circular indeterminate size="32" color="primary" />
+    </div>
+
+    <div v-else-if="questions.length === 0" class="text-center">
+      <v-alert type="info">Nenhuma questão encontrada.</v-alert>
+    </div>
+
+    <div v-else>
+
+      <v-card class="card" color="secondary">
+        <v-progress-linear v-model="power" class="progress-bar" color="accent" height="10" />
+
+        <v-card-title class="question-card">
+          {{ questions[idQuestion].questionText }}
         </v-card-title>
-        <v-card-subtitle class="subtitle">
-          Selecione uma alternativa:
-        </v-card-subtitle>
-      </div>
 
-      <div v-if="programmingEvaluation.exam.questions[idQuestion]" class="answers-container">
-        <v-card v-for="(options, index) in programmingEvaluation.exam.questions[idQuestion].options" :key="index"
-          class="answer-card" :class="{ 'selected-answer': selectedAnswer === index }" outlined variant="tonal"
-          @click="selectAnswer(index)">
-          {{ options.optionText }}
-        </v-card>
-      </div>
+        <v-card-subtitle class="subtitle">Selecione uma alternativa:</v-card-subtitle>
 
-      <div class="navigation-buttons">
-        <v-btn v-if="showPreviousQuestion" color="primary" @click="previousQuestion">
-          <v-icon icon="mdi-chevron-left"></v-icon>
-          Anterior
-        </v-btn>
-        <v-btn v-if="showNextQuestion" color="primary" @click="nextQuestion">
-          Próximo
-          <v-icon icon="mdi-chevron-right"></v-icon>
-        </v-btn>
-        <div>
+        <div class="answers-container">
+          <v-card v-for="(option, index) in questions[idQuestion].options" :key="option.id" class="answer-card"
+            :class="{ 'selected-answer': selectedAnswer === index }" outlined variant="tonal"
+            @click="selectAnswer(index)">
+            {{ option.optionText }}
+          </v-card>
+        </div>
+
+        <div class="navigation-buttons">
+          <v-btn v-if="showPreviousQuestion" color="primary" @click="previousQuestion">
+            <v-icon icon="mdi-chevron-left" />
+            Anterior
+          </v-btn>
+
+          <v-btn v-if="showNextQuestion" color="primary" @click="nextQuestion">
+            Próximo
+            <v-icon icon="mdi-chevron-right" />
+          </v-btn>
+
           <ActivityAlert v-if="finish" v-model="dialog" :dialog="false" @response="handleResponse" />
         </div>
 
-      </div>
-    </v-card>
+
+      </v-card>
+
+    </div>
+
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import router from "@/plugins/router/router";
-import { programmingEvaluation } from '../data/activity-form-data'
-import ActivityAlert from '@/modules/activity/dialog/activity-alert.vue'
+import { useRouter, useRoute } from "vue-router";
 import { userEvaluationStore } from '../activity.store';
+import { useCourseSecondStore } from '@/modules/course/course-second.store';
 import { pushMessageNotification } from "@/utils/notivue-base";
 pushMessageNotification;
+import ActivityAlert from '@/modules/activity/dialog/activity-alert.vue'
 
-const power = ref(10)
-const idQuestion = ref(0);
-const dialog = ref(false)
-const selectedAnswer = ref<number | null>(null);
-const showPreviousQuestion = computed(() => idQuestion.value > 0)
-const showNextQuestion = computed(() => idQuestion.value < programmingEvaluation.exam.questions.length - 1)
-const finish = computed(() => idQuestion.value === programmingEvaluation.exam.questions.length - 1)
-let userAnswers = ref<(number | null)[]>([]);
-userAnswers.value = Array(programmingEvaluation.exam.questions.length).fill(null)
-let correctAnswers = ref<typeof programmingEvaluation.exam.questions>([]);
-correctAnswers.value = Array(programmingEvaluation.exam.questions.length).fill(null)
+
+const router = useRouter();
+const route = useRoute();
+const courseSecondStore = useCourseSecondStore();
 const evaluationStore = userEvaluationStore();
+
+const loading = ref(false);
+
+const idQuestion = ref(0);
+const selectedAnswer = ref<number | null>(null);
+const dialog = ref(false)
+const power = ref(10)
+
+const userAnswers = ref<(number | null)[]>([]);
+const correctAnswers = ref<typeof questions.value>([]);
+
+const courseId = computed(() => route.params.courseId);
+
+const questions = computed(() => courseSecondStore.exams[0].questions)
+
+const showPreviousQuestion = computed(() => idQuestion.value > 0)
+const showNextQuestion = computed(() => idQuestion.value < questions.value.length - 1)
+const finish = computed(() => idQuestion.value === questions.value.length - 1)
+
+userAnswers.value = Array(questions.value.length).fill(null)
+correctAnswers.value = Array(questions.value.length).fill(null)
+
 
 function selectAnswer(index: number) {
   selectedAnswer.value = index;
   userAnswers.value[idQuestion.value] = index;
-  correctAnswers.value = programmingEvaluation.exam.questions.filter(
-    (questions, index) => {
-      const userAnswerIndex = userAnswers.value[index];
-      return userAnswerIndex !== null && questions.options[userAnswerIndex]?.correct;
-    }
-  );
+
 }
 
 function updateProgress() {
-  const total = programmingEvaluation.exam.questions.length;
+  const total = questions.value.length;
   power.value = ((idQuestion.value + 1) / total) * 100;
 }
+
 
 function previousQuestion() {
   if (idQuestion.value > 0) {
@@ -84,7 +108,7 @@ function previousQuestion() {
 }
 
 function nextQuestion() {
-  if (idQuestion.value < programmingEvaluation.exam.questions.length - 1) {
+  if (idQuestion.value < questions.value.length - 1) {
     idQuestion.value++;
     selectedAnswer.value = userAnswers.value[idQuestion.value];
   }
@@ -94,9 +118,17 @@ function nextQuestion() {
 function handleResponse(value: 'sim' | 'nao') {
 
   if (value === 'sim') {
-    evaluationStore.setCorrectAnswers(correctAnswers.value.length)
-    router.push({ name: "ActivityCompleted" })
-  }
+    correctAnswers.value = questions.value.filter(
+      (questions, index) => {
+        const userAnswerIndex = userAnswers.value[index];
+        return userAnswerIndex !== null && questions.options[userAnswerIndex]?.correct;
+      }
+    );
+
+    evaluationStore.setCorrectAnswers(correctAnswers.value.length);
+    evaluationStore.setIntoCourseExams({courseId: +courseId.value, rightAnswers: correctAnswers.value.length})
+  router.push({ name: "ActivityCompleted" })
+}
 }
 
 </script>
