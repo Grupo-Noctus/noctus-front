@@ -10,14 +10,14 @@
             Erro ao buscar módulos do curso
         </div>
         <v-expansion-panel
-            v-for="courseTabContent in eachCourseTabContent"
+            v-for="courseTabContent, index in eachCourseTabContent"
             v-else
             :key="courseTabContent.id"
             class="pa-0 rounded-0"
             static
         >
             <v-expansion-panel-title min-height="40" class="font-weight-medium">
-                Módulo {{ courseTabContent.id + ": " + courseTabContent.name }}
+                Módulo {{ ( index+1) + ": " + courseTabContent.name }}
             </v-expansion-panel-title>
             <v-expansion-panel-text class="pa-0">
                 <div v-for="tabContent in courseTabContent.videos" :key="tabContent.id">
