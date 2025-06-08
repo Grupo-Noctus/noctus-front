@@ -4,7 +4,10 @@ import { adminMiddleware } from "./admin.middleware";
 import TCourses from "./views/courses.vue";
 import EnrollmentCourses from "./views/enrollment-courses.vue";
 import TModules from "./views/module/modules.vue";
+import ManagementMaterialDetaild from "./management-material/management-material-detaild.vue";
+import ManagementMaterial from "./management-material/management-material.vue";
 import Enrollment from "./views/enrollment/envrollment.vue";
+
 export const adminRoutes: RouteRecordRaw[] = [
     {
         path: "admin",
@@ -25,6 +28,19 @@ export const adminRoutes: RouteRecordRaw[] = [
         component: TModules,
         props: true,
         beforeEnter: adminMiddleware,
+    },
+    {
+        path: "management-material",
+        name: "ManagementMaterial",
+        component: ManagementMaterial,
+        props: true,
+        beforeEnter: adminMiddleware,
+    },
+    {
+        path: "management-material/:id/materials",
+        name: "ManagementMaterialDetaild",
+        component: ManagementMaterialDetaild,
+        props: true,
     },
     {
         path: "all-course-enrollment",

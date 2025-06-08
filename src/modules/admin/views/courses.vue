@@ -1,4 +1,5 @@
 <template>
+    <div>
     <v-card class="pa-3 d-flex justify-space-between align-center" variant="text">
         <div class="d-flex pa-0">
             <h1 class="text-h5">Cursos</h1>
@@ -25,7 +26,6 @@
     </v-card>
 
     <v-divider class="mb-4"></v-divider>
-
     <v-row justify="center">
         <v-col v-if="loading" class="text-center">
             <v-progress-circular
@@ -97,6 +97,7 @@
             @cancel="handleCancelDialog"
         ></confirmation-dialog>
     </v-row>
+    </div>
 </template>
 
 <script setup lang="ts">

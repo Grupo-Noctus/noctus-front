@@ -37,6 +37,34 @@ export type TCreateContentData = {
     id?: number;
 };
 
+export type TMaterial = {
+    id: number;
+    name: string;
+    description: string;
+    link: string;
+    type: string;
+    courseId: number;
+    file?: File | null;
+};
+
+export type TCreateMaterial = {
+    name: string;
+    description: string;
+    link: string;
+    type: string;
+    courseId: number;
+    file?: File | null;
+};
+
+export type TContentMaterial = {
+    name: string;
+    description: string;
+    link: string;
+    type: string;
+    courseId: number;
+    file?: File | null;
+};
+
 export type TEnrollment = {
     idUser: number;
     username: string;

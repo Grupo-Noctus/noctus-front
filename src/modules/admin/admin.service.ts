@@ -4,7 +4,9 @@ import type {
     TCourses,
     TCreateContentData,
     TCreateCourseData,
+    TCreateMaterial,
     TCreateModuleData,
+    TMaterial,
     TEnrollment,
 } from "./admin.types";
 
@@ -250,6 +252,23 @@ export const AdminService = () => {
         }
     };
 
+    const getMaterialsService = async (courseId: number): Promise<TMaterial[]> => {
+        try {
+            const data = await adminHttp.getMaterialsHttp(courseId);
+            
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao buscar o material",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return [];
+        }
+    };
+
     const getEnrollmentService = async (courseId: number): Promise<TEnrollment[]> => {
         try {
             const data = await adminHttp.getEnrollmentHttp(courseId);
@@ -267,6 +286,34 @@ export const AdminService = () => {
         }
     };
 
+
+    const createMaterialService = async (form: TCreateMaterial) => {
+        try {
+            const data = await adminHttp.createMaterialHttp(form);
+
+            if (data) {
+                pushMessageNotification({
+                    type: "success",
+                    message: "Material criado com sucesso",
+                    duration: 3000,
+                });
+
+                return true;
+            }
+
+            throw new Error("erro ao criar o material");
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao criar o material",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return null;
+        }
+    };
+
     const createEnrollmentService = async (studentEmail: string, courseId: number) => {
         try {
             const data = await adminHttp.createEnrollmentHttp(studentEmail, courseId);
@@ -277,26 +324,39 @@ export const AdminService = () => {
                     message: "Matrícula criada com sucesso",
                     duration: 3000,
                 });
+
+                return true;
             }
 
-            return true;
+            throw new Error("erro ao criar a matrícula");
         } catch (error) {
-            if (
-                error.response.data.message ===
-                "Duplicate value for: Enrollment_idStudent_idCourse_key"
-            ) {
-                pushMessageNotification({
-                    type: "error",
-                    message: "Aluno já matriculado no curso",
-                    duration: 3000,
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao criar o matrícula",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return null;
+        }
+    };
+
+    const deleteMaterialService = async (id: number): Promise<boolean | null> => {
+        try {
+            await adminHttp.deleteMaterialHttp(id);
+            pushMessageNotification({
+                type: "success",
+                message: "Material deletado com sucesso",
+                duration: 3000,
                 });
-            } else {
-                pushMessageNotification({
-                    type: "error",
-                    message: "Erro ao criar a matrícula",
-                    duration: 3000,
-                });
-            }
+            
+                return true;
+            } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao deletar a matrícula",
+                duration: 3000,
+            });
 
             console.error(error);
             return false;
@@ -312,17 +372,28 @@ export const AdminService = () => {
                 duration: 3000,
             });
 
-            return true;
-        } catch (error) {
-            pushMessageNotification({
-                type: "error",
-                message: "Erro ao deletar a matrícula",
-                duration: 3000,
-            });
+                return true;
+            } catch (error) {
+                if (
+                    error.response.data.message ===
+                    "Duplicate value for: Enrollment_idStudent_idCourse_key"
+                ) {
+                    pushMessageNotification({
+                        type: "error",
+                        message: "Aluno já matriculado no curso",
+                        duration: 3000,
+                    });
+                } else {
+                    pushMessageNotification({
+                        type: "error",
+                        message: "Erro ao criar a matrícula",
+                        duration: 3000,
+                    });
+                }
 
-            console.error(error);
-            return false;
-        }
+                console.error(error);
+                return false;
+            }
     };
 
     return {
@@ -336,6 +407,9 @@ export const AdminService = () => {
         createContentService,
         updateContentService,
         deleteContentService,
+        createMaterialService,
+        getMaterialsService,
+        deleteMaterialService,
         getEnrollmentService,
         createEnrollmentService,
         deleteEnrollmentService,
