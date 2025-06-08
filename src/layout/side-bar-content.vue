@@ -2,10 +2,7 @@
     <v-card style="min-height: 100vh">
         <v-layout>
             <v-app-bar color="primary" class="elevation-0">
-                <v-app-bar-nav-icon
-                    variant="text"
-                    @click.stop="drawer = !drawer"
-                ></v-app-bar-nav-icon>
+                <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
                 <v-avatar size="50" style="margin-right: 0px">
                     <v-img src="src/assets/matera-logo.png" alt="Logo Matera" />
@@ -17,28 +14,14 @@
                 <v-btn icon="mdi mdi-theme-light-dark" variant="text" @click="toggleTheme"></v-btn>
             </v-app-bar>
 
-            <v-navigation-drawer
-                v-model="drawer"
-                :location="$vuetify.display.mobile ? 'bottom' : undefined"
-                temporary
-            >
+            <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary>
                 <div class="w-100 h-100 d-flex flex-column justify-space-between">
                     <v-list :lines="false" density="compact" nav slim>
-                        <side-bar-item
-                            v-for="(item, i) in filteredItems"
-                            :key="i"
-                            :text="item.text"
-                            :icon="item.icon"
-                            :value="item"
-                            :naviga-to="item.navigateTo"
-                        />
+                        <side-bar-item v-for="(item, i) in filteredItems" :key="i" :text="item.text" :icon="item.icon"
+                            :value="item" :naviga-to="item.navigateTo" :disabled="item.disabled" />
                     </v-list>
 
-                    <user-list-item
-                        :userName="userName"
-                        :userEmail="userEmail"
-                        :avatarUrl="userImage"
-                    ></user-list-item>
+                    <user-list-item :userName="userName" :userEmail="userEmail" :avatarUrl="userImage"></user-list-item>
                 </div>
             </v-navigation-drawer>
 
@@ -80,7 +63,8 @@ const filteredItems = computed(() => {
 
 const items = [
     { text: "estudante", icon: "mdi-school", navigateTo: "Student", requireAdminAccess: false },
-    { text: "curso", icon: "mdi-bookshelf", navigateTo: "Course", requireAdminAccess: false },
+    { text: "certificado", icon: "mdi-certificate", navigateTo: "Certificate", requireAdminAccess: false, disabled: true },
+    { text: "área do aluno", icon: "mdi-account", navigateTo: "StudentArea", requireAdminAccess: false, disabled: true },
     { text: "admin", icon: "mdi-crown", navigateTo: "Admin", requireAdminAccess: true },
 ];
 </script>
