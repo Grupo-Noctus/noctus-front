@@ -5,7 +5,7 @@
     </div>
 
     <div v-else-if="questions.length === 0" class="text-center">
-      <v-alert type="info">Nenhuma questão encontrada.</v-alert>
+      <v-alert type="info" class="custom-alert">Nenhuma questão encontrada.</v-alert>
     </div>
 
     <div v-else>
@@ -134,6 +134,12 @@ function handleResponse(value: 'sim' | 'nao') {
 </script>
 
 <style scoped>
+
+.custom-alert {
+  width: 100%;
+  margin: 16px auto;
+}
+
 .evaluation-container {
   display: flex;
   flex-direction: column;

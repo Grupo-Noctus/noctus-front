@@ -6,7 +6,7 @@
 
         <div v-else>
             <div v-if="exams.length === 0" class="text-center">
-                <v-alert type="info">Nenhuma avaliação encontrada.</v-alert>
+                <v-alert type="info" class="custom-alert">Nenhuma avaliação encontrada.</v-alert>
             </div>
             <div v-else>
                 <v-card v-for="exam in exams" :key="exam.id" class="card" color="secondary">
@@ -69,7 +69,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Container principal */
+
 .container {
     display: flex;
     align-items: center;
@@ -80,7 +80,11 @@ onMounted(async () => {
     padding: 0;
 }
 
-/* Card */
+.custom-alert {
+  width: 100%;
+  margin: 16px auto;
+}
+
 .card {
     display: flex;
     flex-direction: column;
@@ -94,14 +98,12 @@ onMounted(async () => {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-/* Título */
 .title {
     margin-top: 32px;
     font-size: 28px;
     text-align: center;
 }
 
-/* Descrição */
 .description {
     display: flex;
     flex-direction: column;
@@ -117,7 +119,6 @@ onMounted(async () => {
     text-align: center;
 }
 
-/* Informações */
 .info {
     display: flex;
     flex-direction: column;
@@ -130,7 +131,6 @@ onMounted(async () => {
     color: #6ff24b;
 }
 
-/* Botões */
 .btn-start {
     padding: 8px;
     margin-top: 20px;

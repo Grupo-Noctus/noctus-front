@@ -13,7 +13,7 @@
         <v-progress-circular :indeterminate="loading" :size="37" color="primary"></v-progress-circular>
       </v-col>
       <v-col v-else-if="!courses || courses.length === 0" cols="12" class="text-center">
-        <v-alert type="info">Nenhum curso encontrado</v-alert>
+        <v-alert type="info" class="w-75 custom-alert">Nenhum curso encontrado</v-alert>
       </v-col>
 
       <v-col v-for="course in courses" v-else :key="course.id" cols="auto" sm="6" md="4" lg="4" class="pa-4">
@@ -82,6 +82,12 @@ const viewMaterials = (courseId: number) => {
 </script>
 
 <style scoped>
+
+.custom-alert {
+  width: 100%;
+  margin: 16px auto;
+}
+
 .course-card {
   max-width: 400px;
   display: flex;

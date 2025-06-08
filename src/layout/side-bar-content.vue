@@ -62,7 +62,7 @@ const filteredItems = computed(() => {
 });
 
 const items = [
-    { text: "estudante", icon: "mdi-school", navigateTo: "Student", requireAdminAccess: false },
+    { text: "cursos", icon: "mdi-school", navigateTo: "Student", requireAdminAccess: false },
     { text: "certificado", icon: "mdi-certificate", navigateTo: "Certificate", requireAdminAccess: false, disabled: true },
     { text: "área do aluno", icon: "mdi-account", navigateTo: "StudentArea", requireAdminAccess: false, disabled: true },
     { text: "admin", icon: "mdi-crown", navigateTo: "Admin", requireAdminAccess: true },

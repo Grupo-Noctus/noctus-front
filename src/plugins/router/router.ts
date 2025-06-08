@@ -17,10 +17,10 @@ const routes: RouteRecordRaw[] = [
     {
         path: "",
         component: SideBarContent,
-        redirect: "/student",
+        redirect: "/course",
         children: [
             {
-                path: "student",
+                path: "course",
                 name: "Student",
                 component: Student,
             },
