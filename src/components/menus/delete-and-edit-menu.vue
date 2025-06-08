@@ -16,6 +16,7 @@
                 prepend-icon="mdi-pencil"
                 class="text-primary text-caption"
                 @click="emits('edit', item)"
+                :disabled="disableEdit"
                 >Editar</v-btn
             >
             <v-btn
@@ -35,6 +36,10 @@ const props = defineProps({
     item: {
         type: Object as PropType<unknown>,
         required: true,
+    },
+    disableEdit: {
+        type: Boolean,
+        default: false,
     },
 });
 

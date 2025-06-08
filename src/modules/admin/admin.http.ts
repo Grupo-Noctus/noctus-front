@@ -3,6 +3,7 @@ import type {
     TCourses,
     TCreateContentData,
     TCreateCourseData,
+    TCreateMaterial,
     TCreateModuleData,
     TMaterial,
 } from "./admin.types";
@@ -125,7 +126,34 @@ export class AdminHttp {
 
     async getMaterialsHttp(courseId: number): Promise<TMaterial[]> {
         const { data } = await this.httpAdmin.get(`/material/find-many/${courseId}`);
+        return data as TMaterial[];
+    }
 
-        return data.courses as TMaterial[];
+    async createMaterialHttp(form: TCreateMaterial): Promise<boolean> {
+        const formData = new FormData();
+
+        formData.append("name", form.name);
+        formData.append("description", form.description);
+        formData.append("link", form.link || "https://link.com/material");
+        formData.append("type", form.type );
+        formData.append("idCourse", String(form.courseId));
+
+        if (form.file) {
+            formData.append("file", form.file);
+        }
+
+        const { data } = await this.httpAdmin.post("/material/create", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        return data;
+    }
+
+    async deleteMaterialHttp(id: number) {
+        const { data } = await this.httpAdmin.delete(`/material/delete/${id}`);
+
+        return data;
     }
 }

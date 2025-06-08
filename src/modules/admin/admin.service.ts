@@ -4,6 +4,7 @@ import type {
     TCourses,
     TCreateContentData,
     TCreateCourseData,
+    TCreateMaterial,
     TCreateModuleData,
     TMaterial,
 } from "./admin.types";
@@ -258,12 +259,61 @@ export const AdminService = () => {
         } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "Erro ao buscar o curso",
+                message: "Erro ao buscar o material",
                 duration: 3000,
             });
 
             console.error(error);
             return [];
+        }
+    };
+
+    const createMaterialService = async (form: TCreateMaterial) => {
+        try {
+            const data = await adminHttp.createMaterialHttp(form);
+
+            if (data) {
+                pushMessageNotification({
+                    type: "success",
+                    message: "Material criado com sucesso",
+                    duration: 3000,
+                });
+
+                return true;
+            }
+
+            throw new Error("erro ao criar o material");
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao criar o material",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return null;
+        }
+    };
+
+    const deleteMaterialService = async (id: number): Promise<boolean | null> => {
+        try {
+            await adminHttp.deleteMaterialHttp(id);
+            pushMessageNotification({
+                type: "success",
+                message: "Material deletado com sucesso",
+                duration: 3000,
+            });
+
+            return true;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao deletar o material",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return null;
         }
     };
 
@@ -278,6 +328,8 @@ export const AdminService = () => {
         createContentService,
         updateContentService,
         deleteContentService,
-        getMaterialsService
+        createMaterialService,
+        getMaterialsService,
+        deleteMaterialService,
     };
 };

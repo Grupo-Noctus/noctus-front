@@ -23,12 +23,7 @@
                                 row-height="25" no-resize :rows="4" variant="outlined"></v-textarea>
                         </v-col>
                         <v-col>
-                            <v-select v-model="createMaterialForm.courseId" :items="courses" item-title="name"
-                                item-value="id" label="Selecione um curso" clearable variant="outlined"
-                                required></v-select>
-                        </v-col>
-                        <v-col>
-                            <v-file-input v-model="createMaterialForm.imageCourse" accept="image/png, image/jpeg"
+                            <v-file-input v-model="createMaterialForm.file" accept="image/png, image/jpeg"
                                 label="Material do curso" placeholder="Carregue seu material"
                                 prepend-icon="mdi-archive-arrow-down-outline" variant="outlined"></v-file-input>
                         </v-col>
@@ -48,17 +43,18 @@
 <script setup lang="ts">
 import { pushMessageNotification } from "@/utils/notivue-base";
 import { Form } from "vee-validate";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import * as yup from "yup";
-import type { TCourses } from "../../admin.types";
 import { AdminService } from "../../admin.service";
 import type { TMaterial } from "../../admin.types";
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 
-const courses = ref<TCourses[]>([]);
 const materials = ref<TMaterial[]>([]);
 const adminService = AdminService();
 const MAX_FILE_SIZE_KB = 1024 * 1000;
+const courseIdFromRoute = computed(() => Number(route.params.id));
 
 
 const props = defineProps<{
@@ -79,8 +75,10 @@ const isEditMode = computed(() => !!props.editData);
 const createMaterialForm = reactive({
     name: "",
     description: "",
-    courseId: null as number | null,
-    imageCourse: null as File | null,
+    courseId: courseIdFromRoute.value,
+    file: null as File | null,
+    type: "PDF",
+    link: "https://link.com/material",
 });
 
 watch(
@@ -90,6 +88,8 @@ watch(
             createMaterialForm.name = newValue.name;
             createMaterialForm.description = newValue.description;
             createMaterialForm.courseId = newValue.courseId;
+            createMaterialForm.type = newValue.type;
+            
         } else {
             resetValues();
         }
@@ -103,7 +103,7 @@ watch(
         if (newValue) {
             fetchMaterials();
         } else {
-            materials.value = []; // Limpa os materiais se o curso for desmarcado
+            materials.value = [];
         }
     }
 );
@@ -134,10 +134,7 @@ const materialCreateRules = yup.object({
         .string()
         .max(150, "A descrição deve ter no máximo 150 caracteres")
         .required("Descrição é obrigatória"),
-    courseId: yup
-        .number()
-        .required("Curso é obrigatório"),
-    imageCourse: yup
+    file: yup
         .mixed()
         .optional()
         .nullable()
@@ -189,7 +186,13 @@ const materialCreateRules = yup.object({
                 return true;
             }
 
-            const validTypes = ["material/jpeg", "material/png", "material/jpg", "material/pdf", "material/txt"];
+            const validTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/jpg",
+                "application/pdf",
+                "text/plain"
+                ];
             return validTypes.includes(file.type);
         }),
 });
@@ -197,8 +200,7 @@ const materialCreateRules = yup.object({
 function resetValues() {
     createMaterialForm.name = "";
     createMaterialForm.description = "";
-    createMaterialForm.courseId = null;
-    createMaterialForm.imageCourse = null;
+    createMaterialForm.file = null;
 }
 
 function handleCancel() {

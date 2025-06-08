@@ -4,111 +4,121 @@
             <h1 class="text-h5">Materiais</h1>
         </div>
         <div class="pa-0">
-            <v-btn variant="elevated" size="small" density="default" prepend-icon="mdi-plus" color="primary"
-                @click="handleWishToCreateCourse">
+            <v-btn 
+                variant="elevated" 
+                size="small" 
+                density="default" 
+                prepend-icon="mdi-plus" 
+                color="primary"
+                @click="handleWishToCreateMaterial">
                 criar material
             </v-btn>
-            <create-material-dialog v-model="isCreateDialogOpen" :is-external-control="true" :edit-data="selectedMaterial"
-                @confirm-create="handleFormSubmit" @cancel="handleDialogCancel"></create-material-dialog>
+            <create-material-dialog 
+                v-model="isCreateDialogOpen" 
+                :is-external-control="true" 
+                :edit-data="selectedMaterial"
+                @confirm-create="handleFormSubmit" 
+                @cancel="handleDialogCancel">
+            </create-material-dialog>
         </div>
     </v-card>
-
     <v-divider class="mb-4"></v-divider>
-
+    
     <v-row justify="center">
         <v-col v-if="loading" class="text-center">
-            <v-progress-circular :indeterminate="loading" :size="37" color="primary"></v-progress-circular>
+            <v-progress-circular
+                :indeterminate="loading"
+                :size="37"
+                color="primary"
+            ></v-progress-circular>
         </v-col>
-        <v-col v-else-if="!courses || courses.length === 0" cols="12" class="text-center">
-            <v-alert type="info">Nenhum curso encontrado</v-alert>
+        <v-col v-else-if="!materials || materials.length === 0" cols="12" class="text-center">
+            <v-alert type="info">Nenhum material encontrado</v-alert>
         </v-col>
 
-        <v-col v-for="course in courses" v-else :key="course.id" cols="auto" sm="6" md="4" lg="4" class="pa-4">
-            <v-card class="course-card px-4 py-2 mx-auto" elevation="4" :class="{ 'dark-theme': isDark }">
-                <delete-and-edit-menu :item="course" @delete="handleWishToDeleteCourse"
-                    @edit="handleWishToEditCourse" />
-                <v-img :src="getImageUrl(course.image)" height="200" cover class="course-image mt-3">
-                </v-img>
-
+        <v-col
+            v-for="material in materials"
+            v-else
+            :key="material.id"
+            cols="auto"
+            sm="6"
+            md="4"
+            lg="4"
+            class="pa-4"
+        >
+            <v-card
+                class="course-card px-4 py-2 mx-auto"
+                elevation="4"
+                :class="{ 'dark-theme': isDark }"
+            >
+                <delete-and-edit-menu
+                    :item="material"
+                    :disable-edit="true"
+                    @delete="handleWishToDeleteMaterial"
+                    @edit="handleWishToEditMaterial"
+                />
                 <v-card-title class="text-h5 mt-2">
-                    {{ course.name }}
+                    {{ material.name }}
                 </v-card-title>
 
                 <v-card-text class="text-body-1 overflow-auto mb-0">
-                    {{ course.description }}
+                    {{ material.description }}
                 </v-card-text>
-
-                <v-card-actions>
-                    <v-btn color="warning" variant="tonal" size="large" block :disabled="!course"
-                        @click="viewMaterials(course.id)">
-                        Acessar Material
-                    </v-btn>
-                </v-card-actions>
             </v-card>
         </v-col>
 
-        <confirmation-dialog :model-value="isDeleteDialogOpen" :title="`Remover curso`"
-            :item-to-delete="selectedMaterial?.name" @confirm="handleConfirmDialog"
-            @cancel="handleCancelDialog"></confirmation-dialog>
+        <confirmation-dialog
+            :model-value="isDeleteDialogOpen"
+            :title="`Remover material`"
+            :item-to-delete="selectedMaterial?.name"
+            @confirm="handleConfirmDialog"
+            @cancel="handleCancelDialog"
+        ></confirmation-dialog>
+
     </v-row>
+    
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 
 import { AdminService } from "../admin.service";
-import { getImageUrl } from "@/utils/image-url";
-import type { TCourses, TCreateCourseData, TMaterial } from "../admin.types";
+import type { TCreateMaterial, TMaterial } from "../admin.types";
 import { useIndexStore } from "@/stores/index.store";
 
 import deleteAndEditMenu from "@/components/menus/delete-and-edit-menu.vue";
 import confirmationDialog from "@/components/dialogs/confirmation-dialog.vue";
 import createMaterialDialog from "./dialogs/create-material-dialog.vue";
+import { useRoute } from "vue-router";
 
-const router = useRouter();
+const route = useRoute();
+const courseId = computed(() => Number(route.params.id)); 
+
 const indexStore = useIndexStore();
 const adminService = AdminService();
 
 const isCreateDialogOpen = ref(false);
 const selectedMaterial = ref<TMaterial | null>(null);
 const isDeleteDialogOpen = ref<boolean>(false);
-const courses = ref<TCourses[]>([]);
+const materials = ref<TMaterial[]>([]);
 const loading = ref(false);
+
 
 const isDark = computed(() => indexStore.isDark);
 
-const handleCreateCourse = async (form: TCreateCourseData) => {
-    const response = await adminService.createCourseService(form);
+const handleCreateMaterial = async (form: TCreateMaterial) => {
+    const response = await adminService.createMaterialService(form);
 
     if (response) {
-        fetchCourses();
+        fetchMaterials();
     }
 };
 
-const handleFormSubmit = (form: TCreateCourseData & { id?: number }) => {
-    if (form.id) {
-        handleEditCourse(form);
-    } else {
-        handleCreateCourse(form);
-    }
+const handleFormSubmit = (form: TCreateMaterial & { id?: number }) => {
+    handleCreateMaterial(form);    
 };
 
-const handleEditCourse = async (form: TCreateCourseData & { id?: number }) => {
-    console.info("edit", form);
-    const response = await adminService.updateCourseService(form);
-
-    if (response) {
-        fetchCourses();
-    }
-};
-
-const handleWishToEditCourse = (course: TCourses) => {
-    selectedMaterial.value = course;
-    isCreateDialogOpen.value = true;
-};
-
-const handleWishToCreateCourse = () => {
+const handleWishToCreateMaterial = () => {
     selectedMaterial.value = null;
     isCreateDialogOpen.value = true;
 };
@@ -119,10 +129,9 @@ const handleDeleteCourse = async () => {
         return;
     }
 
-    const response = await adminService.deleteCourseService(selectedMaterial.value?.id);
-
+    const response = await adminService.deleteMaterialService(selectedMaterial.value?.id);
     if (response) {
-        fetchCourses();
+        fetchMaterials();
     }
 };
 
@@ -136,8 +145,8 @@ const handleCancelDialog = () => {
     selectedMaterial.value = null;
 };
 
-const handleWishToDeleteCourse = (course: TCourses) => {
-    selectedMaterial.value = course;
+const handleWishToDeleteMaterial = (material: TMaterial) => {
+    selectedMaterial.value = material;
     isDeleteDialogOpen.value = true;
 };
 
@@ -145,11 +154,11 @@ const handleDialogCancel = () => {
     selectedMaterial.value = null;
 };
 
-const fetchCourses = async () => {
+const fetchMaterials = async () => {
     try {
         loading.value = true;
-        const response = await adminService.getCoursesService();
-        courses.value = response;
+        const response = await adminService.getMaterialsService(courseId.value);
+        materials.value = response;
         loading.value = false;
     } catch (error) {
         console.error("Erro ao carregar cursos:", error);
@@ -157,17 +166,10 @@ const fetchCourses = async () => {
 };
 
 onMounted(() => {
-    fetchCourses();
+    fetchMaterials();
 });
 
-const viewMaterials = (courseId: number) => {
-    if (!courseId) {
-        console.warn("ID do curso não definido.");
-        return;
-    }
-    
-    router.push({ name: "ManagementMaterial", params: { id: String(courseId) } });
-};
+
 </script>
 
 <style scoped>

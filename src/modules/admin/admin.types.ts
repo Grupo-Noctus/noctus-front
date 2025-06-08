@@ -37,12 +37,31 @@ export type TCreateContentData = {
     id?: number;
 };
 
-
 export type TMaterial = {
-  name: string;
-  description: string;
-  link: string;
-  type: 'PDF' | 'VIDEO' | 'AUDIO' | 'DOC' | string;
-  courseId: number;
+    id: number;
+    name: string;
+    description: string;
+    link: string;
+    type: string;
+    courseId: number;
+    file?: File | null;
+};
+
+export type TCreateMaterial = {
+    name: string;
+    description: string;
+    link: string;
+    type: string;
+    courseId: number;
+    file?: File | null;
+};
+
+export type TContentMaterial = {
+    name: string;
+    description: string;
+    link: string;
+    type: string;
+    courseId: number;
+    file?: File | null;
 };
 

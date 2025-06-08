@@ -25,10 +25,11 @@
       lg="4"
       class="pa-4"
     >
-      <v-card class="course-card px-4 py-2 mx-auto" elevation="4" :class="{ 'dark-theme': isDark }">
-        <delete-and-edit-menu :item="course" @delete="handleWishToDeleteCourse" @edit="handleWishToEditCourse" />
+      <v-card class="course-card px-4 py-2 mx-auto" 
+      elevation="4" :class="{ 'dark-theme': isDark }">
 
-        <v-img :src="getImageUrl(course.image)" height="200" cover class="course-image mt-3" />
+        <v-img :src="getImageUrl(course.image)" 
+        height="200" cover class="course-image mt-3" />
 
         <v-card-title class="text-h5 mt-2">
           {{ course.name }}
@@ -39,20 +40,15 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn color="warning" variant="tonal" size="large" block :disabled="!course" @click="viewMaterials(course.id)">
+          <v-btn color="warning" 
+            variant="tonal" 
+            size="large" 
+            block :disabled="!course" @click="viewMaterials(course.id)">
             Acessar Materiais
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
-
-    <confirmation-dialog
-      :model-value="isDeleteDialogOpen"
-      :title="`Remover curso`"
-      :item-to-delete="selectedMaterial?.name"
-      @confirm="handleConfirmDialog"
-      @cancel="handleCancelDialog"
-    />
   </v-row>
 </template>
 
@@ -62,52 +58,17 @@ import { useRouter } from "vue-router";
 
 import { AdminService } from "../admin.service";
 import { getImageUrl } from "@/utils/image-url";
-import type { TCourses, TMaterial } from "../admin.types";
+import type { TCourses } from "../admin.types";
 import { useIndexStore } from "@/stores/index.store";
-
-import deleteAndEditMenu from "@/components/menus/delete-and-edit-menu.vue";
-import confirmationDialog from "@/components/dialogs/confirmation-dialog.vue";
 
 const router = useRouter();
 const indexStore = useIndexStore();
 const adminService = AdminService();
 
-
-const isDeleteDialogOpen = ref<boolean>(false);
-const selectedMaterial = ref<TMaterial | null>(null);
 const courses = ref<TCourses[]>([]);
 const loading = ref(false);
 
 const isDark = computed(() => indexStore.isDark);
-
-const handleWishToEditCourse = (course: TCourses) => {
-  selectedMaterial.value = course;
-};
-
-const handleDeleteCourse = async () => {
-  isDeleteDialogOpen.value = false;
-  if (!selectedMaterial.value?.id) return;
-
-  const response = await adminService.deleteCourseService(selectedMaterial.value.id);
-  if (response) {
-    fetchCourses();
-  }
-};
-
-const handleConfirmDialog = () => {
-  isDeleteDialogOpen.value = false;
-  handleDeleteCourse();
-};
-
-const handleCancelDialog = () => {
-  isDeleteDialogOpen.value = false;
-  selectedMaterial.value = null;
-};
-
-const handleWishToDeleteCourse = (selectedMaterial: TMaterial) => {
-  selectedMaterial.value = course;
-  isDeleteDialogOpen.value = true;
-};
 
 const fetchCourses = async () => {
   try {
@@ -126,8 +87,9 @@ onMounted(() => {
 
 const viewMaterials = (courseId: number) => {
   if (!courseId) return;
-  router.push({ name: "ManagementMaterial", params: { id: String(courseId) } });
+  router.push({ name: "ManagementMaterialDetaild", params: { id: String(courseId) } });
 };
+
 </script>
 
 <style scoped>

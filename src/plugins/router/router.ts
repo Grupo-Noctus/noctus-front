@@ -8,7 +8,6 @@ import Student from "@/views/student.vue";
 import { courseRoutes } from "@/modules/course/couse.routes";
 import { authMiddleware } from "@/modules/auth/auth.middleware";
 import { adminRoutes } from "@/modules/admin/admin.routes";
-import { managementMaterialRoutes } from "@/modules/admin/management-material/management-material.routes";
 
 
 const routes: RouteRecordRaw[] = [
@@ -24,7 +23,6 @@ const routes: RouteRecordRaw[] = [
             },
             ...courseRoutes,
             ...adminRoutes,
-            ...managementMaterialRoutes,
         ],
     },
     {

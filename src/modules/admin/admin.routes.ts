@@ -4,6 +4,7 @@ import { adminMiddleware } from "./admin.middleware";
 import TCourses from "./views/courses.vue";
 import TModules from "./views/module/modules.vue";
 import ManagementMaterialDetaild from "./management-material/management-material-detaild.vue";
+import ManagementMaterial from "./management-material/management-material.vue";
 
 
 export const adminRoutes: RouteRecordRaw[] = [
@@ -28,7 +29,14 @@ export const adminRoutes: RouteRecordRaw[] = [
         beforeEnter: adminMiddleware,
     },
     {
-        path: "materials/:id",
+        path: "management-material",
+        name: "ManagementMaterial",
+        component: ManagementMaterial,
+        props: true,
+        beforeEnter: adminMiddleware,
+    },
+    {
+        path: "management-material/:id/materials",
         name: "ManagementMaterialDetaild",
         component: ManagementMaterialDetaild,
         props: true,
