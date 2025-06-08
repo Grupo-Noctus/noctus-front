@@ -5,19 +5,19 @@ import ActivityCompleted from "./view/activity-completed.vue";
 
 export const ActivityRoutes: RouteRecordRaw[] = [
     {
-        path: "student/course/:courseId/activity/:moduleId",
+        path: "course/:courseId/activity/:moduleId",
         name: "ActivityInitial",
         component: ActivityInitial,
         props: true,
     },
     {
-        path: "student/course/:courseId/activity/activity-form/:moduleId",
+        path: "course/:courseId/activity/activity-form/:moduleId",
         name: "ActivityForm",
         component: ActivityForm,
         props: true,
     },
     {
-        path: "student/course/:courseId/activity/activity-completed/:moduleId",
+        path: "course/:courseId/activity/activity-completed/:moduleId",
         name: "ActivityCompleted",
         component: ActivityCompleted,
         props: true,

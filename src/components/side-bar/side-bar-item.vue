@@ -1,6 +1,6 @@
 <template>
     <div @click="navigateToMainContent(navigaTo)">
-        <v-list-item :value="value" color="primary" class="mb-2">
+        <v-list-item :value="value" :disabled="disabled" color="primary" class="mb-2">
             <template v-slot:prepend>
                 <v-icon :icon="icon" />
             </template>
@@ -32,6 +32,10 @@ defineProps({
         type: [String, Object],
         default: () => ({}),
     },
+    disabled: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const navigateToMainContent = (routeName: string) => {
