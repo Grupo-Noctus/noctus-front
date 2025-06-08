@@ -1,11 +1,7 @@
 <template>
     <v-expansion-panels variant="accordion" elevation="0" class="text-body-2" multiple>
-        <div
-            v-if="isLoadingContentTab"
-            min-height="40"
-            class="font-weight-medium d-flex justify-space-between align-center"
-            style="height: 50px; width: 100%"
-        >
+        <div v-if="isLoadingContentTab" min-height="40"
+            class="font-weight-medium d-flex justify-space-between align-center" style="height: 50px; width: 100%">
             <v-skeleton-loader type="heading" style="width: 60%"></v-skeleton-loader>
             <v-skeleton-loader type="heading" style="width: 15%"></v-skeleton-loader>
         </div>

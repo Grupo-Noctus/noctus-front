@@ -65,3 +65,24 @@ export type TContentMaterial = {
     file?: File | null;
 };
 
+export type TEnrollment = {
+    idUser: number;
+    username: string;
+    name: string;
+    email: string;
+    phoneNumber: string;
+    idStudent: number;
+    dateBirth: string;
+    state: string;
+    ethnicity: string;
+    gender: string;
+    hasDisability: boolean;
+    disabilityType: string;
+    needsSupportResources: boolean;
+    supportResourcesDescription: string;
+    idCourse: number;
+    nameCourse: string;
+    idEnrollment: number;
+    completed: boolean;
+    expiresAt: string;
+};

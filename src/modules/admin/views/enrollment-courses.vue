@@ -81,9 +81,9 @@
                         size="large"
                         block
                         :disabled="!course"
-                        @click="viewCourse(course.id)"
+                        @click="viewEnrollment(course.id)"
                     >
-                        Acessar detalhes
+                        Acessar matrículas
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -206,8 +206,8 @@ onMounted(() => {
     fetchCourses();
 });
 
-const viewCourse = (courseId: number) => {
-    router.push({ name: "Modules", params: { id: String(courseId) } });
+const viewEnrollment = (courseId: number) => {
+    router.push({ name: "Enrollment", params: { id: String(courseId) } });
 };
 </script>
 

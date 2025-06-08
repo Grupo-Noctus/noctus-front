@@ -7,6 +7,7 @@ import type {
     TCreateMaterial,
     TCreateModuleData,
     TMaterial,
+    TEnrollment,
 } from "./admin.types";
 
 export const AdminService = () => {
@@ -254,7 +255,7 @@ export const AdminService = () => {
     const getMaterialsService = async (courseId: number): Promise<TMaterial[]> => {
         try {
             const data = await adminHttp.getMaterialsHttp(courseId);
-
+            
             return data;
         } catch (error) {
             pushMessageNotification({
@@ -267,6 +268,24 @@ export const AdminService = () => {
             return [];
         }
     };
+
+    const getEnrollmentService = async (courseId: number): Promise<TEnrollment[]> => {
+        try {
+            const data = await adminHttp.getEnrollmentHttp(courseId);
+
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao buscar as matrículas",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return [];
+        }
+    };
+
 
     const createMaterialService = async (form: TCreateMaterial) => {
         try {
@@ -295,6 +314,33 @@ export const AdminService = () => {
         }
     };
 
+    const createEnrollmentService = async (studentEmail: string, courseId: number) => {
+        try {
+            const data = await adminHttp.createEnrollmentHttp(studentEmail, courseId);
+
+            if (data) {
+                pushMessageNotification({
+                    type: "success",
+                    message: "Matrícula criada com sucesso",
+                    duration: 3000,
+                });
+
+                return true;
+            }
+
+            throw new Error("erro ao criar a matrícula");
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                message: "Erro ao criar o matrícula",
+                duration: 3000,
+            });
+
+            console.error(error);
+            return null;
+        }
+    };
+
     const deleteMaterialService = async (id: number): Promise<boolean | null> => {
         try {
             await adminHttp.deleteMaterialHttp(id);
@@ -302,19 +348,52 @@ export const AdminService = () => {
                 type: "success",
                 message: "Material deletado com sucesso",
                 duration: 3000,
-            });
-
-            return true;
-        } catch (error) {
+                });
+            
+                return true;
+            } catch (error) {
             pushMessageNotification({
                 type: "error",
-                message: "Erro ao deletar o material",
+                message: "Erro ao deletar a matrícula",
                 duration: 3000,
             });
 
             console.error(error);
-            return null;
+            return false;
         }
+    };
+
+    const deleteEnrollmentService = async (enrollmentId: number): Promise<boolean> => {
+        try {
+            await adminHttp.deleteEnrollmentHttp(enrollmentId);
+            pushMessageNotification({
+                type: "success",
+                message: "Matrícula deletada com sucesso",
+                duration: 3000,
+            });
+
+                return true;
+            } catch (error) {
+                if (
+                    error.response.data.message ===
+                    "Duplicate value for: Enrollment_idStudent_idCourse_key"
+                ) {
+                    pushMessageNotification({
+                        type: "error",
+                        message: "Aluno já matriculado no curso",
+                        duration: 3000,
+                    });
+                } else {
+                    pushMessageNotification({
+                        type: "error",
+                        message: "Erro ao criar a matrícula",
+                        duration: 3000,
+                    });
+                }
+
+                console.error(error);
+                return false;
+            }
     };
 
     return {
@@ -331,5 +410,8 @@ export const AdminService = () => {
         createMaterialService,
         getMaterialsService,
         deleteMaterialService,
+        getEnrollmentService,
+        createEnrollmentService,
+        deleteEnrollmentService,
     };
 };

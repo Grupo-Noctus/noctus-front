@@ -29,7 +29,7 @@
         >
             <v-card
                 class="course-card pa-4 mx-auto"
-                elevation="4"
+                elevation="0"
                 :class="{ 'dark-theme': isDark }"
             >
                 <v-img
@@ -176,6 +176,7 @@ const viewCourse = (courseId: number) => {
 }
 
 .container-subtitle {
+    height: 31px;
     display: flex;
     justify-content: space-between;
     align-items: center;

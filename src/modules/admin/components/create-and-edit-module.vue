@@ -9,7 +9,7 @@
                 prepend-icon="mdi-plus"
                 color="primary"
             >
-                criar módulo
+                criar matricula
             </v-btn>
         </template>
 

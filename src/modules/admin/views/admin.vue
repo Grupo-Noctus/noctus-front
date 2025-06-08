@@ -58,7 +58,7 @@ const cards = [
     {
         title: "Matrículas",
         description: "gerencie matrículas, controle acessos de alunos para cursos.",
-        navigateTo: "Enrollment",
+        navigateTo: "CourseEnrollment",
     },
     {
         title: "Materiais",

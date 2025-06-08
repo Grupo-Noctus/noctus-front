@@ -6,6 +6,7 @@ import type {
     TCreateMaterial,
     TCreateModuleData,
     TMaterial,
+    TEnrollment,
 } from "./admin.types";
 
 export class AdminHttp {
@@ -109,7 +110,7 @@ export class AdminHttp {
             formData.append("video", form.video);
         }
 
-        const { data } = await this.httpAdmin.post(`/streaming/update/${contentId}`, body, {
+        const { data } = await this.httpAdmin.post(`/streaming/update/${contentId}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -146,6 +147,7 @@ export class AdminHttp {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
+
         });
 
         return data;
@@ -156,4 +158,25 @@ export class AdminHttp {
 
         return data;
     }
+            
+    async getEnrollmentHttp(courseId: number): Promise<TEnrollment[]> {
+        const { data } = await this.httpAdmin.get(`/enrollment/find-many/${courseId}`);
+
+        return data.enrollments as TEnrollment[];
+    }
+
+    async createEnrollmentHttp(studentEmail: string, courseId: number): Promise<boolean> {
+        const { data } = await this.httpAdmin.post(`/enrollment/pending/${courseId}`, {
+            emails: [studentEmail],
+        })
+
+        return data;
+    }
+
+    async deleteEnrollmentHttp(enrollmentId: number): Promise<boolean> {
+        const { data } = await this.httpAdmin.delete(`/enrollment/delete/${enrollmentId}`);
+
+        return data;
+    }
+
 }

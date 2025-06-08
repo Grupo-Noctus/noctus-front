@@ -1,5 +1,6 @@
 import { courseHttp } from "@/plugins/api/http-instances";
 import { pushMessageNotification } from "@/utils/notivue-base";
+import type { exam } from "./course.types";
 pushMessageNotification;
 
 export const CourseService = () => {
@@ -30,8 +31,23 @@ export const CourseService = () => {
         }
     };
 
+    const getExamByModuleIdService = async (moduleId: number): Promise<exam[]> => {
+        try {
+            const data = await courseHttp.getExamByModuleIdHttp(moduleId);
+            return data;
+        } catch (error) {
+            pushMessageNotification({
+                type: "error",
+                title: "Erro!",
+                message: "Nenhum exame encontrado :(!",
+            });
+            return [];
+        }
+    };
+
     return {
         getEnrollmentCoursesService,
         getCourseByEnrollmentService,
+        getExamByModuleIdService,
     };
 };

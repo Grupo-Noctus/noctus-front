@@ -2,10 +2,11 @@ import type { RouteRecordRaw } from "vue-router";
 import Admin from "./views/admin.vue";
 import { adminMiddleware } from "./admin.middleware";
 import TCourses from "./views/courses.vue";
+import EnrollmentCourses from "./views/enrollment-courses.vue";
 import TModules from "./views/module/modules.vue";
 import ManagementMaterialDetaild from "./management-material/management-material-detaild.vue";
 import ManagementMaterial from "./management-material/management-material.vue";
-
+import Enrollment from "./views/enrollment/envrollment.vue";
 
 export const adminRoutes: RouteRecordRaw[] = [
     {
@@ -40,6 +41,17 @@ export const adminRoutes: RouteRecordRaw[] = [
         name: "ManagementMaterialDetaild",
         component: ManagementMaterialDetaild,
         props: true,
+    },
+    {
+        path: "all-course-enrollment",
+        name: "CourseEnrollment",
+        component: EnrollmentCourses,
+        beforeEnter: adminMiddleware,
+    },
+    {
+        path: "all-course-enrollment/:id",
+        name: "Enrollment",
+        component: Enrollment,
         beforeEnter: adminMiddleware,
     },
 ];
