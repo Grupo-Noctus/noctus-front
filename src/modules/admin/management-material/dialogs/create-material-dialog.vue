@@ -22,6 +22,11 @@
                             <v-textarea v-model="createMaterialForm.description" label="Descrição" required clearable
                                 row-height="25" no-resize :rows="4" variant="outlined"></v-textarea>
                         </v-col>
+                        <v-col cols="12" md="12">
+                            <v-select v-model="createMaterialForm.type" label="Tipo de material"
+                                :items="materialTypeOptions" item-title="text" item-value="value" required clearable
+                                row-height="25" no-resize :rows="4" variant="outlined"></v-select>
+                        </v-col>
                         <v-col>
                             <v-file-input v-model="createMaterialForm.file" accept="image/png, image/jpeg"
                                 label="Material do curso" placeholder="Carregue seu material"
@@ -48,6 +53,7 @@ import * as yup from "yup";
 import { AdminService } from "../../admin.service";
 import type { TMaterial } from "../../admin.types";
 import { useRoute } from 'vue-router';
+import { materialTypeOptions } from "./data/material-types-options";
 
 const route = useRoute();
 
@@ -77,7 +83,7 @@ const createMaterialForm = reactive({
     description: "",
     courseId: courseIdFromRoute.value,
     file: null as File | null,
-    type: "PDF",
+    type: "",
     link: "https://link.com/material",
 });
 
@@ -89,7 +95,7 @@ watch(
             createMaterialForm.description = newValue.description;
             createMaterialForm.courseId = newValue.courseId;
             createMaterialForm.type = newValue.type;
-            
+
         } else {
             resetValues();
         }
@@ -167,7 +173,7 @@ const materialCreateRules = yup.object({
 
             return true;
         })
-        .test("fileType", "Tipo de imagem inválido (apenas PNG e JPEG)", (value) => {
+        .test("fileType", "Tipo de arquivo inválido", (value) => {
             if (!value) {
                 return true;
             }
@@ -191,8 +197,8 @@ const materialCreateRules = yup.object({
                 "image/png",
                 "image/jpg",
                 "application/pdf",
-                "text/plain"
-                ];
+                "plain/text"
+            ];
             return validTypes.includes(file.type);
         }),
 });
