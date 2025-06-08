@@ -15,8 +15,9 @@
             <v-btn
                 prepend-icon="mdi-pencil"
                 class="text-primary text-caption"
-                @click="emits('edit', item)"
                 :disabled="disableEdit"
+                variant="text"
+                @click="emits('edit', item)"
                 >Editar</v-btn
             >
             <v-btn

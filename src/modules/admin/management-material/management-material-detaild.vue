@@ -1,82 +1,49 @@
 <template>
-    <v-card class="pa-3 d-flex justify-space-between align-center" variant="text">
-        <div class="d-flex pa-0">
-            <h1 class="text-h5">Materiais</h1>
-        </div>
-        <div class="pa-0">
-            <v-btn 
-                variant="elevated" 
-                size="small" 
-                density="default" 
-                prepend-icon="mdi-plus" 
-                color="primary"
-                @click="handleWishToCreateMaterial">
-                criar material
-            </v-btn>
-            <create-material-dialog 
-                v-model="isCreateDialogOpen" 
-                :is-external-control="true" 
-                :edit-data="selectedMaterial"
-                @confirm-create="handleFormSubmit" 
-                @cancel="handleDialogCancel">
-            </create-material-dialog>
-        </div>
-    </v-card>
-    <v-divider class="mb-4"></v-divider>
-    
-    <v-row justify="center">
-        <v-col v-if="loading" class="text-center">
-            <v-progress-circular
-                :indeterminate="loading"
-                :size="37"
-                color="primary"
-            ></v-progress-circular>
-        </v-col>
-        <v-col v-else-if="!materials || materials.length === 0" cols="12" class="text-center">
-            <v-alert type="info">Nenhum material encontrado</v-alert>
-        </v-col>
+    <div>
+        <v-card class="pa-3 d-flex justify-space-between align-center" variant="text">
+            <div class="d-flex pa-0">
+                <h1 class="text-h5">Materiais</h1>
+            </div>
+            <div class="pa-0">
+                <v-btn variant="elevated" size="small" density="default" prepend-icon="mdi-plus" color="primary"
+                    @click="handleWishToCreateMaterial">
+                    criar material
+                </v-btn>
+                <create-material-dialog v-model="isCreateDialogOpen" :is-external-control="true"
+                    :edit-data="selectedMaterial" @confirm-create="handleFormSubmit" @cancel="handleDialogCancel">
+                </create-material-dialog>
+            </div>
+        </v-card>
+        <v-divider class="mb-4"></v-divider>
 
-        <v-col
-            v-for="material in materials"
-            v-else
-            :key="material.id"
-            cols="auto"
-            sm="6"
-            md="4"
-            lg="4"
-            class="pa-4"
-        >
-            <v-card
-                class="course-card px-4 py-2 mx-auto"
-                elevation="4"
-                :class="{ 'dark-theme': isDark }"
-            >
-                <delete-and-edit-menu
-                    :item="material"
-                    :disable-edit="true"
-                    @delete="handleWishToDeleteMaterial"
-                    @edit="handleWishToEditMaterial"
-                />
-                <v-card-title class="text-h5 mt-2">
-                    {{ material.name }}
-                </v-card-title>
+        <v-row justify="center">
+            <v-col v-if="loading" class="text-center">
+                <v-progress-circular :indeterminate="loading" :size="37" color="primary"></v-progress-circular>
+            </v-col>
+            <v-col v-else-if="!materials || materials.length === 0" cols="12" class="text-center">
+                <v-alert type="info">Nenhum material encontrado</v-alert>
+            </v-col>
 
-                <v-card-text class="text-body-1 overflow-auto mb-0">
-                    {{ material.description }}
-                </v-card-text>
-            </v-card>
-        </v-col>
+            <v-col v-for="material in materials" v-else :key="material.id" cols="auto" sm="6" md="4" lg="4"
+                class="pa-4">
+                <v-card class="course-card px-4 py-2 mx-auto" elevation="4" :class="{ 'dark-theme': isDark }">
+                    <delete-and-edit-menu :item="material" :disable-edit="true" @delete="handleWishToDeleteMaterial" />
+                    <v-card-title class="text-h5 mt-2">
+                        {{ material.name }}
+                    </v-card-title>
 
-        <confirmation-dialog
-            :model-value="isDeleteDialogOpen"
-            :title="`Remover material`"
-            :item-to-delete="selectedMaterial?.name"
-            @confirm="handleConfirmDialog"
-            @cancel="handleCancelDialog"
-        ></confirmation-dialog>
+                    <v-card-text class="text-body-1 overflow-auto mb-0">
+                        {{ material.description }}
+                    </v-card-text>
+                </v-card>
+            </v-col>
 
-    </v-row>
-    
+            <confirmation-dialog :model-value="isDeleteDialogOpen" :title="`Remover material`"
+                :item-to-delete="selectedMaterial?.name" @confirm="handleConfirmDialog"
+                @cancel="handleCancelDialog"></confirmation-dialog>
+
+        </v-row>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -92,7 +59,7 @@ import createMaterialDialog from "./dialogs/create-material-dialog.vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const courseId = computed(() => Number(route.params.id)); 
+const courseId = computed(() => Number(route.params.id));
 
 const indexStore = useIndexStore();
 const adminService = AdminService();
@@ -115,7 +82,7 @@ const handleCreateMaterial = async (form: TCreateMaterial) => {
 };
 
 const handleFormSubmit = (form: TCreateMaterial & { id?: number }) => {
-    handleCreateMaterial(form);    
+    handleCreateMaterial(form);
 };
 
 const handleWishToCreateMaterial = () => {
